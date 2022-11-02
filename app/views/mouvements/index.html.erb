@@ -1,17 +1,12 @@
-<div class="fr-container">    
+<div class="fr-container" data-controller="form">    
 	<div class="fr-grid-row fr-grid-row--gutters">
 		<div class="fr-col-12 fr-col-lg-12">
 			<h1 class="fr-my-6w"><%= current_user.nom %></h1>
+			<%= render 'mouvements/success'%>
 		</div>
 	</div>
 
 	<div class="fr-grid-row fr-grid-row--gutters">
-		<div class="fr-col-12 fr-col-lg-3">
-			<div class="fr-callout ">
-		    	<p class="fr-callout__title"><%= @mouvements.count%></p>
-		    	<p class="fr-callout__text"> Mouvements réalisés</p>
-			</div>
-		</div>
 		<div class="fr-col-12 fr-col-lg-3">
 			<div class="fr-callout ">
 		    	<p class="fr-callout__title"><%= format_number(@etp_supp )%> ETP</p>
@@ -20,70 +15,122 @@
 		</div>
 		<div class="fr-col-12 fr-col-lg-3">
 			<div class="fr-callout ">
-		    	<p class="fr-callout__title"><%= format_number(@etp_3)%> ETP</p>
-		    	<p class="fr-callout__text"> 3% ETP cibles</p>
-			</div>
-		</div>
-		<div class="fr-col-12 fr-col-lg-3">
-			<div class="fr-callout ">
 		    	<p class="fr-callout__title"><% if @etp_cible != 0 %><%= format_number((@etp_supp/@etp_cible)*100) %><%else%>0<%end%>%</p>
 		    	<p class="fr-callout__text"> % ETP supprimés</p>
 			</div>
 		</div>
+		<div class="fr-col-12 fr-col-lg-3">
+			<div class="fr-callout ">
+		    	<p class="fr-callout__title"><%= number_with_delimiter(@mouvements.sum(:credits_gestion).to_i, :delimiter => ' ')%> € </p>
+		    	<p class="fr-callout__text"> Mouv. en gestion</p>
+			</div>
+		</div>
+		<div class="fr-col-12 fr-col-lg-3">
+			<div class="fr-callout ">
+		    	<p class="fr-callout__title"><%= number_with_delimiter(@mouvements.sum(:cout_etp).to_i, :delimiter => ' ')%> €</p>
+		    	<p class="fr-callout__text"> Mouv. en base </p>
+			</div>
+		</div>
 	
 	</div>
-	<div class="fr-grid-row fr-grid-row--gutters">
+	<div class="fr-grid-row fr-grid-row--gutters fr-mb-4w">
 		<div class="fr-col-12 fr-col-lg-12">
-			<h2 class="fr-my-2w">Historique des mouvements</h2>
+			<h2 class="fr-my-2w">Historique des redéploiements [<%= @mouvements.pluck(:mouvement_lien).uniq.count%>] et mouvements [<%= @mouvements.count%>]</h2>
 			<div class="fr-download">
 			    <p>
-			        <%= link_to historique_path(format: :csv), class: "fr-download__link" do %> Télécharger l'historique des mouvements
+			        <%= link_to historique_path(format: :csv), class: "fr-download__link" do %> Télécharger l'historique de tous les mouvements
 			            <span class="fr-download__detail">
 			                CSV
 			            </span>
 			        <%end %>
 			    </p>
 			</div>
-			<div class="fr-table fr-mb-3w fr-table--no-caption" data-controller="form">
-			    <table>
-			      	<thead>
-			        <tr>
-			        	<th scope="col">Date</th>
-			        	<% if current_user.statut == "admin" || current_user.statut == "ministere"%><th scope="col">Région</th><% end %>
-			        	<th scope="col">Quotité ETP</th>
-			        	<th scope="col pr">Macrograde</th>
-			        	<th scope="col">Type  </th>
-			        	<th scope="col">Service concerné</th>
-			        	<th scope="col">Programme</th>
-			          	<th scope="col">Date effective</th>	
-			          	<th scope="col">ETPT</th>	 
-		            	<th scope="col">Mouvements en gestion (LFR)</th> 
-		            	<th scope="col">Mouvements en base (PLF N+1)</th>   
-		            	<th scope="col">N° ref redéploiement</th> 
-			        </tr>
-			      	</thead>
+			<div class="fr-accordions-group" >
+				
+				<% @redeploiements.each do |numero| %>
+				<section class="fr-accordion">
+			        <h3 class="fr-accordion__title">
+			            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="<%=numero%>">
+			            	Redéploiement n°<%= numero%> effectué le <%= l(@mouvements.where(mouvement_lien: numero).first.date,format: "%e/%m/%y") %> 
+			      			<% if current_user.statut == "admin" || current_user.statut == "ministere"%><p class="fr-badge fr-badge--purple-glycine"><%= @mouvements.where(mouvement_lien: numero).first.region.nom%></p><% end %> 
 
-			      	<tbody>
-				      	<% @mouvements.each do |mouvement|%>
-				      	<tr>
-					      	<td><%= l(mouvement.date,format: "%e/%m/%y") %></td>
-					      	<% if current_user.statut == "admin" || current_user.statut == "ministere"%><td><%= mouvement.region.nom%></td><% end %>
-					      	<td><% if mouvement.quotite%1 != 0 %><%= mouvement.quotite %><%else%><%= mouvement.quotite.to_i %><%end%></td>
-					      	<td><%= mouvement.grade%></td>
-					      	<td><% if mouvement.type_mouvement == "ajout"%><p class="fr-badge fr-badge--green-emeraude"><%= mouvement.type_mouvement%></p> <% if mouvement.ponctuel == true %><p class="fr-badge fr-badge--green-emeraude">ponctuel</p><%end%><% else %><p class="fr-badge fr-badge--blue-cumulus"><%= mouvement.type_mouvement%></p> <% end %></td>
-					      	<td><%= mouvement.service.nom%></td>
-					      	<td><%= mouvement.programme.numero %></td>
-					      	<td><%= l(mouvement.date_effet,format: "%e/%m/%y")%></td>
-					      	<td><%= mouvement.etpt%></td>
-					      	<td><%= number_with_delimiter(mouvement.credits_gestion.to_i, :delimiter => ' ')%>€</td>
-					      	<td><%= number_with_delimiter(mouvement.cout_etp.to_i, :delimiter => ' ')%>€</td>
-					      	<td><%= mouvement.mouvement_lien%>
-					      		<% if current_user.statut == "CBR"%><button data-action="click->form#delete" data-value="<%= mouvement.mouvement_lien%>" class="bouton_delete" title="Supprimer"><span data-value="<%= mouvement.mouvement_lien%>" class="fr-icon-delete-fill fr-fi--sm cbleu" aria-hidden="true"></span></button><%end%>
-					      	</td>
-					     </tr>
-				      	<% end %>
-			      	</tbody>
-			    </table>
+			      			<% if @mouvements.where(mouvement_lien: numero, type_mouvement: 'ajout').count > 0 %><p class="fr-badge fr-badge--green-emeraude"><%= @mouvements.where(mouvement_lien: numero, type_mouvement: 'ajout').count %> <% if @mouvements.where(mouvement_lien: numero, type_mouvement: 'ajout').count > 1 %>ajouts<%else%>ajout<%end%> </p><%end%>
+
+			      			<% if @mouvements.where(mouvement_lien: numero, type_mouvement: 'suppression').count > 0 %>
+			      			<p class="fr-badge fr-badge--blue-cumulus"><%= @mouvements.where(mouvement_lien: numero, type_mouvement: 'suppression').count %> <% if @mouvements.where(mouvement_lien: numero, type_mouvement: 'suppression').count > 1 %>suppressions<%else%>suppression<%end%></p><% end %>
+
+			      			<p class="fr-badge fr-badge--new fr-badge--no-icon"><%= number_with_delimiter(@mouvements.where(mouvement_lien: numero).sum(:credits_gestion).to_i, :delimiter => ' ')%>€ /
+					      	<%= number_with_delimiter(@mouvements.where(mouvement_lien: numero).sum(:cout_etp).to_i, :delimiter => ' ')%>€</p>
+			            </button>
+			        </h3>
+			      		
+			      	<div class="fr-collapse" id="<%= numero%>">
+			      		<div class="fr-table fr-mb-3w fr-table--no-caption" >
+			      			<table>
+						      	<thead>
+						        <tr>
+						        	<th scope="col pr">Macrograde</th>
+						        	<th scope="col">Quotité ETP</th>
+						        	<th scope="col">Date effective</th>	
+						          	<th scope="col">ETPT</th>	
+						        	<th scope="col">Type  </th>
+						        	<th scope="col">Service concerné</th>
+						        	<th scope="col">Programme</th>
+						          	 
+					            	<th scope="col">Mouvements en gestion (LFR)</th> 
+					            	<th scope="col">Mouvements en base (PLF N+1)</th>   
+					            	
+						        </tr>
+						      	</thead>
+
+						      	<tbody>
+							      	<% @mouvements.where(mouvement_lien: numero).each do |mouvement|%>
+							      	<tr>
+								      	<td><%= mouvement.grade%></td>
+								      	<td><% if mouvement.quotite%1 != 0 %><%= mouvement.quotite %><%else%><%= mouvement.quotite.to_i %><%end%></td>
+								      	<td><%= l(mouvement.date_effet,format: "%e/%m/%y")%></td>
+								      	<td><%= mouvement.etpt%></td>
+								      	
+								      	<td><% if mouvement.type_mouvement == "ajout"%><p class="fr-badge fr-badge--green-emeraude"><%= mouvement.type_mouvement%></p> <% if mouvement.ponctuel == true %><p class="fr-badge fr-badge--green-emeraude">ponctuel</p><%end%><% else %><p class="fr-badge fr-badge--blue-cumulus"><%= mouvement.type_mouvement%></p> <% end %></td>
+								      	<td><%= mouvement.service.nom%></td>
+								      	<td><%= mouvement.programme.numero %></td>
+								      	
+								      	<td><%= number_with_delimiter(mouvement.credits_gestion.to_i, :delimiter => ' ')%>€</td>
+								      	<td><%= number_with_delimiter(mouvement.cout_etp.to_i, :delimiter => ' ')%>€</td>
+								     
+								     </tr>
+							      	<% end %>
+						      	</tbody>
+						    </table>
+						</div>
+						<% if current_user.statut == "CBR"%>
+						<div>
+							<button class="fr-btn fr-btn--secondary" title="Supprimer" data-fr-opened="false" aria-controls="fr-modal-<%=numero%>">Supprimer le redéploiement</button>
+						</div>
+						<dialog aria-labelledby="fr-modal-title-modal-<%=numero%>" role="dialog" id="fr-modal-<%=numero%>" class="fr-modal">
+						    <div class="fr-container fr-container--fluid fr-container-md">
+						        <div class="fr-grid-row fr-grid-row--center">
+						            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+						                <div class="fr-modal__body">
+						                    <div class="fr-modal__header">
+						                        <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="fr-modal-<%=numero%>">Fermer</button>
+						                    </div>
+						                    <div class="fr-modal__content">
+						                        <h1 id="fr-modal-title-modal-<%=numero%>" class="fr-modal__title"><span class="fr-fi-arrow-right-line fr-fi--lg"></span>Supprimer ce redéploiement ?</h1>
+						                        <p>Êtes-vous sûrs de vouloir supprimer ce redéploiement ?</p>
+						                        <%= link_to suppression_path(id: numero),data: {"turbo-method": :post}, class: "fr-btn fr-btn--secondary" do %>Supprimer le redéploiement<% end%>
+						                    </div>
+						                </div>
+						            </div>
+						        </div>
+						    </div>
+						</dialog>
+						<%end%>
+					</div>
+								      	
+			    </section>
+			    <% end %>
+ 
 			  	
 			</div>
 		</div>

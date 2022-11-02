@@ -90,8 +90,8 @@ class PagesController < ApplicationController
       @mouvements_supp = []
       @etp_time_supp = []
       (0..11).to_a.each do |i|
-        @mouvements_ajout << @mouvements.where(type_mouvement: "suppression").where('date >= ? AND date <= ?', @start + i.month, @start + i.month + 1.month - 1.day).count
-        @mouvements_supp <<  @mouvements.where(type_mouvement: "ajout").where('date >= ? AND date <= ?', @start + i.month, @start + i.month + 1.month - 1.day).count
+        @mouvements_ajout << @mouvements.where(type_mouvement: "suppression").where('date >= ? AND date <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite')
+        @mouvements_supp <<  @mouvements.where(type_mouvement: "ajout").where('date >= ? AND date <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite')
         @etp_time_ajout << @mouvements.where(type_mouvement: "ajout").where('date_effet >= ? AND date_effet <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite')
         @etp_time_supp << @mouvements.where(type_mouvement: "suppression").where('date_effet >= ? AND date_effet <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite')
       end

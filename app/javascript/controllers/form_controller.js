@@ -23,19 +23,13 @@ export default class extends Controller {
   'resultaddGrade2','resultaddQuotite2','resultaddDate2','resultaddProgramme2','resultaddService2','resultaddPonctuel2',
   'resultaddGrade3','resultaddQuotite3','resultaddDate3','resultaddProgramme3','resultaddService3','resultaddPonctuel3',
   'resultaddGrade4','resultaddQuotite4','resultaddDate4','resultaddProgramme4','resultaddService4','resultaddPonctuel4',
-
+  'success',
   ];
   }
   connect() {
     
   }
-  submitForm(e){
-  }
 
-  resultForm(event){
-    if (event.detail.success == false){
-    } 
-  }
   formChange(e){
     e.preventDefault();
     this.errorAddSuppressionTarget.classList.add('fr-hidden');
@@ -391,24 +385,20 @@ export default class extends Controller {
     }
   }
 
-  delete(e){
-    var id = event.target.dataset.value; //numero ef 
-    console.log(id);
-    const token = document.querySelector('meta[name="csrf-token"]').content;
-    const url = "/repere3/suppression";
-    const body = { id }
-    fetch(url, { 
-      method: 'POST', 
-      body: JSON.stringify(body),
-      credentials: "include",
-      dataType: 'script',
-      headers: {
-        "X-CSRF-Token": token,
-        "Content-Type": "application/json"
-      },
-    })
-    .then(response => response.json()/*response.text()*/)
-    .then(console.log('suppression effectuée')) 
+  resultForm(event){
+    console.log('success');
+    if (event.detail.success == true){ // message de reussite
+      fetch("/repere3/mouvements/success")
+        .then((res) => res.text())
+        .then((html) => {
+          const fragment = document
+            .createRange()
+            .createContextualFragment(html);
+
+          this.successTarget.appendChild(fragment);
+          // OR document.getElementById("testy_element").appendChild(fragment)
+        });
+    } 
   }
 
 }

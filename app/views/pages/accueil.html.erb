@@ -40,14 +40,15 @@
 
 	<div class="fr-tabs fr-mb-6w">
 	    <ul class="fr-tabs__list" role="tablist" aria-label="[A modifier | nom du système d'onglet]">
-	    	<% if current_user.statut == "admin" || current_user.statut == "ministere"%>
+	    	
 	        <li role="presentation">
-	            <button id="tabpanel-404" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="0" role="tab" aria-selected="true" aria-controls="tabpanel-404-panel">Synthèse par région</button>
+	            <button id="tabpanel-405" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="0" role="tab" aria-selected="true" aria-controls="tabpanel-405-panel">Synthèse par programme</button>
+	        </li>
+	        <% if current_user.statut == "admin" || current_user.statut == "ministere"%>
+	        <li role="presentation">
+	            <button id="tabpanel-404" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-404-panel" data-action="click->highcharts#syntheseRegion click->highcharts#syntheseRegionSun" >Synthèse par région</button>
 	        </li>
 	        <%end%>
-	        <li role="presentation">
-	            <button id="tabpanel-405" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-405-panel">Synthèse par programme</button>
-	        </li>
 	        
 	        <li role="presentation">
 	            <button id="tabpanel-406" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-406-panel">Synthèse par catégorie</button>
@@ -122,8 +123,6 @@
 						</table>
 					</div>
 				</div>
-
-				
 				
 			</div>
 		</div>
@@ -145,9 +144,9 @@
 									<th scope="col">Programme</th>
 									<th scope="col">Effectifs cibles</th>
 									<th scope="col">Plafond ETPT</th>
-									<th scope="col">Plafond 3%</th>
+									<th scope="col">Plafond 3% ETP</th>
 									<th scope="col">ETP supprimés</th>
-									<th scope="col">Objectif atteint</th>
+									<th scope="col">% ETP supprimés</th>
 									<th scope="col">ETP ajoutés</th>
 									<th scope="col">ETPT supprimés</th>
 									<th scope="col">ETPT ajoutés</th>
@@ -162,7 +161,7 @@
 									<td><%= format_number(@objectifs.sum('etpt_plafond'))%></td>
 									<td><%= format_number(@etp_3)%></td>
 									<td><%= format_number(@mouvements.where(type_mouvement: "suppression").sum('quotite'))%></td>
-									<td><% if @etp_3 != 0 %><%= "%g" % ("%.1f" % ((@mouvements.where(type_mouvement: "suppression").sum('quotite')/@etp_3)*100) )%><%else%>0<%end%>%</td>
+									<td><% if @etp_3 != 0 %><%=format_number((@mouvements.where(type_mouvement: "suppression").sum('quotite')/@objectifs.sum('etp_cible'))*100)%><%else%>0<%end%>%</td>
 									<td><%= format_number(@mouvements.where(type_mouvement: "ajout").sum('quotite'))%></td>
 									<td><%= format_number(@mouvements.where(type_mouvement: "suppression").sum('etpt'))%></td>
 									<td><%= format_number(@mouvements.where(type_mouvement: "ajout").sum('etpt'))%></td>
@@ -176,7 +175,7 @@
 									<td><%= format_number(@objectifs.where(programme_id: programme.id).sum('etpt_plafond'))%></td>
 									<td><%= "%g" % ("%.1f" % (0.03*@objectifs.where(programme_id: programme.id).sum('etp_cible')).to_f ) %></td>							
 									<td><%= format_number(@mouvements.where(programme_id: programme.id, type_mouvement: "suppression").sum('quotite'))%></td>
-									<td><% if @objectifs.where(programme_id: programme.id).sum('etp_cible') != 0%><%= "%g" % ("%.1f" % ((@mouvements.where(programme_id: programme.id, type_mouvement: "suppression").sum('quotite')/(0.03*@objectifs.where(programme_id: programme.id).sum('etp_cible')))*100) )%><%else%>0<%end%>%</td>
+									<td><% if @objectifs.where(programme_id: programme.id).sum('etp_cible') != 0%><%= format_number((@mouvements.where(programme_id: programme.id, type_mouvement: "suppression").sum('quotite')/(0.03*@objectifs.where(programme_id: programme.id).sum('etp_cible')))*100)%><%else%>0<%end%>%</td>
 									<td><%= format_number(@mouvements.where(programme_id: programme.id, type_mouvement: "ajout").sum('quotite'))%></td>
 									<td><%= format_number(@mouvements.where(programme_id: programme.id, type_mouvement: "suppression").sum('etpt'))%></td>
 									<td><%= format_number(@mouvements.where(programme_id: programme.id, type_mouvement: "ajout").sum('etpt'))%></td>

@@ -19,12 +19,10 @@ export default class extends Controller {
   connect() {
     
     this.syntheseCategorie();
-    this.syntheseCategorie2();
-    this.syntheseTime();
-    this.syntheseRegion();
-    this.syntheseRegionSun();
+    this.syntheseCategorie2();   
     this.syntheseProgramme();
     this.syntheseProgramme2();
+    this.syntheseTime();
     this.syntheseTimeEtp();
   }
 
@@ -34,8 +32,8 @@ export default class extends Controller {
     const data = [{
     id: '0.0',
     parent: '',
-    name: 'ETP redéployés ',
-    color: "#FFF",
+    name: "Mouvements totaux d'ETP",
+    color: "var(--text-inverted-grey)",
     },];
     programmes.forEach((programme,i) =>{
       data.push({ name: programme, id: (1+0.1*i).toString(), parent: '0.0' })
@@ -54,24 +52,21 @@ export default class extends Controller {
       chart: {
         height: '100%',
         style:{
-                    fontFamily: "Marianne",
-                },
-    },
-    exporting:{enabled: false},
-    // Let the center circle be transparent
-    colors: couleurs,
-
-    title: {
-        text: 'ETP redéployés par programme',
-        style: {
-                fontSize: '13px',
-                fontWeight: "900",
-                color: 'var(--text-title-grey)',
-                },
-    },
-
-
-    series: [{
+              fontFamily: "Marianne",
+              },
+      },
+      exporting:{enabled: false},
+      // Let the center circle be transparent
+      colors: couleurs,
+      title: {
+          text: "Suivi des mouvements en ETP par programme",
+          style: {
+                  fontSize: '13px',
+                  fontWeight: "900",
+                  color: 'var(--text-title-grey)',
+                  },
+      },
+      series: [{
         type: 'sunburst',
         data: data,
         name: 'Tout',
@@ -79,52 +74,49 @@ export default class extends Controller {
         cursor: 'pointer',
         dataLabels: {
             format: '{point.name}',
+            rotationMode: 'circular',
             filter: {
                 property: 'innerArcLength',
                 operator: '>',
-                value: 16
+                value: 0
             },
-            rotationMode: 'circular'
+            style: {
+              color: 'var(--text-title-grey)',
+              textOutline: 0,
+            }
         },
-        borderColor:'#ffffff',
+        //borderColor:'rgba(255,255,255,0)',
         levels: [{
             level: 1,
             levelIsConstant: false,
-            dataLabels: {
-                filter: {
-                    property: 'outerArcLength',
-                    operator: '>',
-                    value: 64
-                }
-            }
+            dataLabels:{
+              style: {
+                textOverflow: 'clip',
+              },
+            },
         }, {
             level: 2,
             colorByPoint: true,
-            levelSize: {
-              unit: 'percentage',
-              value: 30
-          },
-        },
-        {
+            //levelSize: {
+            //  unit: 'percentage',
+            //  value: 30
+            //},
+        }, {
             level: 3,
             colorVariation: {
                 key: 'brightness',
-                to: 0.2
+                to: 0.5
             },
             levelSize: {
               unit: 'percentage',
               value: 20
-          },
+            },
         }, {
             level: 4,
             levelSize: {
               unit: 'percentage',
               value: 10
-          },
-            //colorVariation: {
-            //    key: 'brightness',
-            //   to: 0.3
-            //}
+            },
         }]
 
     }],
@@ -134,7 +126,7 @@ export default class extends Controller {
         borderRadius: 16,
         backgroundColor: "rgba(245, 245, 245, 1)",
         headerFormat: '',
-        pointFormat: '<b>{point.name}</b> : <b>{point.value}</b>'
+        pointFormat: '<b>{point.name} :</b> {point.value} ETP'
     }
     }
     this.chart = new Highcharts.chart(this.canvasProgramme1Target, options);
@@ -142,8 +134,6 @@ export default class extends Controller {
   }
   syntheseProgramme2(){
     const programmes = JSON.parse(this.data.get("programmes"));
-    const data = JSON.parse(this.data.get("programme2"));
-    const colors = ["var(--background-action-high-blue-france)","var(--background-action-high-green-bourgeon)","var(--background-action-high-purple-glycine)"] 
     const etp_plafond = JSON.parse(this.data.get("progplafond"));
     const etp_supp = JSON.parse(this.data.get("progetp"));
   
@@ -157,10 +147,10 @@ export default class extends Controller {
                                   
           },
           exporting:{enabled: false},
-          colors: ["#99B3F9", "rgba(183, 167, 63, 0.6)"],
+          colors: ["var(--background-action-low-blue-ecume-active)", "rgba(183, 167, 63, 0.6)"],
           
           title: {
-              text: 'Plafond 3% et ETP supprimés par programme',
+              text: 'Plafond 3% ETP et ETP supprimés par programme',
              
               style: {
                 fontSize: '13px',
@@ -210,10 +200,9 @@ export default class extends Controller {
     this.chart = new Highcharts.chart(this.canvasProgramme2Target, options);
     this.chart.reflow();
   }
+
   syntheseRegion(){
     const regions = JSON.parse(this.data.get("regions"));
-    const data = JSON.parse(this.data.get("region1"));
-    const colors = ["var(--background-action-high-blue-france)","var(--background-action-high-green-bourgeon)","var(--background-action-high-purple-glycine)"] 
     const etp_supp =   JSON.parse(this.data.get("region2"));
     const etp_plafond =   JSON.parse(this.data.get("plafond"));
   
@@ -227,10 +216,10 @@ export default class extends Controller {
                                   
           },
           exporting:{enabled: false},
-          colors: ["#99B3F9", "rgba(183, 167, 63, 0.6)"],
+          colors: ["var(--background-action-low-blue-ecume-active)", "rgba(183, 167, 63, 0.6)"],
           
           title: {
-              text: 'Plafond 3% et ETP supprimés par région',
+              text: 'Plafond 3% ETP et ETP supprimés par région',
              
               style: {
                 fontSize: '13px',
@@ -286,8 +275,8 @@ export default class extends Controller {
     const data = [{
     id: '0.0',
     parent: '',
-    name: 'ETP redéployés ',
-    color: "#FFF",
+    name: "Mouvements totaux d'ETP",
+    color: "var(--text-inverted-grey)",
     },];
     regions.forEach((region,i) =>{
       data.push({ name: region, id: (1+0.1*i).toString(), parent: '0.0' })
@@ -314,7 +303,7 @@ export default class extends Controller {
     colors: couleurs,
 
     title: {
-        text: 'ETP redéployés par région',
+        text: 'Suivi des mouvements en ETP par région',
         style: {
                 fontSize: '13px',
                 fontWeight: "900",
@@ -331,31 +320,33 @@ export default class extends Controller {
         cursor: 'pointer',
         dataLabels: {
             format: '{point.name}',
+            rotationMode: 'circular',
             filter: {
                 property: 'innerArcLength',
                 operator: '>',
-                value: 16
+                value: 0
             },
-            rotationMode: 'circular'
+            style: {
+              color: 'var(--text-title-grey)',
+              textOutline: 0,
+            }
         },
-        borderColor:'#ffffff',
+
         levels: [{
             level: 1,
             levelIsConstant: false,
             dataLabels: {
-                filter: {
-                    property: 'outerArcLength',
-                    operator: '>',
-                    value: 64
-                }
+              style: {
+                    textOverflow: 'clip',
+              },
             }
         }, {
             level: 2,
             colorByPoint: true,
-            levelSize: {
-              unit: 'percentage',
-              value: 30
-          },
+            //levelSize: {
+            //  unit: 'percentage',
+            //  value: 30
+            //},
         },
         {
             level: 3,
@@ -373,10 +364,6 @@ export default class extends Controller {
               unit: 'percentage',
               value: 10
           },
-            //colorVariation: {
-            //    key: 'brightness',
-            //   to: 0.3
-            //}
         }]
 
     }],
@@ -392,172 +379,7 @@ export default class extends Controller {
     this.chart = new Highcharts.chart(this.canvasRegionSunburstTarget, options);
     this.chart.reflow();
   }
-  syntheseRegion2(){
-    const regions = JSON.parse(this.data.get("regions"));
-    const data = JSON.parse(this.data.get("region2"));
-    const couleurs = ["#62A9A2","#B7A73F","#F3E2D7","#99B3F9","#A7A967","#F4E3C7","#BAFAEE","#FEECC2","#C7F6FC","#FDDBFA","#E7BEA6","#76ADF8","#FDE39C","#A6F2FA","#9FC3FC","#FDDFD8","#BFCCFB","#F6F6F6","#C3FAD5"];  
-    const datas = [];
-    
-    regions.forEach((region,i) =>{
-      datas.push({ name: region, y: data[i] })
-    }) 
-           
-    const options = {
-          chart: {
-                height:'100%',
-                style:{
-                    fontFamily: "Marianne",
-                },
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                type: 'pie',  
-                                  
-          },
-          exporting:{enabled: false},
-          colors: Highcharts.map(couleurs, function (color) {
-              return {
-                  radialGradient: {
-                      cx: 0.5,
-                      cy: 0.3,
-                      r: 0.7
-                  },
-                  stops: [
-                      [0, color],
-                      [1, Highcharts.color(color).brighten(-0.3).get('rgb')] // darken
-                  ]
-              };
-          }),
-          
-          title: {
-              text: 'ETP supprimés par région',
-             
-              style: {
-                fontSize: '13px',
-                fontWeight: "900",
-                color: 'var(--text-title-grey)',
-                },
-          },
-          tooltip: {
-              borderColor: 'transparent',
-              borderRadius: 16,
-              backgroundColor: "rgba(245, 245, 245, 1)",
-              formatter: function () {
-                return  this.point.name +' : ' + Math.round(this.percentage*10)/10 
-              }
-              //pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-          },
-          accessibility: {
-              point: {
-                  valueSuffix: '%'
-              }
-          },
-          plotOptions: {
-              pie: {
-                  size: '100%',
-                  allowPointSelect: true,
-                  cursor: 'pointer',
-                  dataLabels: {
-                      enabled: true,
-                      format: '<b>{point.y} ',
-                      connectorColor: 'silver',
-                      connectorPadding: 0,
-                      distance:-20,
-                  }
-              }
-          },
-          series: [{
-              name: 'Région',
-              data: datas
-          }]
-    }
-    this.chart = new Highcharts.chart(this.canvasRegion2Target, options);
-    this.chart.reflow();
-  }
-
-  syntheseRegion3(){
-    const regions = JSON.parse(this.data.get("regions"));
-    const data = JSON.parse(this.data.get("region3"));
-    const couleurs = ["#62A9A2","#B7A73F","#F3E2D7","#99B3F9","#A7A967","#F4E3C7","#BAFAEE","#FEECC2","#C7F6FC","#FDDBFA","#E7BEA6","#76ADF8","#FDE39C","#A6F2FA","#9FC3FC","#FDDFD8","#BFCCFB","#F6F6F6","#C3FAD5"];
-    const datas = []
-    
-    regions.forEach((region,i) =>{
-      datas.push({ name: region, y: data[i] })
-    }) 
-           
-    const options = {
-          chart: {
-                height:'100%',
-                style:{
-                    fontFamily: "Marianne",
-                },
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                type: 'pie',  
-                                  
-          },
-          exporting:{enabled: false},
-          colors: Highcharts.map(couleurs, function (color) {
-              return {
-                  radialGradient: {
-                      cx: 0.5,
-                      cy: 0.3,
-                      r: 0.7
-                  },
-                  stops: [
-                      [0, color],
-                      [1, Highcharts.color(color).brighten(-0.3).get('rgb')] // darken Highcharts.getOptions().colors
-                  ]
-              };
-          }),
-          
-          title: {
-              text: 'ETP ajoutés par région',
-             
-              style: {
-                fontSize: '13px',
-                fontWeight: "900",
-                color: 'var(--text-title-grey)',
-                },
-          },
-          tooltip: {
-              borderColor: 'transparent',
-              borderRadius: 16,
-              backgroundColor: "rgba(245, 245, 245, 1)",
-              formatter: function () {
-                return  this.point.name +' : ' + Math.round(this.percentage*10)/10 
-              }
-              //pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-          },
-          accessibility: {
-              point: {
-                  valueSuffix: '%'
-              }
-          },
-          plotOptions: {
-              pie: {
-                  size: '100%',
-                  allowPointSelect: true,
-                  cursor: 'pointer',
-                  dataLabels: {
-                      enabled: true,
-                      format: '<b>{point.y} ',
-                      connectorColor: 'silver',
-                      connectorPadding: 0,
-                      distance:-20,
-                  }
-              }
-          },
-          series: [{
-              name: 'Région',
-              data: datas
-          }]
-    }
-    this.chart = new Highcharts.chart(this.canvasRegion3Target, options);
-    this.chart.reflow();
-  }
-
+ 
   syntheseCategorie(){
     const data = JSON.parse(this.data.get("categories"));
     const colors = ["var(--background-contrast-blue-cumulus-hover)","var(--background-disabled-grey)","var(--background-contrast-beige-gris-galet-hover)"] 
@@ -602,7 +424,7 @@ export default class extends Controller {
               borderRadius: 16,
               backgroundColor: "rgba(245, 245, 245, 1)",
               formatter: function () {
-                return 'ETP ' + this.point.name +' supprimés : ' + Math.round(this.percentage*10)/10 + '%'
+                return '<b>ETP ' + this.point.name +' supprimés : </b>' + Math.round(this.percentage*10)/10 + '%'
               }
               //pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
           },
@@ -622,6 +444,10 @@ export default class extends Controller {
                       connectorColor: 'silver',
                       connectorPadding: 0,
                       distance:-50,
+                      style: {
+                        color: 'var(--text-title-grey)',
+                        textOutline: 0,
+                      }
                   }
               }
           },
@@ -682,7 +508,7 @@ export default class extends Controller {
               borderRadius: 16,
               backgroundColor: "rgba(245, 245, 245, 1)",
               formatter: function () {
-                return 'ETP ' + this.point.name +' ajoutés : ' + Math.round(this.percentage*10)/10 + '%'
+                return '<b>ETP ' + this.point.name +' ajoutés :</b> ' + Math.round(this.percentage*10)/10 + '%'
               }
               //pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
           },
@@ -702,6 +528,10 @@ export default class extends Controller {
                       connectorColor: 'silver',
                       connectorPadding: 0,
                       distance:-50,
+                      style: {
+                        color: 'var(--text-title-grey)',
+                        textOutline: 0,
+                      }
                   }
               }
           },
@@ -731,10 +561,10 @@ export default class extends Controller {
                                   
           },
           exporting:{enabled: false},
-          colors: ["#DAD29E", "#F3E2D7"],
+          colors: ["#DAD29E", "var(--background-action-low-brown-opera)"],
           
           title: {
-              text: 'Mouvements effectués dans le temps',
+              text: 'ETP ajoutés et supprimés dans le temps (date du mouvement)',
              
               style: {
                 fontSize: '13px',
@@ -768,15 +598,19 @@ export default class extends Controller {
               column: {
                   stacking: 'normal',
                   dataLabels: {
-                      enabled: true
+                      enabled: true,
+                      style: {
+                        color: 'var(--text-title-grey)',
+                        textOutline: 0,
+                      }
                   }
               }
           },
           series: [{
-              name: 'Suppression',
+              name: 'ETP supprimés',
               data: data2,
           },{
-              name: 'Ajout',
+              name: 'ETP ajoutés',
               data: data1,
           }]
     }
@@ -797,10 +631,10 @@ export default class extends Controller {
                                   
           },
           exporting:{enabled: false},
-          colors: ["#DAD29E", "#F3E2D7"],
+          colors: ["#DAD29E", "var(--background-action-low-brown-opera)"],
           
           title: {
-              text: "ETP ajoutés et supprimés à date effective",
+              text: "Départs et arrivées d'ETP à date effective",
              
               style: {
                 fontSize: '13px',
@@ -834,15 +668,19 @@ export default class extends Controller {
               column: {
                   stacking: 'normal',
                   dataLabels: {
-                      enabled: true
+                      enabled: true,
+                      style: {
+                        color: 'var(--text-title-grey)',
+                        textOutline: 0,
+                      }
                   }
               }
           },
           series: [{
-              name: 'ETP supprimés',
+              name: 'Départs ETP',
               data: data2,
           },{
-              name: 'ETP ajoutés',
+              name: 'Arrivées ETP',
               data: data1,
           }]
     }

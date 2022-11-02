@@ -6,19 +6,21 @@ class MouvementsController < ApplicationController
     @start = Date.new(Date.today.year,1,1)
     @end = Date.new(Date.today.year,12,31)
     if current_user.statut == "admin"
-      @mouvements = Mouvement.where('date >= ? AND date <= ?',@start,@end).order(date: :desc)
+      @mouvements = Mouvement.where('date >= ? AND date <= ?',@start,@end).order(created_at: :desc)
       @etp_cible = Objectif.where('date >= ? AND date <= ?',@start,@end).sum('etp_cible')
     elsif current_user.statut == "prefet" || current_user.statut == "CBR"
-      @mouvements = Mouvement.where(region_id: current_user.region_id).where('date >= ? AND date <= ?',@start,@end).order(date: :desc)      
+      @mouvements = Mouvement.where(region_id: current_user.region_id).where('date >= ? AND date <= ?',@start,@end).order(created_at: :desc)      
       @etp_cible = Objectif.where('region_id = ? AND date >= ? AND date <= ?',current_user.region_id, @start,@end).sum('etp_cible')
     elsif current_user.statut == "ministere"
       @ministere = Ministere.where(nom: current_user.nom).first
       @programme_id = Programme.where(ministere_id: @ministere.id).pluck(:id)
-      @mouvements = Mouvement.where(programme_id: @programme_id).where('date >= ? AND date <= ?',@start, @end).order(date: :desc)     
+      @mouvements = Mouvement.where(programme_id: @programme_id).where('date >= ? AND date <= ?',@start, @end).order(created_at: :desc)     
       @etp_cible = Objectif.where(programme_id: @programme_id).where('date >= ? AND date <= ?',@start,@end).sum('etp_cible')          
     end
     @etp_supp = @mouvements.where(type_mouvement: "suppression").sum('quotite')
     @etp_3 = 0.03 * @etp_cible
+
+    @redeploiements = @mouvements.pluck(:mouvement_lien).uniq
     if @mouvements.count == 0 
       @mouvements = []
     end
@@ -79,8 +81,9 @@ class MouvementsController < ApplicationController
         @mouvement.save
       end
     end 
-    respond_to do |format|
-      format.all { redirect_to historique_path }       
+    @message = "Redéploiement n°" + @mouvement.mouvement_lien.to_s + "ajouté"
+    respond_to do |format|      
+      format.all { redirect_to historique_path, notice: @message}       
     end 
   end 
 
@@ -90,7 +93,7 @@ class MouvementsController < ApplicationController
   def suppression
     Mouvement.where(mouvement_lien: params[:id]).destroy_all 
     respond_to do |format|
-      format.all { redirect_to historique_path }       
+      format.turbo_stream { redirect_to historique_path, notice: "Redéploiement supprimé"  }       
     end 
   end 
 

@@ -12,7 +12,7 @@
 		</div>
 	</div>
 	<div data-controller="form">
-	<%= form_with(url: mouvements_path, method: :post, data: {'form-target': "form", action: "turbo:before-fetch-request->form#submitForm", action: 'change->form#formChange'}) do |f|%>
+	<%= form_with(url: mouvements_path, method: :post, data: {'form-target': "form", action: "turbo:before-render->form#resultForm change->form#formChange"}) do |f|%>
 	<div class="fr-grid-row fr-grid-row--gutters fr-mb-4w" >
 		<div class="fr-col-12 fr-col-lg-6">
 			<div class="fr-modal__body">
