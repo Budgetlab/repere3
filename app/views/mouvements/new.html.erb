@@ -1,0 +1,298 @@
+<div class="fr-container">    
+	<div class="fr-grid-row fr-grid-row--gutters">
+		<div class="fr-col-12 fr-col-lg-12">
+			<h1 class="fr-my-6w">Nouveau redéploiement</h1>
+			<div class="fr-alert fr-alert--info fr-mb-3w">
+			    <h3 class="fr-alert__title">Vous pouvez effectuer plusieurs suppressions et ajouts pour un même redéploiement. Une suppression est à minima obligatoire pour effectuer une redéploiement.</h3>
+			    <p>Ex: Suppression de 2 ETP  pour créer 1 ETP.</p>
+			</div>
+			<div class="fr-alert fr-alert--warning fr-mb-3w fr-hidden" data-form-target="error">
+			    <h3 class="fr-alert__title">Attention, votre redéploiement n’est pas équilibré budgétairement. Êtes-vous sûr de vouloir valider ce redéploiement ?</h3>
+			</div>
+		</div>
+	</div>
+	<div data-controller="form">
+	<%= form_with(url: mouvements_path, method: :post, data: {'form-target': "form", action: "turbo:before-fetch-request->form#submitForm", action: 'change->form#formChange'}) do |f|%>
+	<div class="fr-grid-row fr-grid-row--gutters fr-mb-4w" >
+		<div class="fr-col-12 fr-col-lg-6">
+			<div class="fr-modal__body">
+                <div class="fr-modal__header"></div>
+                <div class="fr-modal__content">
+                    
+                    <div data-form-target="formSuppression">
+                    	<div class="fr-modal__title">
+	                        <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
+	                        1. Suppression
+	                    </div>
+	                    <div class="fr-my-4w" data-form-target="content1">
+		                    <div class="fr-h5 fr-mb-2w">ETP 1</div>
+		                    <div class="fr-grid-row fr-grid-row--gutters">
+			                    <div class="fr-col-12 fr-col-lg-4">
+									<div class="fr-select-group">
+										<label for="grade1" class="fr-label">Macrograde*</label>
+										<%= f.select :grade1,[['A','A'],['B','B'],['C','C']],{prompt: "- sélectionner -"}, {data: {'form-target': 'grade1' }, id:"grade1",class:"fr-select"}%>
+									</div>	
+								</div>
+								<div class="fr-col-12 fr-col-lg-4">
+									<div class="fr-select-group">
+										<label for="quotite1" class="fr-label">Quotité*</label>
+										<%= f.select :quotite1,[['100%',1],['90%',0.9],['80%',0.8],['70%',0.7],['60%',0.6],['50%',0.5],['40%',0.4],['30%',0.3],['20%',0.2],['10%',0.1]],{prompt: "- sélectionner -"}, {data: {'form-target': 'quotite1' }, id:"quotite1",class:"fr-select"}%>
+									</div>	
+								</div>
+								<div class="fr-col-12 fr-col-lg-4">
+									<div class="fr-select-group">
+										<label for="date1" class="fr-label">Date Effective*</label>
+										<%= f.text_field :date1, {data: { 'form-target': 'date1', controller: "flatpickr",flatpickr_date_format: "Y-m-d",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "date1",class:"fr-select",placeholder: "- Sélectionner -"} %>
+									</div>
+								</div>
+							</div>
+							<div class="fr-grid-row fr-grid-row--gutters">
+								<div class="fr-col-12 fr-col-lg-6">
+									<div class="fr-select-group">
+										<label for="programme1" class="fr-label">Programme*</label>
+										<%= f.select :programme1, Programme.all.order(numero: :asc).pluck(:numero).map {|c| [c.to_s,c]},{prompt: "- sélectionner -"}, {data: {action: 'change->form#programmeChange',value: 1,'form-target': 'programme1' },id:"programme1",class:"fr-select"}%>
+									</div>	
+								</div>
+								<div class="fr-col-12 fr-col-lg-6">
+									<div class="fr-select-group">				
+										<label for="service1" class="fr-label" >Service*</label>
+										<%= f.select :service1, [],{prompt: "- sélectionner -"}, {data: {'form-target': 'service1'},id: "service1", class:"fr-select"}%>
+									</div>
+								</div>
+							</div>
+						</div>
+						<% (2..4).each do |i|%>
+							<div class="fr-my-4w fr-hidden" data-form-target="content<%=i%>">
+								<div class="fr-h5 fr-mb-2w">ETP <%= i%> <button data-action="form#removeEtpSuppression" data-value="<%=i%>" class='bouton_i2' title="supprimer l'etp"><span class="fr-icon-delete-line " aria-hidden="true" data-value="<%=i%>" ></span></button></div>
+								<div class="fr-grid-row fr-grid-row--gutters">
+				                    <div class="fr-col-12 fr-col-lg-4">
+										<div class="fr-select-group">
+											<label for="grade<%=i%>" class="fr-label">Macrograde*</label>
+											<%= f.select "grade#{i}",[['A','A'],['B','B'],['C','C']],{prompt: "- sélectionner -"}, {data: {'form-target': 'grade'+i.to_s }, id:"grade"+i.to_s,class:"fr-select"}%>
+										</div>	
+									</div>
+									<div class="fr-col-12 fr-col-lg-4">
+										<div class="fr-select-group">
+											<label for="quotite<%=i%>" class="fr-label">Quotité*</label>
+											<%= f.select "quotite#{i}",[['100%',1],['90%',0.9],['80%',0.8],['70%',0.7],['60%',0.6],['50%',0.5],['40%',0.4],['30%',0.3],['20%',0.2],['10%',0.1]],{prompt: "- sélectionner -"}, {data: {'form-target': 'quotite'+i.to_s }, id:"quotite"+i.to_s,class:"fr-select"}%>
+										</div>	
+									</div>
+									<div class="fr-col-12 fr-col-lg-4">
+										<div class="fr-select-group">
+											<label for="date<%=i%>" class="fr-label">Date Effective*</label>
+											<%= f.text_field "date#{i}", {data: { 'form-target': 'date'+i.to_s, controller: "flatpickr",flatpickr_date_format: "Y-m-d",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "date"+i.to_s,class:"fr-select", placeholder: "- Sélectionner -"} %>
+										</div>
+									</div>
+								</div>
+								<div class="fr-grid-row fr-grid-row--gutters">
+									<div class="fr-col-12 fr-col-lg-6">
+										<div class="fr-select-group">
+											<label for="programme<%=i%>" class="fr-label">Programme*</label>
+											<%= f.select "programme#{i}", Programme.all.order(numero: :asc).pluck(:numero).map {|c| [c.to_s,c]},{prompt: "- sélectionner -"}, {data: {action: 'change->form#programmeChange',value: i,'form-target': 'programme'+i.to_s },id:"programme"+i.to_s,class:"fr-select"}%>
+										</div>	
+									</div>
+									<div class="fr-col-12 fr-col-lg-6">
+										<div class="fr-select-group">				
+											<label for="service<%=i%>" class="fr-label" >Service*</label>
+											<%= f.select "service#{i}", [],{prompt: "- sélectionner -"}, {data: {'form-target': 'service'+i.to_s},id: "service"+i.to_s, class:"fr-select"}%>
+										</div>
+									</div>
+								</div>
+							</div>
+						<% end %>
+						<div class="fr-error-text fr-hidden" data-form-target="errorAddSuppression" role="alert"> </div>
+						<div class="fr-my-4w" data-form-target="BtnAddSuppression"><button data-action="form#addSuppression" class="btn-plus" title="supprimer un nouvel ETP"> <span class="fr-fi-add-circle-fill cbleu fr-fi--sm" aria-hidden="true"></span> Supprimer un nouvel ETP</button></div>
+					</div>
+
+					<div class="fr-hidden" data-form-target="resultSuppression">
+						<div class="fr-modal__title">
+	                        <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
+	                        ETP Supprimés [<span data-form-target="countSuppression"></span>]
+	                    </div>		
+	                    <p class="fr-badge fr-mt-4w">Coût Total : <span data-form-target="coutSuppression"></span></p>
+						<% (1..4).each do |i|%>
+							<div class="fr-my-4w fr-hidden" data-form-target='resultSuppression<%=i%>'>
+								<div class="fr-h5 fr-mb-2w">ETP <%= i %></div>
+								<span class="fr-tag">Macrograde : <span data-form-target='resultGrade<%=i%>'></span></span>
+								<span class="fr-tag">Quotité : <span data-form-target='resultQuotite<%=i%>'></span></span>
+								<span class="fr-tag">Date effective : <span data-form-target='resultDate<%=i%>'></span></span>
+								<span class="fr-tag">Programme : <span data-form-target='resultProgramme<%=i%>'></span> </span>
+								<span class="fr-tag">Service : <span data-form-target='resultService<%=i%>'></span> </span>
+							</div>
+						<% end %>
+					</div>
+
+                </div>                    
+            </div>			
+		</div>
+		<div class="fr-col-12 fr-col-lg-6">
+			<div class="fr-modal__body">
+                <div class="fr-modal__header"></div>
+                <div class="fr-modal__content">
+                    
+                    <div data-form-target="formAjout">
+                    	<div class="fr-modal__title">
+	                        <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
+	                        2. Ajout
+	                    </div>
+	                    <div class="fr-my-4w" data-form-target="addcontent1">
+		                    <div class="fr-h5 fr-mb-2w">ETP 1</div>
+		                    <div class="fr-grid-row fr-grid-row--gutters">
+			                    <div class="fr-col-12 fr-col-lg-4">
+									<div class="fr-select-group">
+										<label for="addgrade1" class="fr-label">Macrograde</label>
+										<%= f.select :addgrade1,[['A','A'],['B','B'],['C','C']],{prompt: "- sélectionner -"}, {data: {'form-target': 'addgrade1' }, id:"addgrade1",class:"fr-select"}%>
+									</div>	
+								</div>
+								<div class="fr-col-12 fr-col-lg-4">
+									<div class="fr-select-group">
+										<label for="addquotite1" class="fr-label">Quotité</label>
+										<%= f.select :addquotite1,[['100%',1],['90%',0.9],['80%',0.8],['70%',0.7],['60%',0.6],['50%',0.5],['40%',0.4],['30%',0.3],['20%',0.2],['10%',0.1]],{prompt: "- sélectionner -"}, {data: {'form-target': 'addquotite1' }, id:"addquotite1",class:"fr-select"}%>
+									</div>	
+								</div>
+								<div class="fr-col-12 fr-col-lg-4">
+									<div class="fr-select-group">
+										<label for="adddate1" class="fr-label">Date Effective</label>
+										<%= f.text_field :adddate1, {data: { 'form-target': 'adddate1', controller: "flatpickr",flatpickr_date_format: "Y-m-d",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "adddate1",class:"fr-select", placeholder: "- Sélectionner -"} %>
+									</div>
+								</div>
+							</div>
+							<div class="fr-grid-row fr-grid-row--gutters">
+								<div class="fr-col-12 fr-col-lg-6">
+									<div class="fr-select-group">
+										<label for="addprogramme1" class="fr-label">Programme</label>
+										<%= f.select :addprogramme1, Programme.all.order(numero: :asc).pluck(:numero).map {|c| [c.to_s,c]},{prompt: "- sélectionner -"}, {data: {action: 'change->form#programmeChangeAjout',value: 1,'form-target': 'addprogramme1' },id:"addprogramme1",class:"fr-select"}%>
+									</div>	
+								</div>
+								<div class="fr-col-12 fr-col-lg-6">
+									<div class="fr-select-group">				
+										<label for="addservice1" class="fr-label" >Service</label>
+										<%= f.select :addservice1, [],{prompt: "- sélectionner -"}, {data: {'form-target': 'addservice1'},id: "addservice1", class:"fr-select"}%>
+									</div>
+								</div>
+							</div>
+							<div class="fr-grid-row fr-grid-row--gutters">
+								<div class="fr-col-12 fr-col-lg-12">
+									<div class="">
+									    <fieldset class="fr-fieldset fr-fieldset--inline">
+									        <legend class="fr-fieldset__legend fr-text--regular fr-mb-1w" id='radio-inline-legend'>
+									            S'agit-il d'un emploi ponctuel ? 
+									        </legend>
+									        <div class="fr-text--xs">Un poste ponctuel est un poste qui répond à une politique prioritaire ministérielle nécessitant des recrutements spécifiques et exceptionnels en cours d’année</div>
+									        <div class="fr-fieldset__content" >
+									            <div class="fr-radio-group">
+									                <%= f.radio_button :ponctuel1, true, id: "radio-ponctuel1", data: {'form-target': 'addponctuel1'}, checked: false  %>
+									                <label class="fr-label" for="radio-ponctuel1">Oui</label>
+									            </div>
+									            <div class="fr-radio-group">
+									                <%= f.radio_button :ponctuel1, false, checked: true, id:"radio-ponctuel2" %>
+									                <label class="fr-label" for="radio-ponctuel2">Non</label>
+									            </div>
+									        </div>
+									        
+									    </fieldset>
+									</div>
+								</div>
+							</div>
+						</div>
+						<% (2..4).each do |i|%>
+							<div class="fr-my-4w fr-hidden" data-form-target="addcontent<%=i%>">
+								<div class="fr-h5 fr-mb-2w">ETP <%= i%> <button data-action="form#removeEtpAjout" data-value="<%=i%>" class='bouton_i2' title="supprimer l'etp ajouté"><span class="fr-icon-delete-line " aria-hidden="true" data-value="<%=i%>" ></span></button></div>
+								<div class="fr-grid-row fr-grid-row--gutters">
+				                    <div class="fr-col-12 fr-col-lg-4">
+										<div class="fr-select-group">
+											<label for="addgrade<%=i%>" class="fr-label">Macrograde*</label>
+											<%= f.select "addgrade#{i}",[['A','A'],['B','B'],['C','C']],{prompt: "- sélectionner -"}, {data: {'form-target': 'addgrade'+i.to_s }, id:"addgrade"+i.to_s,class:"fr-select"}%>
+										</div>	
+									</div>
+									<div class="fr-col-12 fr-col-lg-4">
+										<div class="fr-select-group">
+											<label for="addquotite<%=i%>" class="fr-label">Quotité*</label>
+											<%= f.select "addquotite#{i}",[['100%',1],['90%',0.9],['80%',0.8],['70%',0.7],['60%',0.6],['50%',0.5],['40%',0.4],['30%',0.3],['20%',0.2],['10%',0.1]],{prompt: "- sélectionner -"}, {data: {'form-target': 'addquotite'+i.to_s }, id:"addquotite"+i.to_s,class:"fr-select"}%>
+										</div>	
+									</div>
+									<div class="fr-col-12 fr-col-lg-4">
+										<div class="fr-select-group">
+											<label for="adddate<%=i%>" class="fr-label">Date Effective*</label>
+											<%= f.text_field "adddate#{i}", {data: { 'form-target': 'adddate'+i.to_s, controller: "flatpickr",flatpickr_date_format: "Y-m-d",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "adddate"+i.to_s,class:"fr-select", placeholder: "- Sélectionner -"} %>
+										</div>
+									</div>
+								</div>
+								<div class="fr-grid-row fr-grid-row--gutters">
+									<div class="fr-col-12 fr-col-lg-6">
+										<div class="fr-select-group">
+											<label for="addprogramme<%=i%>" class="fr-label">Programme*</label>
+											<%= f.select "addprogramme#{i}", Programme.all.order(numero: :asc).pluck(:numero).map {|c| [c.to_s,c]},{prompt: "- sélectionner -"}, {data: {action: 'change->form#programmeChangeAjout',value: i,'form-target': 'addprogramme'+i.to_s },id:"addprogramme"+i.to_s,class:"fr-select"}%>
+										</div>	
+									</div>
+									<div class="fr-col-12 fr-col-lg-6">
+										<div class="fr-select-group">				
+											<label for="addservice<%=i%>" class="fr-label" >Service*</label>
+											<%= f.select "addservice#{i}", [],{prompt: "- sélectionner -"}, {data: {'form-target': 'addservice'+i.to_s},id: "addservice"+i.to_s, class:"fr-select"}%>
+										</div>
+									</div>
+								</div>
+								<div class="fr-grid-row fr-grid-row--gutters">
+								<div class="fr-col-12 fr-col-lg-12">
+									<div class="">
+									    <fieldset class="fr-fieldset fr-fieldset--inline">
+									        <legend class="fr-fieldset__legend fr-text--regular fr-mb-1w" id='radio-inline-legend'>
+									            S'agit-il d'un emploi ponctuel ? 
+									        </legend>
+									        <div class="fr-fieldset__content" >
+									            <div class="fr-radio-group">
+									                <%= f.radio_button "ponctuel#{i}", true, id: "radio-ponctuel1"+i.to_s, data: {'form-target': 'addponctuel'+i.to_s},checked: false  %>
+									                <label class="fr-label" for="radio-ponctuel1<%=i%>">Oui</label>
+									            </div>
+									            <div class="fr-radio-group">
+									                <%= f.radio_button "ponctuel#{i}", false, checked: true, id:"radio-ponctuel2"+i.to_s %>
+									                <label class="fr-label" for="radio-ponctuel2<%=i%>">Non</label>
+									            </div>
+									        </div>
+									        
+									    </fieldset>
+									</div>
+								</div>
+							</div>
+							</div>
+						<% end %>
+						<div class="fr-error-text fr-hidden" data-form-target="errorAddAjout" role="alert"> </div>
+						<div class="fr-my-4w" data-form-target="BtnAddAjout"><button data-action="form#addAjout" class="btn-plus" title="ajouter un nuovel ETP"> <span class="fr-fi-add-circle-fill cbleu fr-fi--sm" aria-hidden="true"></span> Ajouter un nouvel ETP</button></div>
+					</div>
+
+					<div class="fr-hidden" data-form-target="resultAjout">
+						<div class="fr-modal__title">
+	                        <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
+	                        ETP ajoutés [<span data-form-target="countAjout"></span>]
+	                    </div>
+	                    <p class="fr-badge fr-mt-4w">Coût Total : <span data-form-target="coutAjout"></span></p>		
+						<% (1..4).each do |i|%>
+							<div class="fr-my-4w fr-hidden" data-form-target='resultAjout<%=i%>'>
+								<div class="fr-h5 fr-mb-2w">ETP <%= i %></div>
+								<span class="fr-tag">Macrograde : <span data-form-target='resultaddGrade<%=i%>'></span></span>
+								<span class="fr-tag">Quotité : <span data-form-target='resultaddQuotite<%=i%>'></span></span>
+								<span class="fr-tag">Date effective : <span data-form-target='resultaddDate<%=i%>'></span></span>
+								<span class="fr-tag">Programme : <span data-form-target='resultaddProgramme<%=i%>'></span> </span>
+								<span class="fr-tag">Service : <span data-form-target='resultaddService<%=i%>'></span> </span>
+								<span class="fr-tag">Ajout ponctuel : <span data-form-target='resultaddPonctuel<%=i%>'></span> </span>
+							</div>
+						<% end %>
+					</div>
+
+                </div>                    
+            </div>
+		</div>
+	</div>
+	
+	<div class="fr-grid-row fr-grid-row--gutters fr-mb-4w">
+		<div class="fr-col-12 fr-col-lg-12 tc">
+			<button data-action="form#preview" data-form-target="BtnPreview" class="fr-btn bouton_inactive" title="Prévisualiser"> Prévisualiser le redéploiement</button>
+			<button data-action="form#modifier" data-form-target="BtnModifier" class="fr-btn fr-btn--secondary fr-hidden" title="Modifier"> Modifier</button>
+			<%= f.submit "Valider", class: "fr-btn fr-hidden", data: {'form-target': "submitBouton"}, aria: { label: "Valider"} %>
+		</div>
+	</div>
+	<% end %>
+	</div>
+
+
+</div>

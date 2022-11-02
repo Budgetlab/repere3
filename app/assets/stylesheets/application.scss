@@ -1,0 +1,87 @@
+@charset "UTF-8";
+@font-face{font-display:swap;font-family:Marianne;font-style:normal;font-weight:300;src:font-url('Marianne-Light.woff2') format("woff2"),font-url('Marianne-Light.woff') format("woff")}@font-face{font-display:swap;font-family:Marianne;font-style:italic;font-weight:300;src:font-url('Marianne-Light_Italic.woff2') format("woff2"),font-url('Marianne-Light_Italic.woff') format("woff")}@font-face{font-display:swap;font-family:Marianne;font-style:normal;font-weight:400;src:font-url('Marianne-Regular.woff2') format("woff2"),font-url('Marianne-Regular.woff') format("woff")}@font-face{font-display:swap;font-family:Marianne;font-style:italic;font-weight:400;src:font-url('Marianne-Regular_Italic.woff2') format("woff2"),font-url('Marianne-Regular_Italic.woff') format("woff")}@font-face{font-display:swap;font-family:Marianne;font-style:normal;font-weight:500;src:font-url('Marianne-Medium.woff2') format("woff2"),font-url('Marianne-Medium.woff') format("woff")}@font-face{font-display:swap;font-family:Marianne;font-style:italic;font-weight:500;src:font-url('Marianne-Medium_Italic.woff2') format("woff2"),font-url('Marianne-Medium_Italic.woff') format("woff")}@font-face{font-display:swap;font-family:Marianne;font-style:normal;font-weight:700;src:font-url('Marianne-Bold.woff2') format("woff2"),font-url('Marianne-Bold.woff') format("woff")}@font-face{font-display:swap;font-family:Marianne;font-style:italic;font-weight:700;src:font-url('Marianne-Bold_Italic.woff2') format("woff2"),font-url('Marianne-Bold_Italic.woff') format("woff")}
+ 
+
+html{
+  height: 100%;
+}
+
+body div{
+  font-family: Marianne, sans-serif;
+}
+a{
+  &:hover{
+  cursor:pointer;
+  }
+}
+
+.fr-header__brand:hover, .fr-footer__brand:hover{
+  background-color:transparent !important;
+}
+.fr-text-lg{
+  font-size:1.125rem;
+}
+h1, h2{
+  position:relative;
+}
+.total{
+  background-color:var(--blue-france-950-100) !important;
+}
+
+.highcharts-credits{
+  color:var(--background-default-grey)!important;
+  fill: var(--background-default-grey) !important;
+  opacity:0 !important; 
+}
+.highcharts-tooltip, .highcharts-tooltip-box {
+  z-index: 100 !important;
+}
+.highcharts-container, .highcharts-root{
+  width:100% !important;
+}
+.highcharts-background{
+  fill: var(--background-default-grey) !important;
+}
+.highcharts-title, .highcharts-subtitle, .highcharts-no-data, .btn-plus{
+  color:var(--text-title-grey) !important;
+  fill:var(--text-title-grey) !important;
+  font-size: 1rem;
+}
+.cbleu{
+  color:var(--text-action-high-blue-france);
+}
+.bouton_i2{
+  color: var(--text-action-high-blue-france);
+  &:hover{
+  background-color:transparent !important;
+  }
+}
+.tc {
+  text-align:center;
+}
+
+.bouton_inactive {
+  background-color: var(--background-disabled-grey) !important;
+  color: var(--text-disabled-grey) !important;
+  &:hover,&:active {
+  background-color: var(--background-disabled-grey) !important;
+  color: var(--text-disabled-grey) !important;
+  cursor: not-allowed !important;
+  }
+}
+.flatpickr-input::placeholder{
+  color: var(--text-title-grey) !important;
+}
+
+.fr-tag span {
+  margin-left: 0.25rem !important;
+}
+
+.fr-modal__content .fr-tag {
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  display: inline-block !important;
+}
+.bouton_delete{
+  background-color:transparent;
+}

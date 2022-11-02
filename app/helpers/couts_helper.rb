@@ -1,0 +1,2 @@
+module CoutsHelper
+end

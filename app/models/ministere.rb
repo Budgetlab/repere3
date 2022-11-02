@@ -1,0 +1,2 @@
+class Ministere < ApplicationRecord
+end

@@ -1,0 +1,33 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  date: 2022-10-17
+  user: one
+  region: one
+  quotite: 1.5
+  grade: MyString
+  date_effet: 2022-10-17
+  type_mouvement: MyString
+  service: one
+  programme: one
+  cout_etp: 1.5
+  ponctuel: false
+  mouvement_lien: 1
+  credits_gestion: 1.5
+  etpt: 1.5
+
+two:
+  date: 2022-10-17
+  user: two
+  region: two
+  quotite: 1.5
+  grade: MyString
+  date_effet: 2022-10-17
+  type_mouvement: MyString
+  service: two
+  programme: two
+  cout_etp: 1.5
+  ponctuel: false
+  mouvement_lien: 1
+  credits_gestion: 1.5
+  etpt: 1.5

@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  date: 2022-10-17
+  etp_cible: 1.5
+  etpt_plafond: 1.5
+  region: one
+  programme: one
+
+two:
+  date: 2022-10-17
+  etp_cible: 1.5
+  etpt_plafond: 1.5
+  region: two
+  programme: two

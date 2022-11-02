@@ -1,0 +1,244 @@
+<% if user_signed_in? %>
+<div class="fr-container"  data-controller="highcharts" data-highcharts-categories="[<%=@etp_supp_a%>,<%=@etp_supp_b%>,<%=@etp_supp_c%>]"  data-highcharts-categories2="[<%=@etp_add_a%>,<%=@etp_add_b%>,<%=@etp_add_c%>]" data-highcharts-ajout="<%=@mouvements_ajout%>" data-highcharts-suppression="<%= @mouvements_supp%>" data-highcharts-regions="<%= @regions.pluck(:nom)%>" data-highcharts-regionsun="<%= @etp_region%>" data-highcharts-region1="<%= @obj_region%>" data-highcharts-region2="<%= @etp_supp_region%>" data-highcharts-plafond="<%= @etp_plafond%>" data-highcharts-region3="<%= @etp_add_region%>" data-highcharts-programmes="<%= @programmes.pluck(:numero)%>" data-highcharts-programme1="<%= @ept_prog%>" data-highcharts-progplafond="<%=@etp_plafond_prog%>" data-highcharts-progetp="<%=@etp_supp_prog%>" data-highcharts-programme2="<%= @obj_prog%>" data-highcharts-time1="<%= @etp_time_ajout%>" data-highcharts-time2="<%= @etp_time_supp%>">    
+	<div class="fr-grid-row fr-grid-row--gutters">
+		<div class="fr-col-12 fr-col-lg-12">
+			<h1 class="fr-my-6w"><%= current_user.nom%></h1>
+		</div>
+	</div>
+	<div class="fr-grid-row fr-grid-row--gutters">
+		<div class="fr-col-12 fr-col-lg-3">
+			<div class="fr-callout ">
+		    	<p class="fr-callout__title"><%= @mouvements.count%></p>
+		    	<p class="fr-callout__text"> Mouvements réalisés</p>
+			</div>
+		</div>
+		<div class="fr-col-12 fr-col-lg-3">
+			<div class="fr-callout ">
+		    	<p class="fr-callout__title"><%= format_number(@etp_supp )%> ETP</p>
+		    	<p class="fr-callout__text"> ETP supprimés</p>
+			</div>
+		</div>
+		<div class="fr-col-12 fr-col-lg-3">
+			<div class="fr-callout ">
+		    	<p class="fr-callout__title"><%= format_number(@etp_3)%> ETP</p>
+		    	<p class="fr-callout__text"> 3% ETP cibles</p>
+			</div>
+		</div>
+		<div class="fr-col-12 fr-col-lg-3">
+			<div class="fr-callout ">
+		    	<p class="fr-callout__title"><% if @etp_3 != 0 %><%= format_number((@etp_supp/@objectifs.sum('etp_cible'))*100) %><%else%>0<%end%>%</p>
+		    	<p class="fr-callout__text"> % ETP supprimés</p>
+			</div>
+		</div>
+	
+	</div>
+	<div class="fr-grid-row fr-grid-row--gutters">
+		<div class="fr-col-12 fr-col-lg-12">
+			<h2 class="fr-my-2w">Synthèse des redéploiements</h2>
+		</div>
+	</div>
+
+	<div class="fr-tabs fr-mb-6w">
+	    <ul class="fr-tabs__list" role="tablist" aria-label="[A modifier | nom du système d'onglet]">
+	    	<% if current_user.statut == "admin" || current_user.statut == "ministere"%>
+	        <li role="presentation">
+	            <button id="tabpanel-404" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="0" role="tab" aria-selected="true" aria-controls="tabpanel-404-panel">Synthèse par région</button>
+	        </li>
+	        <%end%>
+	        <li role="presentation">
+	            <button id="tabpanel-405" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-405-panel">Synthèse par programme</button>
+	        </li>
+	        
+	        <li role="presentation">
+	            <button id="tabpanel-406" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-406-panel">Synthèse par catégorie</button>
+	        </li>
+	        <li role="presentation">
+	            <button id="tabpanel-407" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-407-panel">Synthèse temporelle</button>
+	        </li>
+	    </ul>
+	    
+		<% if current_user.statut == "admin" || current_user.statut == "ministere"%>
+		<div id="tabpanel-404-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tabpanel-404" tabindex="0">
+			<div class="fr-grid-row fr-grid-row--gutters">
+				<div class="fr-col-6 fr-col-lg-12">
+					<div data-highcharts-target="canvasRegion1"></div>
+				</div>
+				
+				<div class="fr-col-12 fr-col-lg-10 fr-col-offset-lg-1">
+					<div data-highcharts-target="canvasRegionSunburst"></div>
+				</div>
+				
+				<div class="fr-col-12 fr-col-lg-12">
+					<div class="fr-table fr-mb-3w fr-table--no-caption">
+						<table>
+							<thead>
+								<tr>
+									<th scope="col">Région</th>
+									<th scope="col">Effectifs cibles</th>
+									<th scope="col">Plafond ETPT </th>
+									<th scope="col">Plafond 3% ETP</th>
+									<th scope="col">ETP supprimés</th>
+									<th scope="col">% ETP supprimés</th>
+									<th scope="col">ETP ajoutés</th>
+									
+									<th scope="col">ETPT supprimés</th>
+									<th scope="col">ETPT ajoutés</th>
+									<th scope="col">Mouvement en gestion (LFR)</th>
+									<th scope="col">Mouvement en base (PLF N+1)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="total">
+									<td>Total</td>
+									<td><%= format_number(@objectifs.sum('etp_cible')) %></td>
+									<td><%= format_number(@objectifs.sum('etpt_plafond'))%></td>
+									<td><%= format_number(@etp_3)%></td>
+									<td><%= format_number(@mouvements.where(type_mouvement: "suppression").sum('quotite'))%></td>
+									<td><% if @etp_3 != 0 %><%= format_number((@mouvements.where(type_mouvement: "suppression").sum('quotite')/@objectifs.sum('etp_cible'))*100)%><%else%>0<%end%>%</td>
+									<td><%= format_number(@mouvements.where(type_mouvement: "ajout").sum('quotite'))%></td>								
+									
+									<td><%= format_number(@mouvements.where(type_mouvement: "suppression").sum('etpt'))%></td>
+									<td><%= format_number(@mouvements.where(type_mouvement: "ajout").sum('etpt'))%></td>
+									<td><%= format_number(@mouvements.sum('credits_gestion').to_i)%> €</td>
+									<td><%= format_number(@mouvements.sum('cout_etp').to_i)%> €</td>
+								</tr>
+								<% @regions.each_with_index do |region,i|%>
+								<tr>
+									<td><%= region.nom %></td>
+									<td><%= format_number(@objectifs.where(region_id: region.id).sum('etp_cible'))%></td>
+									<td><%= format_number(@objectifs.where(region_id: region.id).sum('etpt_plafond'))%></td>
+									<td><%= "%g" % ("%.1f" % (0.03*@objectifs.where(region_id: region.id).sum('etp_cible')).to_f ) %></td>				
+									<td><%= format_number(@mouvements.where(region_id: region.id, type_mouvement: "suppression").sum('quotite'))%></td>
+									<td><%= format_number(@obj_region[i])%>%</td>
+									<td><%= format_number(@mouvements.where(region_id: region.id, type_mouvement: "ajout").sum('quotite'))%></td>
+									
+									<td><%= format_number(@mouvements.where(region_id: region.id, type_mouvement: "suppression").sum('etpt') )%></td>
+									<td><%= format_number(@mouvements.where(region_id: region.id, type_mouvement: "ajout").sum('etpt') )%></td>
+									<td><%= format_number(@mouvements.where(region_id: region.id).sum('credits_gestion').to_i)%> €</td>
+									<td><%= format_number(@mouvements.where(region_id: region.id).sum('cout_etp').to_i)%> €</td>
+								</tr>
+								<% end %>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				
+				
+			</div>
+		</div>
+		<% end %>
+		
+		<div id="tabpanel-405-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-405" tabindex="0">
+			<div class="fr-grid-row fr-grid-row--gutters">
+				<div class="fr-col-12 fr-col-lg-6">
+					<div data-highcharts-target="canvasProgramme2"></div>
+				</div>
+				<div class="fr-col-12 fr-col-lg-6">
+					<div data-highcharts-target="canvasProgramme1"></div>
+				</div>
+				<div class="fr-col-12 fr-col-lg-12">
+					<div class="fr-table fr-mb-3w fr-table--no-caption">
+						<table>
+							<thead>
+								<tr>
+									<th scope="col">Programme</th>
+									<th scope="col">Effectifs cibles</th>
+									<th scope="col">Plafond ETPT</th>
+									<th scope="col">Plafond 3%</th>
+									<th scope="col">ETP supprimés</th>
+									<th scope="col">Objectif atteint</th>
+									<th scope="col">ETP ajoutés</th>
+									<th scope="col">ETPT supprimés</th>
+									<th scope="col">ETPT ajoutés</th>
+									<th scope="col">Mouvement en gestion (LFR)</th>
+									<th scope="col">Mouvement en base (PLF N+1)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="total">
+									<td>Total</td>
+									<td><%= format_number(@objectifs.sum('etp_cible')) %></td>
+									<td><%= format_number(@objectifs.sum('etpt_plafond'))%></td>
+									<td><%= format_number(@etp_3)%></td>
+									<td><%= format_number(@mouvements.where(type_mouvement: "suppression").sum('quotite'))%></td>
+									<td><% if @etp_3 != 0 %><%= "%g" % ("%.1f" % ((@mouvements.where(type_mouvement: "suppression").sum('quotite')/@etp_3)*100) )%><%else%>0<%end%>%</td>
+									<td><%= format_number(@mouvements.where(type_mouvement: "ajout").sum('quotite'))%></td>
+									<td><%= format_number(@mouvements.where(type_mouvement: "suppression").sum('etpt'))%></td>
+									<td><%= format_number(@mouvements.where(type_mouvement: "ajout").sum('etpt'))%></td>
+									<td><%= format_number(@mouvements.sum('credits_gestion').to_i)%> €</td>
+									<td><%= format_number(@mouvements.sum('cout_etp').to_i)%> €</td>
+								</tr>
+								<% @programmes.each do |programme|%>
+								<tr>
+									<td><%= programme.numero %></td>
+									<td><%= format_number(@objectifs.where(programme_id: programme.id).sum('etp_cible'))%></td>
+									<td><%= format_number(@objectifs.where(programme_id: programme.id).sum('etpt_plafond'))%></td>
+									<td><%= "%g" % ("%.1f" % (0.03*@objectifs.where(programme_id: programme.id).sum('etp_cible')).to_f ) %></td>							
+									<td><%= format_number(@mouvements.where(programme_id: programme.id, type_mouvement: "suppression").sum('quotite'))%></td>
+									<td><% if @objectifs.where(programme_id: programme.id).sum('etp_cible') != 0%><%= "%g" % ("%.1f" % ((@mouvements.where(programme_id: programme.id, type_mouvement: "suppression").sum('quotite')/(0.03*@objectifs.where(programme_id: programme.id).sum('etp_cible')))*100) )%><%else%>0<%end%>%</td>
+									<td><%= format_number(@mouvements.where(programme_id: programme.id, type_mouvement: "ajout").sum('quotite'))%></td>
+									<td><%= format_number(@mouvements.where(programme_id: programme.id, type_mouvement: "suppression").sum('etpt'))%></td>
+									<td><%= format_number(@mouvements.where(programme_id: programme.id, type_mouvement: "ajout").sum('etpt'))%></td>
+									<td><%= format_number(@mouvements.where(programme_id: programme.id).sum('credits_gestion').to_i)%> €</td>
+									<td><%= format_number(@mouvements.where(programme_id: programme.id).sum('cout_etp').to_i)%> €</td>
+								</tr>
+								<% end %>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div id="tabpanel-406-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-406" tabindex="0">
+			<div class="fr-grid-row fr-grid-row--gutters">
+				<div class="fr-col-12 fr-col-lg-6">
+					
+					<div class="fr-table fr-mb-3w fr-table--no-caption">
+						<table>
+							<thead>
+								<tr>
+									<th scope="col">Macrograde</th>
+									<th scope="col">ETP supprimés</th>
+									<th scope="col">ETP ajoutés</th>
+									<th scope="col">ETPT supprimés</th>
+									<th scope="col">ETPT ajoutés</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="total"><td>Total</td><td><%=format_number(@etp_supp)%></td><td><%= format_number(@etp_add)%></td><td><%= format_number(@etpt_supp)%></td><td><%= format_number(@etpt_add)%></td></tr>
+								<tr><td>A</td><td><%=format_number(@etp_supp_a)%></td><td><%= format_number(@etp_add_a)%></td><td><%= format_number(@etpt_supp_a)%></td><td><%= @etpt_add_a%></td></tr>
+								<tr><td>B</td><td><%=format_number(@etp_supp_b)%></td><td><%= format_number(@etp_add_b)%></td><td><%= format_number(@etpt_supp_b)%></td><td><%= format_number(@etpt_add_b)%></td></tr>
+								<tr><td>C</td><td><%=format_number(@etp_supp_c)%></td><td><%= format_number(@etp_add_c)%></td><td><%= format_number(@etpt_supp_c)%></td><td><%= format_number(@etpt_add_c)%></td></tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="fr-col-12 fr-col-lg-3">
+					<div>
+						<div data-highcharts-target="canvasCategorie"></div>
+
+					</div>
+				</div>
+				<div class="fr-col-12 fr-col-lg-3">
+					<div>
+						<div data-highcharts-target="canvasCategorie2"></div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="tabpanel-407-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-407" tabindex="0">		
+			<div class="fr-grid-row fr-grid-row--gutters">
+				<div class="fr-col-12 fr-col-lg-12">
+					<div data-highcharts-target="canvasTimeEtp"></div>
+					<div data-highcharts-target="canvasTime"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<% end %>

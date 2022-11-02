@@ -1,0 +1,91 @@
+<div class="fr-container">    
+	<div class="fr-grid-row fr-grid-row--gutters">
+		<div class="fr-col-12 fr-col-lg-12">
+			<h1 class="fr-my-6w"><%= current_user.nom %></h1>
+		</div>
+	</div>
+
+	<div class="fr-grid-row fr-grid-row--gutters">
+		<div class="fr-col-12 fr-col-lg-3">
+			<div class="fr-callout ">
+		    	<p class="fr-callout__title"><%= @mouvements.count%></p>
+		    	<p class="fr-callout__text"> Mouvements réalisés</p>
+			</div>
+		</div>
+		<div class="fr-col-12 fr-col-lg-3">
+			<div class="fr-callout ">
+		    	<p class="fr-callout__title"><%= format_number(@etp_supp )%> ETP</p>
+		    	<p class="fr-callout__text"> ETP supprimés</p>
+			</div>
+		</div>
+		<div class="fr-col-12 fr-col-lg-3">
+			<div class="fr-callout ">
+		    	<p class="fr-callout__title"><%= format_number(@etp_3)%> ETP</p>
+		    	<p class="fr-callout__text"> 3% ETP cibles</p>
+			</div>
+		</div>
+		<div class="fr-col-12 fr-col-lg-3">
+			<div class="fr-callout ">
+		    	<p class="fr-callout__title"><% if @etp_cible != 0 %><%= format_number((@etp_supp/@etp_cible)*100) %><%else%>0<%end%>%</p>
+		    	<p class="fr-callout__text"> % ETP supprimés</p>
+			</div>
+		</div>
+	
+	</div>
+	<div class="fr-grid-row fr-grid-row--gutters">
+		<div class="fr-col-12 fr-col-lg-12">
+			<h2 class="fr-my-2w">Historique des mouvements</h2>
+			<div class="fr-download">
+			    <p>
+			        <%= link_to historique_path(format: :csv), class: "fr-download__link" do %> Télécharger l'historique des mouvements
+			            <span class="fr-download__detail">
+			                CSV
+			            </span>
+			        <%end %>
+			    </p>
+			</div>
+			<div class="fr-table fr-mb-3w fr-table--no-caption" data-controller="form">
+			    <table>
+			      	<thead>
+			        <tr>
+			        	<th scope="col">Date</th>
+			        	<% if current_user.statut == "admin" || current_user.statut == "ministere"%><th scope="col">Région</th><% end %>
+			        	<th scope="col">Quotité ETP</th>
+			        	<th scope="col pr">Macrograde</th>
+			        	<th scope="col">Type  </th>
+			        	<th scope="col">Service concerné</th>
+			        	<th scope="col">Programme</th>
+			          	<th scope="col">Date effective</th>	
+			          	<th scope="col">ETPT</th>	 
+		            	<th scope="col">Mouvements en gestion (LFR)</th> 
+		            	<th scope="col">Mouvements en base (PLF N+1)</th>   
+		            	<th scope="col">N° ref redéploiement</th> 
+			        </tr>
+			      	</thead>
+
+			      	<tbody>
+				      	<% @mouvements.each do |mouvement|%>
+				      	<tr>
+					      	<td><%= l(mouvement.date,format: "%e/%m/%y") %></td>
+					      	<% if current_user.statut == "admin" || current_user.statut == "ministere"%><td><%= mouvement.region.nom%></td><% end %>
+					      	<td><% if mouvement.quotite%1 != 0 %><%= mouvement.quotite %><%else%><%= mouvement.quotite.to_i %><%end%></td>
+					      	<td><%= mouvement.grade%></td>
+					      	<td><% if mouvement.type_mouvement == "ajout"%><p class="fr-badge fr-badge--green-emeraude"><%= mouvement.type_mouvement%></p> <% if mouvement.ponctuel == true %><p class="fr-badge fr-badge--green-emeraude">ponctuel</p><%end%><% else %><p class="fr-badge fr-badge--blue-cumulus"><%= mouvement.type_mouvement%></p> <% end %></td>
+					      	<td><%= mouvement.service.nom%></td>
+					      	<td><%= mouvement.programme.numero %></td>
+					      	<td><%= l(mouvement.date_effet,format: "%e/%m/%y")%></td>
+					      	<td><%= mouvement.etpt%></td>
+					      	<td><%= number_with_delimiter(mouvement.credits_gestion.to_i, :delimiter => ' ')%>€</td>
+					      	<td><%= number_with_delimiter(mouvement.cout_etp.to_i, :delimiter => ' ')%>€</td>
+					      	<td><%= mouvement.mouvement_lien%>
+					      		<% if current_user.statut == "CBR"%><button data-action="click->form#delete" data-value="<%= mouvement.mouvement_lien%>" class="bouton_delete" title="Supprimer"><span data-value="<%= mouvement.mouvement_lien%>" class="fr-icon-delete-fill fr-fi--sm cbleu" aria-hidden="true"></span></button><%end%>
+					      	</td>
+					     </tr>
+				      	<% end %>
+			      	</tbody>
+			    </table>
+			  	
+			</div>
+		</div>
+	</div>
+</div>

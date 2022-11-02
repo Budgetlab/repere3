@@ -1,0 +1,34 @@
+<div class="fr-container">    
+	<div class="fr-grid-row fr-grid-row--gutters">
+		<div class="fr-col-12 fr-col-lg-12 ">
+			<h1 class="fr-my-6w">Répartition des coûts ETP annuels</h1>
+	
+	
+  			<div class="fr-table fr-mb-2w fr-table--no-caption">
+		    	<table>
+			      	<thead>
+			        <tr>
+			        	<th scope="col">Programme</th>
+			        	<th scope="col">Macrograde A</th>
+			        	<th scope="col">Macrograde B</th>
+			        	<th scope="col">Macrograde C</th>
+			        </tr>
+			      	</thead>
+
+			      	<tbody>
+			      		<% Programme.all.each do |programme|%>
+		  				<tr>
+					      	<td><%=programme.numero%> - <%=programme.ministere.nom%> </td>
+					      	<% programme.couts.each do |cout|%>
+					      	<td><%= number_with_delimiter(cout.cout.round, :delimiter => ' ')%>€</td>
+							<%end%>
+					    </tr>
+					    <% end %>
+		  			</tbody>
+		    	</table>
+			</div> 
+			<div class='fr-text--xs fr-mb-4w'>Source Base Pay </div>
+
+		</div>
+	</div>
+</div>
