@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     get 'historique' => "mouvements#index"
     get 'nouveau-redeploiement' => "mouvements#new"
     post 'suppression' => "mouvements#suppression"
+    post 'get_couts' => "mouvements#get_couts"
     
     get '/mentions-legales', to: 'pages#mentions_legales'
     get '/donnees-personnelles', to: 'pages#donnees_personnelles'

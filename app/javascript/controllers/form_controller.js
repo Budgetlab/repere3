@@ -2,17 +2,17 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static get targets() {
-  return ['form','submitBouton','error','BtnPreview','BtnModifier',
+  return ['form','submitBouton','error','BtnPreview','BtnModifier','info',
   'content1','grade1','quotite1','date1','programme1','service1',
   'content2', 'grade2','quotite2','date2','programme2','service2',
   'content3','grade3','quotite3','date3','programme3','service3',
   'content4','grade4','quotite4','date4','programme4','service4',
-  'formSuppression','BtnAddSuppression','errorAddSuppression','countSuppression','coutSuppression',
+  'formSuppression','BtnAddSuppression','errorAddSuppression','countSuppression','coutSuppression','coutSuppressionBase',
   'addcontent1','addgrade1','addquotite1','adddate1','addprogramme1','addservice1','addponctuel1',
   'addcontent2','addgrade2','addquotite2','adddate2','addprogramme2','addservice2','addponctuel2',
   'addcontent3','addgrade3','addquotite3','adddate3','addprogramme3','addservice3','addponctuel3',
   'addcontent4','addgrade4','addquotite4','adddate4','addprogramme4','addservice4','addponctuel4',
-  'formAjout','BtnAddAjout','errorAddAjout','countAjout','coutAjout',
+  'formAjout','BtnAddAjout','errorAddAjout','countAjout','coutAjout','coutAjoutBase',
   'resultSuppression','resultSuppression1','resultSuppression2','resultSuppression3','resultSuppression4',
   'resultGrade1','resultQuotite1','resultDate1','resultProgramme1','resultService1',
   'resultGrade2','resultQuotite2','resultDate2','resultProgramme2','resultService2',
@@ -360,6 +360,44 @@ export default class extends Controller {
         }else{
           result_ponctuel_targets[indice].innerHTML = "Non";
         }
+      });
+      this.infoTarget.classList.add('fr-hidden');
+      // mettre à jour les couts 
+      const token = document.querySelector('meta[name="csrf-token"]').content;
+      const url = "/repere3/get_couts";
+      const grades = [this.grade1Target.value, this.grade2Target.value, this.grade3Target.value, this.grade4Target.value];
+      const addgrades = [this.addgrade1Target.value, this.addgrade2Target.value, this.addgrade3Target.value, this.addgrade4Target.value];
+      const programmes = [this.programme1Target.value, this.programme2Target.value, this.programme3Target.value, this.programme4Target.value];
+      const addprogrammes = [this.addprogramme1Target.value, this.addprogramme2Target.value, this.addprogramme3Target.value, this.addprogramme4Target.value];
+      const quotites = [this.quotite1Target.value, this.quotite2Target.value, this.quotite3Target.value, this.quotite4Target.value];
+      const addquotites = [this.addquotite1Target.value, this.addquotite2Target.value, this.addquotite3Target.value, this.addquotite4Target.value];
+      const dates = [this.date1Target.value, this.date2Target.value, this.date3Target.value, this.date4Target.value];
+      const adddates = [this.adddate1Target.value, this.adddate2Target.value, this.adddate3Target.value, this.adddate4Target.value];
+      const ponctuel = [this.addponctuel1Target.value, this.addponctuel2Target.value, this.addponctuel3Target.value, this.addponctuel4Target.value];
+      const body = {grades: grades, addgrades: addgrades,programmes: programmes, addprogrammes: addprogrammes, quotites: quotites, addquotites: addquotites, dates: dates, adddates: adddates, ponctuel: ponctuel};
+      
+      console.log(body);
+      fetch(url, { 
+        method: 'POST', 
+        body: JSON.stringify(body),
+        credentials: "include",
+        dataType: 'script',
+        headers: {
+          "X-CSRF-Token": token,
+          "Content-Type": "application/json"
+        },
+      })
+      .then(response => response.json()/*response.text()*/)
+      .then(data => {                
+          this.coutSuppressionTarget.innerHTML = (data.cout_supp_gestion).toString();
+          this.coutAjoutTarget.innerHTML = (data.cout_add_gestion).toString();
+          this.coutSuppressionBaseTarget.innerHTML = (data.cout_supp_base).toString();
+          this.coutAjoutBaseTarget.innerHTML = (data.cout_add_base).toString();
+          if (Math.abs(data.cout_supp_gestion) < data.cout_add_gestion){
+            this.errorTarget.classList.remove('fr-hidden');
+          }else {
+            this.successTarget.classList.remove('fr-hidden');
+          }
       })
 
     }else {
@@ -368,6 +406,7 @@ export default class extends Controller {
   }
 
   modifier(e){
+    e.preventDefault();
     this.formSuppressionTarget.classList.remove('fr-hidden');
     this.resultSuppressionTarget.classList.add('fr-hidden');
     this.formAjoutTarget.classList.remove('fr-hidden');
@@ -375,6 +414,9 @@ export default class extends Controller {
     this.BtnPreviewTarget.classList.remove('fr-hidden');
     this.BtnModifierTarget.classList.add('fr-hidden');
     this.submitBoutonTarget.classList.add('fr-hidden');
+    this.infoTarget.classList.remove('fr-hidden');
+    this.errorTarget.classList.add('fr-hidden');
+    this.successTarget.classList.add('fr-hidden');
   }
 
   replaceHtml(form, result){
@@ -385,21 +427,6 @@ export default class extends Controller {
     }
   }
 
-  resultForm(event){
-    console.log('success');
-    if (event.detail.success == true){ // message de reussite
-      fetch("/repere3/mouvements/success")
-        .then((res) => res.text())
-        .then((html) => {
-          const fragment = document
-            .createRange()
-            .createContextualFragment(html);
-
-          this.successTarget.appendChild(fragment);
-          // OR document.getElementById("testy_element").appendChild(fragment)
-        });
-    } 
-  }
 
 }
 function getSelectedValues(event) {

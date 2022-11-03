@@ -1,17 +1,27 @@
-<div class="fr-container">    
+<div class="fr-container" data-controller="form">    
 	<div class="fr-grid-row fr-grid-row--gutters">
 		<div class="fr-col-12 fr-col-lg-12">
 			<h1 class="fr-my-6w">Nouveau redéploiement</h1>
-			<div class="fr-alert fr-alert--info fr-mb-3w">
+			<div class="fr-alert fr-alert--info fr-mb-3w"  data-form-target="info">
 			    <h3 class="fr-alert__title">Vous pouvez effectuer plusieurs suppressions et ajouts pour un même redéploiement. Une suppression est à minima obligatoire pour effectuer une redéploiement.</h3>
 			    <p>Ex: Suppression de 2 ETP  pour créer 1 ETP.</p>
 			</div>
 			<div class="fr-alert fr-alert--warning fr-mb-3w fr-hidden" data-form-target="error">
-			    <h3 class="fr-alert__title">Attention, votre redéploiement n’est pas équilibré budgétairement. Êtes-vous sûr de vouloir valider ce redéploiement ?</h3>
+			    <h3 class="fr-alert__title">Attention, votre redéploiement n’est pas équilibré budgétairement. </h3>
+				<p>Êtes-vous sûr de vouloir valider ce redéploiement ?</p>
+			</div>
+			<div class="fr-notice fr-notice--info fr-hidden" data-form-target="success">
+			    <div class="fr-container">
+			        <div class="fr-notice__body">
+			            <p class="fr-notice__title">
+			              Voici la synthèse de votre redéploiement. Cliquez sur Valider pour l'enregistrer.
+			            </p>
+			        </div>
+			    </div>
 			</div>
 		</div>
 	</div>
-	<div data-controller="form">
+	<div >
 	<%= form_with(url: mouvements_path, method: :post, data: {'form-target': "form", action: "turbo:before-render->form#resultForm change->form#formChange"}) do |f|%>
 	<div class="fr-grid-row fr-grid-row--gutters fr-mb-4w" >
 		<div class="fr-col-12 fr-col-lg-6">
@@ -109,7 +119,8 @@
 	                        <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
 	                        ETP Supprimés [<span data-form-target="countSuppression"></span>]
 	                    </div>		
-	                    <p class="fr-badge fr-mt-4w">Coût Total : <span data-form-target="coutSuppression"></span></p>
+	                    <p class="fr-badge fr-mt-4w fr-badge--new fr-badge--no-icon">Coût en base : <span data-form-target="coutSuppressionBase"></span> €</p>
+	                    <p class="fr-badge fr-mt-4w fr-badge--new fr-badge--no-icon">Coût en gestion : <span data-form-target="coutSuppression"></span> €</p>
 						<% (1..4).each do |i|%>
 							<div class="fr-my-4w fr-hidden" data-form-target='resultSuppression<%=i%>'>
 								<div class="fr-h5 fr-mb-2w">ETP <%= i %></div>
@@ -265,7 +276,8 @@
 	                        <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
 	                        ETP ajoutés [<span data-form-target="countAjout"></span>]
 	                    </div>
-	                    <p class="fr-badge fr-mt-4w">Coût Total : <span data-form-target="coutAjout"></span></p>		
+	                    <p class="fr-badge fr-mt-4w fr-badge--new fr-badge--no-icon">Coût en base : <span data-form-target="coutAjoutBase"></span> €</p>	
+	                    <p class="fr-badge fr-mt-4w fr-badge--new fr-badge--no-icon">Coût en gestion : <span data-form-target="coutAjout"></span> €</p>		
 						<% (1..4).each do |i|%>
 							<div class="fr-my-4w fr-hidden" data-form-target='resultAjout<%=i%>'>
 								<div class="fr-h5 fr-mb-2w">ETP <%= i %></div>

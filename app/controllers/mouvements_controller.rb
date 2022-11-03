@@ -34,6 +34,33 @@ class MouvementsController < ApplicationController
   def new 
   end 
 
+  def get_couts
+    @suppressions = params[:grades]
+    @ajouts = params[:addgrades]
+    @cout_supp_base = 0
+    @cout_supp_gestion = 0
+    @cout_add_base = 0
+    @cout_add_gestion = 0
+    (0..3).to_a.each do |i|
+      if !@suppressions[i].nil? && @suppressions[i] != ""
+        @cout_etp = Cout.where('programme_id = ? AND categorie = ?',Programme.where(numero: params[:programmes][i].to_i).first.id, params[:grades][i]).first.cout
+        @cout_supp_base += -(params[:quotites][i].to_f * @cout_etp).round(2)
+        @cout_supp_gestion += -(params[:quotites][i].to_f * @cout_etp * (DateTime.new(Date.today.year,12,31)-params[:dates][i].to_date).to_i / 365).round(2)
+      end
+      if !@ajouts[i].nil? && @ajouts[i] != ""
+        @cout_etp = Cout.where('programme_id = ? AND categorie = ?',Programme.where(numero: params[:addprogrammes][i].to_i).first.id, params[:addgrades][i]).first.cout
+        @cout_add_gestion = (params[:addquotites][i].to_f * @cout_etp * (DateTime.new(Date.today.year,12,31)-params[:adddates][i].to_date).to_i / 365).round(2)
+        if params[:ponctuel][i] == true 
+          @cout_add_base += 0 
+        else
+          @cout_add_base += (params[:quotites][i].to_f * @cout_etp).round(2) #valider le cout etp car programme nouveau pas supp 
+        end 
+      end 
+    end
+    response = {cout_supp_base: @cout_supp_base, cout_supp_gestion: @cout_supp_gestion, cout_add_base: @cout_add_base, cout_add_gestion: @cout_add_gestion}
+    render json: response
+  end 
+
   def create
     @lien = Mouvement.count+1
     @suppressions = [params[:grade1],params[:grade2],params[:grade3],params[:grade4]]
@@ -81,7 +108,7 @@ class MouvementsController < ApplicationController
         @mouvement.save
       end
     end 
-    @message = "Redéploiement n°" + @mouvement.mouvement_lien.to_s + "ajouté"
+    @message = "Redéploiement n°" + @mouvement.mouvement_lien.to_s + " ajouté"
     respond_to do |format|      
       format.all { redirect_to historique_path, notice: @message}       
     end 
