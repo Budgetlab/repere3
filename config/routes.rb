@@ -1,8 +1,4 @@
 Rails.application.routes.draw do
-  get 'mouvements/index'
-  get 'objectifs/index'
-  get 'couts/index'
-  get 'services/index'
   scope(:path => '/repere3') do
     devise_for :users, :path => "",
       :path_names =>  {:sign_in => "connexion", :sign_out => "logout"},
@@ -10,6 +6,7 @@ Rails.application.routes.draw do
     root 'pages#accueil'
     get 'users' => "users#index"
     post 'import_users' => "users#import"
+    get 'regions' => "regions#index"
     get 'programmes' => "programmes#index"
     post 'import_programmes' => "programmes#import"
     get 'services' => "services#index"

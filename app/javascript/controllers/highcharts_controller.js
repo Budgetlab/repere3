@@ -17,11 +17,11 @@ export default class extends Controller {
   ];
   }
   connect() {
-    
-    this.syntheseCategorie();
-    this.syntheseCategorie2();   
+     
     this.syntheseProgramme();
     this.syntheseProgramme2();
+    this.syntheseCategorie();
+    this.syntheseCategorie2(); 
     this.syntheseTime();
     this.syntheseTimeEtp();
   }
@@ -47,7 +47,8 @@ export default class extends Controller {
       data.push({ name: 'C', id: (3+0.1*i+0.02+0.003).toString(), parent: (2+0.1*i+0.02).toString(), value: etp[6*i+5], color: "var(--background-contrast-beige-gris-galet-hover)"})
     });
 
-    const couleurs = ["var(--background-action-low-blue-ecume-active)","var(--background-contrast-green-emeraude)","var(--background-contrast-yellow-tournesol-active)","var(--border-action-low-purple-glycine)","var(--background-action-high-green-tilleul-verveine-active)","var(--border-default-blue-ecume)","var(--background-action-high-orange-terre-battue-active)","var(--border-default-grey)"]; 
+    //const couleurs = ["var(--background-action-low-blue-ecume-active)","var(--background-contrast-green-emeraude)","var(--background-contrast-yellow-tournesol-active)","var(--border-action-low-purple-glycine)","var(--background-action-high-green-tilleul-verveine-active)","var(--border-default-blue-ecume)","var(--background-action-high-orange-terre-battue-active)","var(--border-default-grey)"]; 
+    const couleurs = ["#99b3f9","#c3fad5", "#e6c130", "#fbb8f6",'#a7a967',"#465f9d","#c68f7d","#ddd"];
     const options = {
       chart: {
         height: '100%',
@@ -105,7 +106,7 @@ export default class extends Controller {
             level: 3,
             colorVariation: {
                 key: 'brightness',
-                to: 0.5
+                to: 0.2
             },
             levelSize: {
               unit: 'percentage',

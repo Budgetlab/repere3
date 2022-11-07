@@ -1,4 +1,5 @@
 class PagesController < ApplicationController
+  before_action :authenticate_user!
   def accueil
     if current_user
       @start = Date.new(Date.today.year,1,1)

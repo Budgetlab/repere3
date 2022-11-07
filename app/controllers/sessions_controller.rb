@@ -19,7 +19,7 @@ class SessionsController < Devise::SessionsController
 	    yield resource if block_given?
 	    #respond_with resource, location: after_sign_in_path_for(resource)
       respond_to do |format|
-        format.turbo_stream {redirect_to root_path} 
+        format.all {redirect_to root_path} 
       end 
 
 	  else 
@@ -34,13 +34,13 @@ class SessionsController < Devise::SessionsController
     yield if block_given?
     #respond_to_on_destroy
     respond_to do |format|
-      format.all { redirect_to root_path }
+      format.all { redirect_to new_user_session_path }
     end
   end
  
   def after_sign_in_path_for(resource)
     respond_to do |format|
-        format.turbo_stream {redirect_to root_path} 
+        format.all {redirect_to root_path} 
     end   
   end
 
