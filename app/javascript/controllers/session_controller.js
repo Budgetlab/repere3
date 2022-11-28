@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static get targets() {
-  return ['form','statut','region','regionBloc','ministere','ministereBloc','password','submitBouton','error',
+  return ['form','statut','region','regionBloc','ministere','ministereBloc','password','submitBouton','error','error2','credentials'
   ];
   }
   connect() {
@@ -29,39 +29,29 @@ export default class extends Controller {
   }
   changeForm(e){
     e.preventDefault();
+    this.error2Target.classList.add('fr-hidden');
     this.errorTarget.classList.add('fr-hidden');
-    const targets = [this.statutTarget, this.regionTarget, this.ministereTarget, this.passwordTarget];
-    targets.forEach((element) =>{
-      element.classList.remove('fr-select--error');
-      element.parentNode.classList.remove('fr-select-group--error');
-    });
+    this.credentialsTarget.classList.remove('fr-fieldset--error');
+
   }
 
   submitForm(e){
     let valid = true;
     if (this.passwordTarget.value == ""){
       valid = false;
-      this.passwordTarget.classList.add('fr-select--error');
-      this.passwordTarget.parentNode.classList.add('fr-select-group--error');
     }
     if (this.statutTarget.value == "" ){
       valid = false;
-      this.statutTarget.classList.add('fr-select--error');
-      this.statutTarget.parentNode.classList.add('fr-select-group--error');
     }
     if ((this.statutTarget.value == "CBR" || this.statutTarget.value == "prefet") && this.regionTarget.value == ""){
       valid = false;
-      this.regionTarget.classList.add('fr-select--error');
-      this.regionTarget.parentNode.classList.add('fr-select-group--error');
 
     }else if (this.statutTarget.value == "ministere" && this.ministereTarget.value == ""){
       valid = false;
-      this.ministereTarget.classList.add('fr-select--error');
-      this.ministereTarget.parentNode.classList.add('fr-select-group--error');
     }
     if (valid == false ){
-      this.errorTarget.classList.remove('fr-hidden');
-      this.errorTarget.innerHTML = "Vous devez remplir tous les champs obligatoires (*)";
+      this.error2Target.classList.remove('fr-hidden');
+      this.credentialsTarget.classList.add('fr-fieldset--error');
       e.preventDefault();
     }
   }
@@ -69,9 +59,7 @@ export default class extends Controller {
   resultForm(event){
     if (event.detail.success == false){
       this.errorTarget.classList.remove('fr-hidden');
-      this.errorTarget.innerHTML = "Mot de passe incorrect";
-      this.passwordTarget.classList.add('fr-select--error');
-      this.passwordTarget.parentNode.classList.add('fr-select-group--error');
+      this.credentialsTarget.classList.add('fr-fieldset--error');
     } 
   }
 }

@@ -1,5 +1,5 @@
 <% if user_signed_in? %>
-<div class="fr-container"  data-controller="highcharts" data-highcharts-categories="[<%=@etp_supp_a%>,<%=@etp_supp_b%>,<%=@etp_supp_c%>]"  data-highcharts-categories2="[<%=@etp_add_a%>,<%=@etp_add_b%>,<%=@etp_add_c%>]" data-highcharts-ajout="<%=@mouvements_ajout%>" data-highcharts-suppression="<%= @mouvements_supp%>" data-highcharts-regions="<%= @regions.pluck(:nom)%>" data-highcharts-regionsun="<%= @etp_region%>" data-highcharts-region1="<%= @obj_region%>" data-highcharts-region2="<%= @etp_supp_region%>" data-highcharts-plafond="<%= @etp_plafond%>" data-highcharts-region3="<%= @etp_add_region%>" data-highcharts-programmes="<%= @programmes.pluck(:numero)%>" data-highcharts-programme1="<%= @ept_prog%>" data-highcharts-progplafond="<%=@etp_plafond_prog%>" data-highcharts-progetp="<%=@etp_supp_prog%>" data-highcharts-programme2="<%= @obj_prog%>" data-highcharts-time1="<%= @etp_time_ajout%>" data-highcharts-time2="<%= @etp_time_supp%>">    
+<div class="fr-container"  data-controller="highcharts" data-highcharts-mvtcount="<%=@mouvements.count%>" data-highcharts-showregion="<%= current_user.statut == "admin" || current_user.statut == "ministere"%>" data-highcharts-categories="[<%=@etp_supp_a%>,<%=@etp_supp_b%>,<%=@etp_supp_c%>]"  data-highcharts-categories2="[<%=@etp_add_a%>,<%=@etp_add_b%>,<%=@etp_add_c%>]" data-highcharts-ajout="<%=@mouvements_ajout%>" data-highcharts-suppression="<%= @mouvements_supp%>" data-highcharts-regions="<%= @regions.pluck(:nom)%>" data-highcharts-regionsun="<%= @etp_region%>" data-highcharts-region1="<%= @obj_region%>" data-highcharts-region2="<%= @etp_supp_region%>" data-highcharts-plafond="<%= @etp_plafond%>" data-highcharts-region3="<%= @etp_add_region%>" data-highcharts-programmes="<%= @programmes.pluck(:numero)%>" data-highcharts-programme1="<%= @ept_prog%>" data-highcharts-progplafond="<%=@etp_plafond_prog%>" data-highcharts-progetp="<%=@etp_supp_prog%>" data-highcharts-programme2="<%= @obj_prog%>" data-highcharts-time1="<%= @etp_time_ajout%>" data-highcharts-time2="<%= @etp_time_supp%>">    
 	<div class="fr-grid-row fr-grid-row--gutters">
 		<div class="fr-col-12 fr-col-lg-12">
 			<h1 class="fr-my-6w"><%= current_user.nom%></h1>
@@ -46,7 +46,7 @@
 	        </li>
 	        <% if current_user.statut == "admin" || current_user.statut == "ministere"%>
 	        <li role="presentation">
-	            <button id="tabpanel-405" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-405-panel" data-action="click->highcharts#syntheseRegion click->highcharts#syntheseRegionSun" >Synthèse par région</button>
+	            <button id="tabpanel-405" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-405-panel"  >Synthèse par région</button>
 	        </li>
 	        <%end%>
 	        
@@ -61,12 +61,15 @@
 				
 		<div id="tabpanel-404-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tabpanel-404" tabindex="0">
 			<div class="fr-grid-row fr-grid-row--gutters">
+			
 				<div class="fr-col-12 fr-col-lg-6">
 					<div data-highcharts-target="canvasProgramme2"></div>
-				</div>
+				</div>				
 				<div class="fr-col-12 fr-col-lg-6">
 					<div data-highcharts-target="canvasProgramme1"></div>
 				</div>
+				
+
 				<div class="fr-col-12 fr-col-lg-12">
 					<div class="fr-download">
 					    <p>
@@ -136,7 +139,6 @@
 				<div class="fr-col-6 fr-col-lg-12">
 					<div data-highcharts-target="canvasRegion1"></div>
 				</div>
-				
 				<div class="fr-col-12 fr-col-lg-10 fr-col-offset-lg-1">
 					<div data-highcharts-target="canvasRegionSunburst"></div>
 				</div>
@@ -226,7 +228,7 @@
 							</thead>
 							<tbody>
 								<tr class="total"><td>Total</td><td><%=format_number(@etp_supp)%></td><td><%= format_number(@etp_add)%></td><td><%= format_number(@etpt_supp)%></td><td><%= format_number(@etpt_add)%></td></tr>
-								<tr><td>A</td><td><%=format_number(@etp_supp_a)%></td><td><%= format_number(@etp_add_a)%></td><td><%= format_number(@etpt_supp_a)%></td><td><%= @etpt_add_a%></td></tr>
+								<tr><td>A</td><td><%=format_number(@etp_supp_a)%></td><td><%= format_number(@etp_add_a)%></td><td><%= format_number(@etpt_supp_a)%></td><td><%= format_number(@etpt_add_a)%></td></tr>
 								<tr><td>B</td><td><%=format_number(@etp_supp_b)%></td><td><%= format_number(@etp_add_b)%></td><td><%= format_number(@etpt_supp_b)%></td><td><%= format_number(@etpt_add_b)%></td></tr>
 								<tr><td>C</td><td><%=format_number(@etp_supp_c)%></td><td><%= format_number(@etp_add_c)%></td><td><%= format_number(@etpt_supp_c)%></td><td><%= format_number(@etpt_add_c)%></td></tr>
 							</tbody>

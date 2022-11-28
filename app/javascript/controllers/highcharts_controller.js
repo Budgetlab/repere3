@@ -17,13 +17,28 @@ export default class extends Controller {
   ];
   }
   connect() {
-     
-    this.syntheseProgramme();
-    this.syntheseProgramme2();
-    this.syntheseCategorie();
-    this.syntheseCategorie2(); 
+    this.showViz();
+    
     this.syntheseTime();
     this.syntheseTimeEtp();
+  }
+
+  showViz(){
+    const mvtCount = JSON.parse(this.data.get("mvtcount"));
+    const showRegion = JSON.parse(this.data.get("showregion"));
+
+     if (mvtCount > 0){
+      this.syntheseProgramme();
+      this.syntheseProgramme2();
+      this.syntheseCategorie();
+      this.syntheseCategorie2(); 
+     }
+    if (showRegion > 0){
+      this.syntheseRegion();
+      if (mvtCount > 0){
+        this.syntheseRegionSun();
+      }
+    }
   }
 
   syntheseProgramme(){
@@ -148,10 +163,10 @@ export default class extends Controller {
                                   
           },
           exporting:{enabled: false},
-          colors: ["var(--background-action-low-blue-ecume-active)", "rgba(183, 167, 63, 0.6)"],
+          colors: ["rgba(183, 167, 63, 0.6)", "var(--background-action-low-blue-ecume-active)"],
           
           title: {
-              text: 'Plafond 3% ETP et ETP supprimés par programme',
+              text: 'ETP supprimés par programme',
              
               style: {
                 fontSize: '13px',
@@ -186,17 +201,18 @@ export default class extends Controller {
               }
           },
           
-          series: [{
-              name: 'Plafond 3% ETP',
-              data: etp_plafond,
-              pointPadding: 0.3,
-              pointPlacement: 0
-          },{
+          series: [
+          {
               name: 'ETP supprimés',
               data: etp_supp,
               pointPadding: 0.1,
               pointPlacement: 0
-          }]
+          }/*,{
+              name: 'Plafond 3% ETP',
+              data: etp_plafond,
+              pointPadding: 0.3,
+              pointPlacement: 0
+          },*/]
     }
     this.chart = new Highcharts.chart(this.canvasProgramme2Target, options);
     this.chart.reflow();
@@ -579,7 +595,7 @@ export default class extends Controller {
           yAxis: {
             min: 0,
             title: {
-              text: 'Mouvements',
+              text: 'ETP',
             },
             stackLabels: {
                 enabled: true,

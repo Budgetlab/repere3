@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_17_115855) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_28_161714) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -46,7 +46,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_17_115855) do
     t.float "etpt"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "redeploiement_id"
     t.index ["programme_id"], name: "index_mouvements_on_programme_id"
+    t.index ["redeploiement_id"], name: "index_mouvements_on_redeploiement_id"
     t.index ["region_id"], name: "index_mouvements_on_region_id"
     t.index ["service_id"], name: "index_mouvements_on_service_id"
     t.index ["user_id"], name: "index_mouvements_on_user_id"
@@ -71,6 +73,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_17_115855) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["ministere_id"], name: "index_programmes_on_ministere_id"
+  end
+
+  create_table "redeploiements", force: :cascade do |t|
+    t.bigint "region_id", null: false
+    t.integer "ajout"
+    t.integer "suppression"
+    t.float "cout_etp"
+    t.float "credits_gestion"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["region_id"], name: "index_redeploiements_on_region_id"
   end
 
   create_table "regions", force: :cascade do |t|
@@ -105,12 +118,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_17_115855) do
 
   add_foreign_key "couts", "programmes"
   add_foreign_key "mouvements", "programmes"
+  add_foreign_key "mouvements", "redeploiements"
   add_foreign_key "mouvements", "regions"
   add_foreign_key "mouvements", "services"
   add_foreign_key "mouvements", "users"
   add_foreign_key "objectifs", "programmes"
   add_foreign_key "objectifs", "regions"
   add_foreign_key "programmes", "ministeres"
+  add_foreign_key "redeploiements", "regions"
   add_foreign_key "services", "programmes"
   add_foreign_key "users", "regions"
 end

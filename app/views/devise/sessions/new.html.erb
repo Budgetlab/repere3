@@ -1,40 +1,118 @@
-<% content_for :title do %>Connexion - REPERE3 <% end %><div class="fr-container">    
-<div class="fr-grid-row fr-grid-row--gutters" data-controller="session">
-    <div class="fr-col-12 fr-col-lg-6 fr-col-offset-lg-3 fr-mb-5w">
-       
-      <h1 class="fr-my-5w tc">Connexion</h1>
-      <%= form_for(resource, as: resource_name, url: session_path(resource_name),data: {'session-target': "form", action: "turbo:before-fetch-request->session#submitForm turbo:submit-end->session#resultForm change->session#changeForm"}) do |f| %>
+<% content_for :title do %>Connexion - REPERE3 <% end %>
+<main role="main" id="content">
+    <div class="fr-container fr-container--fluid fr-mb-md-14v" data-controller="session">
+        <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                <div class="fr-container fr-background-alt--grey fr-px-md-0 fr-pt-10v fr-pt-md-14v fr-pb-6v fr-pb-md-10v fr-mt-4w">
+                    <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+                        <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                            <h4>Connexion à REPERE3</h4>
+                            
+                            <div>
+                              <%= form_for(resource, as: resource_name, url: session_path(resource_name),data: {'session-target': "form", action: "turbo:before-fetch-request->session#submitForm turbo:submit-end->session#resultForm change->session#changeForm input->session#changeForm"}) do |f| %>
+                            
+                                    <fieldset class="fr-fieldset" id="login-1801-fieldset" aria-labelledby="login-1801-fieldset-legend login-1801-fieldset-messages">
+                                        <legend class="fr-fieldset__legend" id="login-1801-fieldset-legend">
+                                            <h5>Se connecter avec son compte</h5>
+                                        </legend>
+                                        <div class="fr-fieldset__element fr-hidden" data-session-target="error" >
+                                            <div class="fr-alert fr-alert--error fr-alert--sm">
+                                                <p>Mot de passe incorrect</p>
+                                            </div>
+                                        </div>
+                                        <div class="fr-fieldset__element fr-hidden" data-session-target="error2" >
+                                            <div class="fr-alert fr-alert--error fr-alert--sm">
+                                                <p>Vous devez remplir tous les champs obligatoires (*)</p>
+                                            </div>
+                                        </div>
+                                        <div class="fr-fieldset__element">
+                                            <fieldset class="fr-fieldset" id="credentials" data-session-target="credentials" aria-labelledby="credentials-legend credentials-messages">
+                                                <legend class="fr-sr-only" id="credentials-legend">
+                                                    identifiants
+                                                </legend>
+                                                <div class="fr-fieldset__element">
+                                                    <div class="fr-input-group">
+                                                        <label class="fr-label" for="username-1798">
+                                                            Profil*
+                                                        </label>
+                                                        
+                                                        <%= f.select :statut , [["CBR","CBR"], ["Préfet - SGARE","prefet"],["Ministère","ministere"], ["Direction du Budget","admin"]], {:include_blank => "- Sélectionner -"}, {data: {action: 'change->session#statutChange','session-target': 'statut' }, required: true, class: "fr-select", id:'username-1798'} %>
+                                                        <div class="fr-messages-group" id="username-1798-messages" aria-live="assertive">
+                                                        </div>
+                                                    </div>
+                                                </div>
 
+                                                <div class="fr-fieldset__element fr-hidden" data-session-target="regionBloc">
+                                                    <div class="fr-input-group">
+                                                        <label class="fr-label" for="region-1798">
+                                                            Périmètre*
+                                                        </label>
+                                                        <%= f.select :region_id, Region.all.pluck(:id).map {|s| [Region.find(s).nom, s]}, {:include_blank => "- Sélectionner -"}, {data: {'session-target': 'region' }, class: "fr-select region", id: 'region-1798'} %>
+                                                        
+                                                        <div class="fr-messages-group" id="region-1798-messages" aria-live="assertive">
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-        <div class="fr-select-group">
-          <label class="fr-label" for="user_statut"> Se connecter en tant que* </label>
-          <%= f.select :statut , [["CBR","CBR"], ["Préfet - SGARE","prefet"],["Ministère","ministere"], ["Direction du Budget","admin"]], {:include_blank => "- Sélectionner -"}, {data: {action: 'change->session#statutChange','session-target': 'statut' }, required: true, class: "fr-select", id:'user_statut'} %>
-        </div>
- 
-     
-        <div class="fr-select-group fr-hidden" data-session-target="regionBloc">
-          <label class="fr-label" for="region_f">Sur le périmètre*</label>
-          <%= f.select :region_id, Region.all.pluck(:id).map {|s| [Region.find(s).nom, s]}, {:include_blank => "- Sélectionner -"}, {data: {'session-target': 'region' }, class: "fr-select region", id: 'region_f'} %>
-        </div>
-    
-        <div class="fr-select-group fr-hidden" data-session-target="ministereBloc">
-          <label class="fr-label" for="nom">Sur le ministère* </label>
-          <%= f.select :nom, User.where(statut: "ministere").all.pluck(:nom).uniq.map {|s| [s, s]}, {:include_blank => "- Sélectionner -"}, {data: {'session-target': 'ministere' }, class: "fr-select ministere", id: 'nom'} %>
-        </div>
-    
+                                                <div class="fr-fieldset__element fr-hidden" data-session-target="ministereBloc">
+                                                    <div class="fr-input-group">
+                                                        <label class="fr-label" for="ministere-1798">
+                                                            Ministère*
+                                                        </label>
+                                                        <%= f.select :nom, User.where(statut: "ministere").all.pluck(:nom).uniq.map {|s| [s, s]}, {:include_blank => "- Sélectionner -"}, {data: {'session-target': 'ministere' }, class: "fr-select ministere", id: 'ministere-1798'} %>
+                                                 
+                                                        <div class="fr-messages-group" id="ministere-1798-messages" aria-live="assertive">
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-        <div class="fr-input-group">
-          <label class="fr-label" for="password">Mot de passe*</label>
-          <%= f.password_field :password,data: {'session-target': 'password' },required: true, autocomplete: "current-password",class:"fr-input", id: "password" %>
+                                                <div class="fr-fieldset__element">
+                                                    <div class="fr-password" id="password-1799">
+                                                        <label class="fr-label" for="password-1799-input">
+                                                            Mot de passe
+                                                        </label>
+                                                        <div class="fr-input-wrap">
+                                                            <%= f.password_field :password,data: {'session-target': 'password' },required: true, autocomplete: "current-password",class:"fr-password__input fr-input", id: "password-1799-input" %>
+                                                            
+                                                        </div>
+                                                        <div class="fr-messages-group" id="password-1799-input-messages" aria-live="assertive">
+                                                        </div>
+                                                        <div class="fr-password__checkbox fr-checkbox-group fr-checkbox-group--sm">
+                                                            <input aria-label="Afficher le mot de passe" id="password-1799-show" type="checkbox">
+                                                            <label class="fr--password__checkbox fr-label" for="password-1799-show">
+                                                                Afficher
+                                                            </label>
+                                                        </div>
+                                                        <p>
+                                                          <a class="fr-link" href="mailto:budget.lab@finances.gouv.fr?subject=Mot de passe oublié -REPERE3" target="_blank" rel="noopener" title="Mot de passe oublié">Mot de passe oublié ?</a>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="fr-messages-group" id="credentials-messages" aria-live="assertive">
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                        <div class="fr-fieldset__element">
+                                            <ul class="fr-btns-group">
+                                                <li>
+                                                    
+                                                    <%= f.submit "Connexion", class:"fr-mt-2v fr-btn",  data: {action: 'click->session#submitForm','session-target': "submitBouton"}, aria: { label: "Valider le formulaire de connexion"} %>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="fr-messages-group" id="login-1801-fieldset-messages" aria-live="assertive">
+                                        </div>
+                                    </fieldset>
+                                <%end%>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="fr-error-text fr-hidden" data-session-target="error"  role="alert"> </div>      
-        <div class="tc fr-my-5w">
-          <%= f.submit "Connexion", class:"fr-btn",  data: {action: 'click->session#submitForm','session-target': "submitBouton"}, aria: { label: "Valider le formulaire de connexion"} %>
-        </div>
-        
-      <% end %>
     </div>
- 
-  </div>
-</div>
+</main>
+
+
+

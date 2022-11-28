@@ -21,13 +21,13 @@
 		</div>
 		<div class="fr-col-12 fr-col-lg-3">
 			<div class="fr-callout ">
-		    	<p class="fr-callout__title"><%= number_with_delimiter(@mouvements.sum(:credits_gestion).to_i, :delimiter => ' ')%> € </p>
+		    	<p class="fr-callout__title"><%= number_with_delimiter(@credits_gestion, :delimiter => ' ')%> € </p>
 		    	<p class="fr-callout__text"> Mouv. en gestion</p>
 			</div>
 		</div>
 		<div class="fr-col-12 fr-col-lg-3">
 			<div class="fr-callout ">
-		    	<p class="fr-callout__title"><%= number_with_delimiter(@mouvements.sum(:cout_etp).to_i, :delimiter => ' ')%> €</p>
+		    	<p class="fr-callout__title"><%= number_with_delimiter(@cout_etp, :delimiter => ' ')%> €</p>
 		    	<p class="fr-callout__text"> Mouv. en base </p>
 			</div>
 		</div>
@@ -35,7 +35,7 @@
 	</div>
 	<div class="fr-grid-row fr-grid-row--gutters fr-mb-4w">
 		<div class="fr-col-12 fr-col-lg-12">
-			<h2 class="fr-my-2w">Historique des redéploiements [<%= @mouvements.pluck(:mouvement_lien).uniq.count%>] et mouvements [<%= @mouvements.count%>]</h2>
+			<h2 class="fr-my-2w">Historique des redéploiements [<%= @redeploiements.count%>] et mouvements [<%= @mouvements.count%>]</h2>
 			<div class="fr-download">
 			    <p>
 			        <%= link_to historique_path(format: :csv), class: "fr-download__link" do %> Télécharger l'historique de tous les mouvements
@@ -47,24 +47,24 @@
 			</div>
 			<div class="fr-accordions-group" >
 				
-				<% @redeploiements.each do |numero| %>
+				<% @redeploiements.each do |redeploiement| %>
 				<section class="fr-accordion">
 			        <h3 class="fr-accordion__title">
-			            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="<%=numero%>">
-			            	Redéploiement n°<%= numero%> effectué le <%= l(@mouvements.where(mouvement_lien: numero).first.date,format: "%e/%m/%y") %> 
-			      			<% if current_user.statut == "admin" || current_user.statut == "ministere"%><p class="fr-badge fr-badge--purple-glycine"><%= @mouvements.where(mouvement_lien: numero).first.region.nom%></p><% end %> 
+			            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="<%=redeploiement.id%>">
+			            	Redéploiement n°<%= redeploiement.id%> effectué le <%= l(redeploiement.created_at,format: "%e/%m/%y") %> 
+			      			<% if current_user.statut == "admin" || current_user.statut == "ministere"%><p class="fr-badge fr-badge--purple-glycine"><%= redeploiement.region.nom%></p><% end %> 
 
-			      			<% if @mouvements.where(mouvement_lien: numero, type_mouvement: 'ajout').count > 0 %><p class="fr-badge fr-badge--green-emeraude"><%= @mouvements.where(mouvement_lien: numero, type_mouvement: 'ajout').count %> <% if @mouvements.where(mouvement_lien: numero, type_mouvement: 'ajout').count > 1 %>ajouts<%else%>ajout<%end%> </p><%end%>
+			      			<% if redeploiement.ajout > 0 %><p class="fr-badge fr-badge--green-emeraude"><%= redeploiement.ajout %> <% if redeploiement.ajout > 1 %>ajouts<%else%>ajout<%end%> </p><%end%>
 
-			      			<% if @mouvements.where(mouvement_lien: numero, type_mouvement: 'suppression').count > 0 %>
-			      			<p class="fr-badge fr-badge--blue-cumulus"><%= @mouvements.where(mouvement_lien: numero, type_mouvement: 'suppression').count %> <% if @mouvements.where(mouvement_lien: numero, type_mouvement: 'suppression').count > 1 %>suppressions<%else%>suppression<%end%></p><% end %>
+			      			<% if redeploiement.suppression > 0 %>
+			      			<p class="fr-badge fr-badge--blue-cumulus"><%= redeploiement.suppression %> <% if redeploiement.suppression > 1 %>suppressions<%else%>suppression<%end%></p><% end %>
 
-			      			<p class="fr-badge fr-badge--new fr-badge--no-icon"><%= number_with_delimiter(@mouvements.where(mouvement_lien: numero).sum(:credits_gestion).to_i, :delimiter => ' ')%>€ /
-					      	<%= number_with_delimiter(@mouvements.where(mouvement_lien: numero).sum(:cout_etp).to_i, :delimiter => ' ')%>€</p>
+			      			<p class="fr-badge fr-badge--new fr-badge--no-icon"><%= number_with_delimiter(redeploiement.credits_gestion.to_i, :delimiter => ' ')%>€ /
+					      	<%= number_with_delimiter(redeploiement.cout_etp.to_i, :delimiter => ' ')%>€</p>
 			            </button>
 			        </h3>
 			      		
-			      	<div class="fr-collapse" id="<%= numero%>">
+			      	<div class="fr-collapse" id="<%= redeploiement.id%>">
 			      		<div class="fr-table fr-mb-3w fr-table--no-caption" >
 			      			<table>
 						      	<thead>
@@ -84,7 +84,7 @@
 						      	</thead>
 
 						      	<tbody>
-							      	<% @mouvements.where(mouvement_lien: numero).each do |mouvement|%>
+							      	<% redeploiement.mouvements.each do |mouvement|%>
 							      	<tr>
 								      	<td><%= mouvement.grade%></td>
 								      	<td><% if mouvement.quotite%1 != 0 %><%= mouvement.quotite %><%else%><%= mouvement.quotite.to_i %><%end%></td>
@@ -105,20 +105,28 @@
 						</div>
 						<% if current_user.statut == "CBR"%>
 						<div>
-							<button class="fr-btn fr-btn--secondary" title="Supprimer" data-fr-opened="false" aria-controls="fr-modal-<%=numero%>">Supprimer le redéploiement</button>
+							<button class="fr-btn fr-btn--secondary" title="Supprimer" data-fr-opened="false" aria-controls="fr-modal-<%=redeploiement.id%>">Supprimer le redéploiement</button>
 						</div>
-						<dialog aria-labelledby="fr-modal-title-modal-<%=numero%>" role="dialog" id="fr-modal-<%=numero%>" class="fr-modal">
+						<dialog aria-labelledby="fr-modal-title-modal-<%=redeploiement.id%>" role="dialog" id="fr-modal-<%=redeploiement.id%>" class="fr-modal">
 						    <div class="fr-container fr-container--fluid fr-container-md">
 						        <div class="fr-grid-row fr-grid-row--center">
 						            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
 						                <div class="fr-modal__body">
 						                    <div class="fr-modal__header">
-						                        <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="fr-modal-<%=numero%>">Fermer</button>
+						                        <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="fr-modal-<%=redeploiement.id%>">Fermer</button>
 						                    </div>
 						                    <div class="fr-modal__content">
-						                        <h1 id="fr-modal-title-modal-<%=numero%>" class="fr-modal__title"><span class="fr-fi-arrow-right-line fr-fi--lg"></span>Supprimer ce redéploiement ?</h1>
+						                        <h1 id="fr-modal-title-modal-<%=redeploiement.id%>" class="fr-modal__title"><span class="fr-fi-arrow-right-line fr-fi--lg"></span>Supprimer ce redéploiement ?</h1>
+						                        <% if Date.today > redeploiement.mouvements.pluck(:date_effet).min%>
+						                        <div class="fr-alert fr-alert--warning fr-mb-3w">
+												    <h3 class="fr-alert__title">Attention</h3>
+												    <p>Vous êtes sur le point de supprimer un redéploiement qui a déjà eu lieu. Êtes-vous sûrs de vouloir supprimer ce redéploiement ?</p>
+												</div>
+						                        
+						                        <%else%>
 						                        <p>Êtes-vous sûrs de vouloir supprimer ce redéploiement ?</p>
-						                        <%= link_to suppression_path(id: numero),data: {"turbo-method": :post}, class: "fr-btn fr-btn--secondary" do %>Supprimer le redéploiement<% end%>
+						                        <% end %>
+						                        <%= link_to suppression_path(id: redeploiement.id),data: {"turbo-method": :post}, class: "fr-btn fr-btn--secondary" do %>Supprimer le redéploiement<% end%>
 						                    </div>
 						                </div>
 						            </div>

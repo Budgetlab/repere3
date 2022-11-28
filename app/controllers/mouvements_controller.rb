@@ -7,20 +7,25 @@ class MouvementsController < ApplicationController
     @end = Date.new(Date.today.year,12,31)
     if current_user.statut == "admin"
       @mouvements = Mouvement.where('date >= ? AND date <= ?',@start,@end).order(created_at: :desc)
+      @redeploiements = Redeploiement.where('created_at >= ? AND created_at <= ?',@start,@end).order(created_at: :desc)
       @etp_cible = Objectif.where('date >= ? AND date <= ?',@start,@end).sum('etp_cible')
     elsif current_user.statut == "prefet" || current_user.statut == "CBR"
       @mouvements = Mouvement.where(region_id: current_user.region_id).where('date >= ? AND date <= ?',@start,@end).order(created_at: :desc)      
+      @redeploiements = Redeploiement.where(region_id: current_user.region_id).where('created_at >= ? AND created_at <= ?',@start,@end).order(created_at: :desc)
       @etp_cible = Objectif.where('region_id = ? AND date >= ? AND date <= ?',current_user.region_id, @start,@end).sum('etp_cible')
     elsif current_user.statut == "ministere"
       @ministere = Ministere.where(nom: current_user.nom).first
       @programme_id = Programme.where(ministere_id: @ministere.id).pluck(:id)
       @mouvements = Mouvement.where(programme_id: @programme_id).where('date >= ? AND date <= ?',@start, @end).order(created_at: :desc)     
       @etp_cible = Objectif.where(programme_id: @programme_id).where('date >= ? AND date <= ?',@start,@end).sum('etp_cible')          
+      @redeploiements = []
     end
     @etp_supp = @mouvements.where(type_mouvement: "suppression").sum('quotite')
     @etp_3 = 0.03 * @etp_cible
+    @credits_gestion = @mouvements.sum('credits_gestion').to_i
+    @cout_etp = @mouvements.sum('cout_etp').to_i
 
-    @redeploiements = @mouvements.pluck(:mouvement_lien).uniq
+    #@redeploiements = @mouvements.pluck(:mouvement_lien).uniq
     if @mouvements.count == 0 
       @mouvements = []
     end
@@ -32,6 +37,9 @@ class MouvementsController < ApplicationController
 
 
   def new 
+    if current_user.statut != "CBR" 
+      redirect_to root_path
+    end
   end 
 
   def get_couts
@@ -62,6 +70,14 @@ class MouvementsController < ApplicationController
   end 
 
   def create
+    @redeploiement = Redeploiement.new 
+    @redeploiement.region_id = current_user.region_id
+    @redeploiement.suppression = 0
+    @redeploiement.ajout = 0
+    @redeploiement.cout_etp = 0
+    @redeploiement.credits_gestion = 0
+    @redeploiement.save 
+
     @lien = Mouvement.count+1
     @suppressions = [params[:grade1],params[:grade2],params[:grade3],params[:grade4]]
     @ajouts = [params[:addgrade1],params[:addgrade2],params[:addgrade3],params[:addgrade4]]
@@ -81,8 +97,12 @@ class MouvementsController < ApplicationController
         @mouvement.cout_etp = -(params["quotite#{i}"].to_f * @cout_etp).round(2)
         @mouvement.credits_gestion = -(params["quotite#{i}"].to_f * @cout_etp * (DateTime.new(Date.today.year,12,31)-params["date#{i}"].to_date).to_i / 365).round(2)
         @mouvement.etpt =  (params["quotite#{i}"].to_f * (params["date#{i}"].to_date-DateTime.new(Date.today.year,1,1)).to_i / 365).round(2)
-        @mouvement.mouvement_lien = @lien
+        @mouvement.mouvement_lien = @redeploiement.id
+        @mouvement.redeploiement = @redeploiement
         @mouvement.save 
+        @redeploiement.suppression += 1
+        @redeploiement.cout_etp += @mouvement.cout_etp
+        @redeploiement.credits_gestion += @mouvement.credits_gestion
       end 
       if !@ajouts[i-1].nil? && @ajouts[i-1] != ""
         @mouvement = Mouvement.new
@@ -98,7 +118,8 @@ class MouvementsController < ApplicationController
         @cout_etp = Cout.where('programme_id = ? AND categorie = ?',Programme.where(numero: params["addprogramme#{i}"].to_i).first.id, params["addgrade#{i}"]).first.cout
         @mouvement.credits_gestion = (params["addquotite#{i}"].to_f * @cout_etp * (DateTime.new(Date.today.year,12,31)-params["adddate#{i}"].to_date).to_i / 365).round(2)
         @mouvement.etpt =  (params["addquotite#{i}"].to_f * (DateTime.new(Date.today.year,12,31)-params["adddate#{i}"].to_date ).to_i / 365).round(2)
-        @mouvement.mouvement_lien = @lien
+        @mouvement.mouvement_lien = @redeploiement.id
+        @mouvement.redeploiement = @redeploiement
         if params["ponctuel#{i}"] == true 
           @mouvement.ponctuel = true 
           @mouvement.cout_etp = 0 
@@ -106,8 +127,13 @@ class MouvementsController < ApplicationController
           @mouvement.cout_etp = (params["addquotite#{i}"].to_f * @cout_etp).round(2) #valider le cout etp car programme nouveau pas supp 
         end 
         @mouvement.save
+        @redeploiement.ajout += 1
+        @redeploiement.cout_etp += @mouvement.cout_etp
+        @redeploiement.credits_gestion += @mouvement.credits_gestion
       end
     end 
+
+    @redeploiement.save
     @message = "Redéploiement n°" + @mouvement.mouvement_lien.to_s + " ajouté"
     respond_to do |format|      
       format.all { redirect_to historique_path, notice: @message}       
@@ -118,7 +144,8 @@ class MouvementsController < ApplicationController
   end 
 
   def suppression
-    Mouvement.where(mouvement_lien: params[:id]).destroy_all 
+    Redeploiement.where(id: params[:id]).destroy_all 
+    #Mouvement.where(mouvement_lien: params[:id]).destroy_all 
     respond_to do |format|
       format.turbo_stream { redirect_to historique_path, notice: "Redéploiement supprimé"  }       
     end 

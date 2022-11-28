@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  region: one
+  ajout: 1
+  suppression: 1
+  cout_etp: 1.5
+  credits_gestion: 1.5
+
+two:
+  region: two
+  ajout: 1
+  suppression: 1
+  cout_etp: 1.5
+  credits_gestion: 1.5

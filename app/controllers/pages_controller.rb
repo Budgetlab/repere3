@@ -50,19 +50,19 @@ class PagesController < ApplicationController
       @etp_plafond = []
       @etp_region = []
       @regions.each do |region|
-        @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "ajout", 'A', region.id).sum('quotite')
-        @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "ajout", 'B', region.id).sum('quotite')
-        @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "ajout", 'C', region.id).sum('quotite')
-        @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "suppression", 'A', region.id).sum('quotite')      
-        @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "suppression", 'B', region.id).sum('quotite')
-        @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "suppression", 'C', region.id).sum('quotite')
+        @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "ajout", 'A', region.id).sum('quotite').round(1)
+        @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "ajout", 'B', region.id).sum('quotite').round(1)
+        @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "ajout", 'C', region.id).sum('quotite').round(1)
+        @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "suppression", 'A', region.id).sum('quotite').round(1)      
+        @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "suppression", 'B', region.id).sum('quotite').round(1)
+        @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "suppression", 'C', region.id).sum('quotite').round(1)
         if @objectifs.where(region_id: region.id).sum('etp_cible') != 0 
           @obj_region << (@mouvements.where(region_id: region.id, type_mouvement: "suppression").sum('quotite')/@objectifs.where(region_id: region.id).sum('etp_cible')).round(1) 
         else
           @obj_region << 0
         end
-        @etp_supp_region << @mouvements.where(region_id: region.id, type_mouvement: "suppression").sum('quotite')
-        @etp_add_region << @mouvements.where(region_id: region.id, type_mouvement: "ajout").sum('quotite') 
+        @etp_supp_region << @mouvements.where(region_id: region.id, type_mouvement: "suppression").sum('quotite').round(1)
+        @etp_add_region << @mouvements.where(region_id: region.id, type_mouvement: "ajout").sum('quotite') .round(1)
         @etp_plafond << (0.03*Objectif.where('region_id = ? AND date >= ? AND date <= ?',region.id,@start,@end).sum('etp_cible')).round(1)
       end
 
@@ -71,18 +71,18 @@ class PagesController < ApplicationController
       @etp_plafond_prog = []
       @etp_supp_prog = []
       @programmes.each do |programme|
-        @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "ajout", 'A', programme.id).sum('quotite')
-        @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "ajout", 'B', programme.id).sum('quotite')
-        @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "ajout", 'C', programme.id).sum('quotite')
-        @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "suppression", 'A', programme.id).sum('quotite')      
-        @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "suppression", 'B', programme.id).sum('quotite')
-        @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "suppression", 'C', programme.id).sum('quotite')
+        @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "ajout", 'A', programme.id).sum('quotite').round(1)
+        @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "ajout", 'B', programme.id).sum('quotite').round(1)
+        @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "ajout", 'C', programme.id).sum('quotite').round(1)
+        @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "suppression", 'A', programme.id).sum('quotite').round(1)      
+        @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "suppression", 'B', programme.id).sum('quotite').round(1)
+        @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "suppression", 'C', programme.id).sum('quotite').round(1)
         if @objectifs.where(programme_id: programme.id).sum('etp_cible') != 0 
           @obj_prog << ((@mouvements.where(programme_id: programme.id, type_mouvement: "suppression").sum('quotite')/(0.03*@objectifs.where(programme_id: programme.id).sum('etp_cible')))*100).round(1) 
         else
           @obj_prog << 0
         end
-        @etp_supp_prog << @mouvements.where('type_mouvement = ? AND programme_id = ?', "suppression", programme.id).sum('quotite')
+        @etp_supp_prog << @mouvements.where('type_mouvement = ? AND programme_id = ?', "suppression", programme.id).sum('quotite').round(1)
         @etp_plafond_prog << (0.03*Objectif.where('programme_id = ? AND date >= ? AND date <= ?',programme.id,@start,@end).sum('etp_cible')).round(1)
       end 
 
@@ -91,10 +91,10 @@ class PagesController < ApplicationController
       @mouvements_supp = []
       @etp_time_supp = []
       (0..11).to_a.each do |i|
-        @mouvements_ajout << @mouvements.where(type_mouvement: "suppression").where('date >= ? AND date <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite')
-        @mouvements_supp <<  @mouvements.where(type_mouvement: "ajout").where('date >= ? AND date <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite')
-        @etp_time_ajout << @mouvements.where(type_mouvement: "ajout").where('date_effet >= ? AND date_effet <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite')
-        @etp_time_supp << @mouvements.where(type_mouvement: "suppression").where('date_effet >= ? AND date_effet <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite')
+        @mouvements_ajout << @mouvements.where(type_mouvement: "suppression").where('date >= ? AND date <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite').round(1)
+        @mouvements_supp <<  @mouvements.where(type_mouvement: "ajout").where('date >= ? AND date <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite').round(1)
+        @etp_time_ajout << @mouvements.where(type_mouvement: "ajout").where('date_effet >= ? AND date_effet <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite').round(1)
+        @etp_time_supp << @mouvements.where(type_mouvement: "suppression").where('date_effet >= ? AND date_effet <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite').round(1)
       end
       
       
