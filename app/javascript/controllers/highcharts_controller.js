@@ -49,6 +49,11 @@ export default class extends Controller {
     parent: '',
     name: "Mouvements totaux d'ETP",
     color: "var(--text-inverted-grey)",
+    dataLabels: [{
+        style: {
+            textOutline: 0,
+            }  
+    }],
     },];
     programmes.forEach((programme,i) =>{
       data.push({ name: programme, id: (1+0.1*i).toString(), parent: '0.0' })
@@ -89,45 +94,43 @@ export default class extends Controller {
         allowDrillToNode: true,
         cursor: 'pointer',
         dataLabels: {
-            format: '{point.name}',
-            rotationMode: 'circular',
+            format: '{point.name}',           
             filter: {
                 property: 'innerArcLength',
                 operator: '>',
                 value: 0
             },
-            style: {
-              color: 'var(--text-title-grey)',
-              textOutline: 0,
+            rotationMode: 'circular',
+            style:{
+                  color: 'var(--text-title-grey)',
             }
+            
         },
         //borderColor:'rgba(255,255,255,0)',
         levels: [{
             level: 1,
             levelIsConstant: false,
-            dataLabels:{
-              style: {
-                textOverflow: 'clip',
-              },
-            },
-        }, {
+            dataLabels: {
+                filter: {
+                    property: 'outerArcLength',
+                    operator: '>',
+                    value: 64
+                },    
+                style:{
+                  textOverflow: "clip",          
+                }                        
+          },
+            
+          }, {
             level: 2,
             colorByPoint: true,
-            //levelSize: {
-            //  unit: 'percentage',
-            //  value: 30
-            //},
-        }, {
+          }, {
             level: 3,
             colorVariation: {
                 key: 'brightness',
                 to: 0.2
             },
-            levelSize: {
-              unit: 'percentage',
-              value: 20
-            },
-        }, {
+          }, {
             level: 4,
             levelSize: {
               unit: 'percentage',
@@ -142,7 +145,8 @@ export default class extends Controller {
         borderRadius: 16,
         backgroundColor: "rgba(245, 245, 245, 1)",
         headerFormat: '',
-        pointFormat: '<b>{point.name} :</b> {point.value} ETP'
+        pointFormat: '<b>{point.name} :</b> {point.value} ETP',
+        valueDecimals: 1,
     }
     }
     this.chart = new Highcharts.chart(this.canvasProgramme1Target, options);
@@ -336,51 +340,48 @@ export default class extends Controller {
         allowDrillToNode: true,
         cursor: 'pointer',
         dataLabels: {
-            format: '{point.name}',
-            rotationMode: 'circular',
+            format: '{point.name}',           
             filter: {
                 property: 'innerArcLength',
                 operator: '>',
                 value: 0
             },
-            style: {
-              color: 'var(--text-title-grey)',
-              textOutline: 0,
+            rotationMode: 'circular',
+            style:{
+                  color: 'var(--text-title-grey)',
             }
+            
         },
-
+        //borderColor:'rgba(255,255,255,0)',
         levels: [{
             level: 1,
             levelIsConstant: false,
             dataLabels: {
-              style: {
-                    textOverflow: 'clip',
-              },
-            }
-        }, {
+                filter: {
+                    property: 'outerArcLength',
+                    operator: '>',
+                    value: 64
+                },    
+                style:{
+                  textOverflow: "clip",          
+                }                        
+          },
+            
+          }, {
             level: 2,
             colorByPoint: true,
-            //levelSize: {
-            //  unit: 'percentage',
-            //  value: 30
-            //},
-        },
-        {
+          }, {
             level: 3,
             colorVariation: {
                 key: 'brightness',
                 to: 0.2
             },
-            levelSize: {
-              unit: 'percentage',
-              value: 20
-          },
-        }, {
+          }, {
             level: 4,
             levelSize: {
               unit: 'percentage',
               value: 10
-          },
+            },
         }]
 
     }],
@@ -390,7 +391,8 @@ export default class extends Controller {
         borderRadius: 16,
         backgroundColor: "rgba(245, 245, 245, 1)",
         headerFormat: '',
-        pointFormat: '<b>{point.name}</b> : <b>{point.value}</b>'
+        pointFormat: '<b>{point.name}</b> : <b>{point.value}</b>',
+        valueDecimals: 1,
     }
     }
     this.chart = new Highcharts.chart(this.canvasRegionSunburstTarget, options);

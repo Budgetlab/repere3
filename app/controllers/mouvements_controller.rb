@@ -25,7 +25,6 @@ class MouvementsController < ApplicationController
     @credits_gestion = @mouvements.sum('credits_gestion').to_i
     @cout_etp = @mouvements.sum('cout_etp').to_i
 
-    #@redeploiements = @mouvements.pluck(:mouvement_lien).uniq
     if @mouvements.count == 0 
       @mouvements = []
     end

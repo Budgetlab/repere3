@@ -38,15 +38,14 @@
 			<h2 class="fr-my-2w">Historique des redéploiements [<%= @redeploiements.count%>] et mouvements [<%= @mouvements.count%>]</h2>
 			<div class="fr-download">
 			    <p>
-			        <%= link_to historique_path(format: :csv), class: "fr-download__link" do %> Télécharger l'historique de tous les mouvements
+			        <%= link_to historique_path(format: :csv), class: "fr-download__link" do %> Télécharger l'historique des mouvements nationaux
 			            <span class="fr-download__detail">
 			                CSV
 			            </span>
 			        <%end %>
 			    </p>
 			</div>
-			<div class="fr-accordions-group" >
-				
+			<div class="fr-accordions-group" >				
 				<% @redeploiements.each do |redeploiement| %>
 				<section class="fr-accordion">
 			        <h3 class="fr-accordion__title">
