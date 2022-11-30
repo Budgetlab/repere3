@@ -119,7 +119,8 @@ class MouvementsController < ApplicationController
         @mouvement.etpt =  (params["addquotite#{i}"].to_f * (DateTime.new(Date.today.year,12,31)-params["adddate#{i}"].to_date ).to_i / 365).round(2)
         @mouvement.mouvement_lien = @redeploiement.id
         @mouvement.redeploiement = @redeploiement
-        if params["ponctuel#{i}"] == true 
+        
+        if params["ponctuel#{i}"] == "true" 
           @mouvement.ponctuel = true 
           @mouvement.cout_etp = 0 
         else

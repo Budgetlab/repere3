@@ -23,7 +23,8 @@ class SessionsController < Devise::SessionsController
       end 
 
 	  else 
-		  invalid_login_attempt     
+		  #invalid_login_attempt    
+      redirect_to root_path 
 	  end
   
   end
@@ -39,14 +40,12 @@ class SessionsController < Devise::SessionsController
   end
  
   def after_sign_in_path_for(resource)
-    respond_to do |format|
-        format.all {redirect_to root_path} 
-    end   
+    root_path  
   end
 
   protected
   def invalid_login_attempt
-    render json: flash[:alert], status: 401
+    #render json: flash[:alert], status: 401
   end
 
 

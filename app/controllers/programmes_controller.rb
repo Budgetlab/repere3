@@ -19,7 +19,7 @@ class ProgrammesController < ApplicationController
   		Programme.import(params[:file])
   		respond_to do |format|
 		  	format.turbo_stream {redirect_to root_path} 
-		end
+		  end
   	end 
 
 end

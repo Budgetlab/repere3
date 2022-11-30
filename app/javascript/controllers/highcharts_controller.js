@@ -154,7 +154,6 @@ export default class extends Controller {
   }
   syntheseProgramme2(){
     const programmes = JSON.parse(this.data.get("programmes"));
-    const etp_plafond = JSON.parse(this.data.get("progplafond"));
     const etp_supp = JSON.parse(this.data.get("progetp"));
   
     const options = {
@@ -180,11 +179,14 @@ export default class extends Controller {
           },
           xAxis: {
             categories: programmes,
+            title: {
+              text: 'N° du Programme',
+            },
           },
           yAxis: {
             min: 0,
             title: {
-              text: 'ETP',
+              text: "Nombre d'ETP supprimés",
             },
           },
           tooltip: {
@@ -195,7 +197,7 @@ export default class extends Controller {
 
           },
           legend: {
-              shadow: false
+              enabled: false
           },
           plotOptions: {
               column: {
@@ -211,12 +213,7 @@ export default class extends Controller {
               data: etp_supp,
               pointPadding: 0.1,
               pointPlacement: 0
-          }/*,{
-              name: 'Plafond 3% ETP',
-              data: etp_plafond,
-              pointPadding: 0.3,
-              pointPlacement: 0
-          },*/]
+          }]
     }
     this.chart = new Highcharts.chart(this.canvasProgramme2Target, options);
     this.chart.reflow();
@@ -391,7 +388,7 @@ export default class extends Controller {
         borderRadius: 16,
         backgroundColor: "rgba(245, 245, 245, 1)",
         headerFormat: '',
-        pointFormat: '<b>{point.name}</b> : <b>{point.value}</b>',
+        pointFormat: '<b>{point.name} :</b> {point.value} ETP',
         valueDecimals: 1,
     }
     }

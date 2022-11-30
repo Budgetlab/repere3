@@ -35,16 +35,17 @@
 	</div>
 	<div class="fr-grid-row fr-grid-row--gutters fr-mb-4w">
 		<div class="fr-col-12 fr-col-lg-12">
-			<h2 class="fr-my-2w">Historique des redéploiements [<%= @redeploiements.count%>] et mouvements [<%= @mouvements.count%>]</h2>
+			<h2 class="fr-my-2w">Historique des <% if current_user.statut != "ministere"%>redéploiements [<%= @redeploiements.count%>] et <%end%>mouvements [<%= @mouvements.count%>]</h2>
 			<div class="fr-download">
 			    <p>
-			        <%= link_to historique_path(format: :csv), class: "fr-download__link" do %> Télécharger l'historique des mouvements nationaux
+			        <%= link_to historique_path(format: :csv), class: "fr-download__link" do %> Télécharger l'historique des mouvements
 			            <span class="fr-download__detail">
 			                CSV
 			            </span>
 			        <%end %>
 			    </p>
 			</div>
+			<% if current_user.statut != "ministere"%>
 			<div class="fr-accordions-group" >				
 				<% @redeploiements.each do |redeploiement| %>
 				<section class="fr-accordion">
@@ -136,10 +137,52 @@
 					</div>
 								      	
 			    </section>
-			    <% end %>
- 
-			  	
+			    <% end %>			  	
 			</div>
+			<% end %>
+			<% if current_user.statut == "ministere"%>
+			<div class="fr-table fr-mb-3w fr-table--no-caption" >
+				<table>
+			      	<thead>
+			        <tr>
+			        	<th scope="col pr">Date</th>
+			        	<th scope="col pr">Région</th>
+			        	<th scope="col pr">Macrograde</th>
+			        	<th scope="col">Quotité ETP</th>
+			        	<th scope="col">Date effective</th>	
+			          	<th scope="col">ETPT</th>	
+			        	<th scope="col">Type  </th>
+			        	<th scope="col">Service concerné</th>
+			        	<th scope="col">Programme</th>			          	 
+		            	<th scope="col">Mouvements en gestion (LFR)</th> 
+		            	<th scope="col">Mouvements en base (PLF N+1)</th>   
+		            	
+			        </tr>
+			      	</thead>
+
+			      	<tbody>
+				      	<% @mouvements.each do |mouvement|%>
+				      	<tr>
+				      		<td><%= l(mouvement.date,format: "%e/%m/%y") %></td>
+				      		<td><p class="fr-badge fr-badge--purple-glycine"><%= mouvement.region.nom %></p></td>
+					      	<td><%= mouvement.grade%></td>
+					      	<td><% if mouvement.quotite%1 != 0 %><%= mouvement.quotite %><%else%><%= mouvement.quotite.to_i %><%end%></td>
+					      	<td><%= l(mouvement.date_effet,format: "%e/%m/%y")%></td>
+					      	<td><%= mouvement.etpt%></td>
+					      	
+					      	<td><% if mouvement.type_mouvement == "ajout"%><p class="fr-badge fr-badge--green-emeraude"><%= mouvement.type_mouvement%></p> <% if mouvement.ponctuel == true %><p class="fr-badge fr-badge--green-emeraude">ponctuel</p><%end%><% else %><p class="fr-badge fr-badge--blue-cumulus"><%= mouvement.type_mouvement%></p> <% end %></td>
+					      	<td><%= mouvement.service.nom%></td>
+					      	<td><%= mouvement.programme.numero %></td>
+					      	
+					      	<td><%= number_with_delimiter(mouvement.credits_gestion.to_i, :delimiter => ' ')%>€</td>
+					      	<td><%= number_with_delimiter(mouvement.cout_etp.to_i, :delimiter => ' ')%>€</td>
+					     
+					     </tr>
+				      	<% end %>
+			      	</tbody>
+			    </table>
+			</div>
+			<% end %>
 		</div>
 	</div>
 </div>

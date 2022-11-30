@@ -10,7 +10,7 @@ class Programme < ApplicationRecord
   require 'csv'
 
   def self.to_csv(region)
-    header = %W{ Programme Effectifs\ cibles Plafond\ ETPT Plafond\ 3%\ ETP ETP\ supprimés ETP\ ajoutés ETPT\ supprimés ETPT\ ajoutés Mouvements\ en\ gestion\ (LFR) Mouvements\ en\ base\ (PLF\ N+1) }
+    header = %W{ Programme Effectifs\ cibles Plafond\ ETPT Plafond\ 3%\ ETP ETP\ supprimés %ETP\ supprimés ETP\ ajoutés ETPT\ supprimés ETPT\ ajoutés Mouvements\ en\ gestion\ (LFR) Mouvements\ en\ base\ (PLF\ N+1) }
     #attributes = %w{ region_id date quotite grade type_mouvement}
      
     CSV.generate(headers: true) do |csv|
@@ -18,9 +18,9 @@ class Programme < ApplicationRecord
 
       all.each do |programme|
         #csv << attributes.map {|attr| mouvement.send(attr)}
-        csv << [programme.numero,programme.objectifs.where(region: region).sum('etp_cible'), programme.objectifs.where(region: region).sum('etpt_plafond'), (0.03*programme.objectifs.where(region: region).sum('etp_cible')).round(2), programme.mouvements.where(type_mouvement: "suppression", region: region).sum('quotite'), 
-          ((programme.mouvements.where(type_mouvement: "suppression", region: region).sum('quotite')/programme.objectifs.where(region: region).sum('etp_cible'))*100).round(2),programme.mouvements.where(type_mouvement: "ajout", region: region).sum('quotite'), 
-          programme.mouvements.where(type_mouvement: "suppression", region: region).sum('etpt'),programme.mouvements.where(type_mouvement: "ajout", region: region).sum('etpt'), programme.mouvements.where(region: region).sum('credits_gestion').to_i,programme.mouvements.where(region: region).sum('cout_etp').to_i]
+        csv << [programme.numero,programme.objectifs.where(region: region).sum('etp_cible').round(1), programme.objectifs.where(region: region).sum('etpt_plafond').round(2), (0.03*programme.objectifs.where(region: region).sum('etp_cible')).round(2), programme.mouvements.where(type_mouvement: "suppression", region: region).sum('quotite').round(1), 
+          ((programme.mouvements.where(type_mouvement: "suppression", region: region).sum('quotite')/programme.objectifs.where(region: region).sum('etp_cible'))*100).round(2),programme.mouvements.where(type_mouvement: "ajout", region: region).sum('quotite').round(1), 
+          programme.mouvements.where(type_mouvement: "suppression", region: region).sum('etpt').round(2),programme.mouvements.where(type_mouvement: "ajout", region: region).sum('etpt').round(2), programme.mouvements.where(region: region).sum('credits_gestion').to_i,programme.mouvements.where(region: region).sum('cout_etp').to_i]
       end
     end 
   end 
