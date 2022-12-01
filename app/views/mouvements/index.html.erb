@@ -120,11 +120,11 @@
 						                        <% if Date.today > redeploiement.mouvements.pluck(:date_effet).min%>
 						                        <div class="fr-alert fr-alert--warning fr-mb-3w">
 												    <h3 class="fr-alert__title">Attention</h3>
-												    <p>Vous êtes sur le point de supprimer un redéploiement qui a déjà eu lieu. Êtes-vous sûrs de vouloir supprimer ce redéploiement ?</p>
+												    <p>Vous êtes sur le point de supprimer un redéploiement qui a déjà eu lieu. Êtes-vous sûr·e de vouloir supprimer ce redéploiement ?</p>
 												</div>
 						                        
 						                        <%else%>
-						                        <p>Êtes-vous sûrs de vouloir supprimer ce redéploiement ?</p>
+						                        <p>Êtes-vous sûr·e de vouloir supprimer ce redéploiement ?</p>
 						                        <% end %>
 						                        <%= link_to suppression_path(id: redeploiement.id),data: {"turbo-method": :post}, class: "fr-btn fr-btn--secondary" do %>Supprimer le redéploiement<% end%>
 						                    </div>

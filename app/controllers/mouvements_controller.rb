@@ -51,16 +51,16 @@ class MouvementsController < ApplicationController
     (0..3).to_a.each do |i|
       if !@suppressions[i].nil? && @suppressions[i] != ""
         @cout_etp = Cout.where('programme_id = ? AND categorie = ?',Programme.where(numero: params[:programmes][i].to_i).first.id, params[:grades][i]).first.cout
-        @cout_supp_base += -(params[:quotites][i].to_f * @cout_etp).round(2)
-        @cout_supp_gestion += -(params[:quotites][i].to_f * @cout_etp * (DateTime.new(Date.today.year,12,31)-params[:dates][i].to_date).to_i / 365).round(2)
+        @cout_supp_base += -(params[:quotites][i].to_f * @cout_etp).to_i
+        @cout_supp_gestion += -(params[:quotites][i].to_f * @cout_etp * (DateTime.new(Date.today.year,12,31)-params[:dates][i].to_date).to_i / 365).to_i
       end
       if !@ajouts[i].nil? && @ajouts[i] != ""
         @cout_etp = Cout.where('programme_id = ? AND categorie = ?',Programme.where(numero: params[:addprogrammes][i].to_i).first.id, params[:addgrades][i]).first.cout
-        @cout_add_gestion = (params[:addquotites][i].to_f * @cout_etp * (DateTime.new(Date.today.year,12,31)-params[:adddates][i].to_date).to_i / 365).round(2)
-        if params[:ponctuel][i] == true 
+        @cout_add_gestion = (params[:addquotites][i].to_f * @cout_etp * (DateTime.new(Date.today.year,12,31)-params[:adddates][i].to_date).to_i / 365).to_i
+        if params[:ponctuel][i] == "true"
           @cout_add_base += 0 
         else
-          @cout_add_base += (params[:quotites][i].to_f * @cout_etp).round(2) #valider le cout etp car programme nouveau pas supp 
+          @cout_add_base += (params[:quotites][i].to_f * @cout_etp).to_i #valider le cout etp car programme nouveau pas supp 
         end 
       end 
     end

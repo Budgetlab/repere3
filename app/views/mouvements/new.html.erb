@@ -4,7 +4,7 @@
 			<h1 class="fr-my-6w">Nouveau redéploiement</h1>
 			<% if Date.today <= Date.new(2023,10,31)%>
 			<div class="fr-alert fr-alert--info fr-mb-3w"  data-form-target="info">
-			    <h3 class="fr-alert__title">Vous pouvez effectuer plusieurs suppressions et ajouts pour un même redéploiement. Une suppression est à minima obligatoire pour effectuer une redéploiement.</h3>
+			    <h3 class="fr-alert__title">Vous pouvez effectuer plusieurs suppressions et ajouts pour un même redéploiement. Une suppression est à minima obligatoire pour effectuer un redéploiement.</h3>
 			    <p>Ex: Suppression de 2 ETP  pour créer 1 ETP.</p>
 			</div>
 			<% else %>
@@ -14,7 +14,7 @@
 			<% end %>
 			<div class="fr-alert fr-alert--warning fr-mb-3w fr-hidden" data-form-target="error">
 			    <h3 class="fr-alert__title">Attention, votre redéploiement n’est pas équilibré budgétairement. </h3>
-				<p>Êtes-vous sûr de vouloir valider ce redéploiement ?</p>
+				<p>Êtes-vous sûr·e de vouloir valider ce redéploiement ?</p>
 			</div>
 			<div class="fr-notice fr-notice--info fr-hidden" data-form-target="success">
 			    <div class="fr-container">
@@ -58,8 +58,8 @@
 									</div>
 									<div class="fr-col-12 fr-col-lg-4">
 										<div class="fr-select-group">
-											<label for="date1" class="fr-label">Date Effective*</label>
-											<%= f.text_field :date1, {data: { 'form-target': 'date1', controller: "flatpickr",flatpickr_date_format: "Y-m-d",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "date1",class:"fr-select",placeholder: "- Sélectionner -"} %>
+											<label for="date1" class="fr-label">Date effective*</label>
+											<%= f.text_field :date1, {data: { 'form-target': 'date1', controller: "flatpickr",flatpickr_date_format: "d-m-Y",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "date1",class:"fr-select",placeholder: "- Sélectionner -"} %>
 										</div>
 									</div>
 								</div>
@@ -96,8 +96,8 @@
 										</div>
 										<div class="fr-col-12 fr-col-lg-4">
 											<div class="fr-select-group">
-												<label for="date<%=i%>" class="fr-label">Date Effective*</label>
-												<%= f.text_field "date#{i}", {data: { 'form-target': 'date'+i.to_s, controller: "flatpickr",flatpickr_date_format: "Y-m-d",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "date"+i.to_s,class:"fr-select", placeholder: "- Sélectionner -"} %>
+												<label for="date<%=i%>" class="fr-label">Date effective*</label>
+												<%= f.text_field "date#{i}", {data: { 'form-target': 'date'+i.to_s, controller: "flatpickr",flatpickr_date_format: "d-m-Y",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "date"+i.to_s,class:"fr-select", placeholder: "- Sélectionner -"} %>
 											</div>
 										</div>
 									</div>
@@ -118,7 +118,7 @@
 								</div>
 							<% end %>
 							<div class="fr-error-text fr-hidden" data-form-target="errorAddSuppression" role="alert"> </div>
-							<div class="fr-my-4w" data-form-target="BtnAddSuppression"><button data-action="form#addSuppression" class="btn-plus" title="supprimer un nouvel ETP"> <span class="fr-fi-add-circle-fill cbleu fr-fi--sm" aria-hidden="true"></span> Supprimer un nouvel ETP</button></div>
+							<div class="fr-my-4w" data-form-target="BtnAddSuppression"><button data-action="form#addSuppression" class="btn-plus" title="supprimer un nouvel ETP"> <span class="fr-fi-add-circle-fill cbleu fr-fi--sm" aria-hidden="true"></span> Supprimer un autre ETP</button></div>
 						</div>
 
 						<div class="fr-hidden" data-form-target="resultSuppression">
@@ -170,8 +170,8 @@
 									</div>
 									<div class="fr-col-12 fr-col-lg-4">
 										<div class="fr-select-group">
-											<label for="adddate1" class="fr-label">Date Effective</label>
-											<%= f.text_field :adddate1, {data: { 'form-target': 'adddate1', controller: "flatpickr",flatpickr_date_format: "Y-m-d",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "adddate1",class:"fr-select", placeholder: "- Sélectionner -"} %>
+											<label for="adddate1" class="fr-label">Date effective</label>
+											<%= f.text_field :adddate1, {data: { 'form-target': 'adddate1', controller: "flatpickr",flatpickr_date_format: "d-m-Y",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "adddate1",class:"fr-select", placeholder: "- Sélectionner -"} %>
 										</div>
 									</div>
 								</div>
@@ -231,8 +231,8 @@
 										</div>
 										<div class="fr-col-12 fr-col-lg-4">
 											<div class="fr-select-group">
-												<label for="adddate<%=i%>" class="fr-label">Date Effective*</label>
-												<%= f.text_field "adddate#{i}", {data: { 'form-target': 'adddate'+i.to_s, controller: "flatpickr",flatpickr_date_format: "Y-m-d",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "adddate"+i.to_s,class:"fr-select", placeholder: "- Sélectionner -"} %>
+												<label for="adddate<%=i%>" class="fr-label">Date effective*</label>
+												<%= f.text_field "adddate#{i}", {data: { 'form-target': 'adddate'+i.to_s, controller: "flatpickr",flatpickr_date_format: "d-m-Y",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "adddate"+i.to_s,class:"fr-select", placeholder: "- Sélectionner -"} %>
 											</div>
 										</div>
 									</div>
@@ -275,7 +275,7 @@
 								</div>
 							<% end %>
 							<div class="fr-error-text fr-hidden" data-form-target="errorAddAjout" role="alert"> </div>
-							<div class="fr-my-4w" data-form-target="BtnAddAjout"><button data-action="form#addAjout" class="btn-plus" title="ajouter un nuovel ETP"> <span class="fr-fi-add-circle-fill cbleu fr-fi--sm" aria-hidden="true"></span> Ajouter un nouvel ETP</button></div>
+							<div class="fr-my-4w" data-form-target="BtnAddAjout"><button data-action="form#addAjout" class="btn-plus" title="ajouter un nuovel ETP"> <span class="fr-fi-add-circle-fill cbleu fr-fi--sm" aria-hidden="true"></span> Ajouter un autre ETP</button></div>
 						</div>
 
 						<div class="fr-hidden" data-form-target="resultAjout">
