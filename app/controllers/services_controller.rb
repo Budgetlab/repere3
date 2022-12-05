@@ -3,7 +3,10 @@ class ServicesController < ApplicationController
   protect_from_forgery with: :null_session
     
   def index
-  end
+    if current_user.statut != "admin"
+      redirect_to root_path
+    end 
+  end 
 
   def import
     Service.import(params[:file])
