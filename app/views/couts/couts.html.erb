@@ -20,7 +20,7 @@
 		  				<tr>
 					      	<td><%=programme.numero%> - <%=programme.ministere.nom%> </td>
 					      	<% programme.couts.each do |cout|%>
-					      	<td><%= number_with_delimiter(cout.cout.round, :delimiter => ' ')%>€</td>
+					      	<td><%= number_with_delimiter(cout.cout.round, locale: :fr)%>€</td>
 							<%end%>
 					    </tr>
 					    <% end %>

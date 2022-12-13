@@ -1,7 +1,8 @@
 class RegionsController < ApplicationController
   before_action :authenticate_user!
   protect_from_forgery with: :null_session
-    
+  require 'axlsx'
+
   def index
     @regions = Region.all.order(nom: :asc) 
     if current_user.statut == "ministere"
@@ -11,7 +12,9 @@ class RegionsController < ApplicationController
     end
     respond_to do |format|
         format.html
-        format.csv {send_data @regions.to_csv(@programme_id), type: 'text/csv', disposition: 'attachment', filename: "synthese_regions.csv"}
+        format.xlsx {
+            response.headers['Content-Disposition'] = 'attachment; filename="synthese_region.xlsx"'
+          }
     end
   end
 end

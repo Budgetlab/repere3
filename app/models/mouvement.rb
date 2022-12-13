@@ -9,19 +9,19 @@ class Mouvement < ApplicationRecord
   require 'axlsx'
   require 'csv'
 
-  def self.to_csv
-    header = %W{ Région Date Quotité Grade Type Service\ concerné Programme Date\ effective ETPT Mouvements\ en\ gestion\ (LFR) Mouvements\ en\ base\ (PLF\ N+1) N°ref\ redéploiement}
-    #attributes = %w{ region_id date quotite grade type_mouvement}
-
-    CSV.generate(headers: true) do |csv|
-      csv << header
-
-      all.each do |mouvement|
-        #csv << attributes.map {|attr| mouvement.send(attr)}
-        csv << [mouvement.region.nom, mouvement.date, mouvement.quotite, mouvement.grade, mouvement.type_mouvement, mouvement.service.nom, mouvement.programme.numero, mouvement.date_effet, mouvement.etpt, mouvement.credits_gestion, mouvement.cout_etp, mouvement.mouvement_lien]
-      end
-    end 
-  end 
+  #def self.to_csv
+  #  header = %W{ Région Date Quotité Grade Type Service\ concerné Programme Date\ effective ETPT Mouvements\ en\ gestion\ (LFR) Mouvements\ en\ base\ (PLF\ N+1) N°ref\ redéploiement}
+  #  #attributes = %w{ region_id date quotite grade type_mouvement}
+#
+  #  CSV.generate(headers: true) do |csv|
+  #    csv << header
+#
+  #    all.each do |mouvement|
+  #      #csv << attributes.map {|attr| mouvement.send(attr)}
+  #      csv << [mouvement.region.nom, mouvement.date, mouvement.quotite, mouvement.grade, mouvement.type_mouvement, mouvement.service.nom, mouvement.programme.numero, mouvement.date_effet, mouvement.etpt, mouvement.credits_gestion, mouvement.cout_etp, mouvement.mouvement_lien]
+  #    end
+  #  end 
+  #end 
 
   def self.import(file)
     Mouvement.destroy_all

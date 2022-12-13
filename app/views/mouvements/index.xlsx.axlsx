@@ -1,0 +1,11 @@
+
+    wb = xlsx_package.workbook
+	wb.add_worksheet(name: "Buttons") do |sheet|
+	  sheet.add_row %W{ Région Date Quotité Grade Type Service\ concerné Programme Date\ effective ETPT Mouvements\ en\ gestion\ (LFR) Mouvements\ en\ base\ (PLF\ N+1) N°ref\ redéploiement}
+    
+
+      @mouvements.each do |mouvement|
+        sheet.add_row [mouvement.region.nom, mouvement.date, mouvement.quotite, mouvement.grade, mouvement.type_mouvement, mouvement.service.nom, mouvement.programme.numero, mouvement.date_effet, mouvement.etpt, mouvement.credits_gestion, mouvement.cout_etp, mouvement.mouvement_lien]
+           
+      end
+	end

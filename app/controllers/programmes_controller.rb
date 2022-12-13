@@ -1,7 +1,8 @@
 class ProgrammesController < ApplicationController
 	before_action :authenticate_user!
 	protect_from_forgery with: :null_session
-  	
+  require 'axlsx'
+
   	def index
   		@programmes = Programme.all.order(numero: :asc) 
   		if current_user.statut == 'CBR' || current_user.statut == "prefet"
@@ -11,8 +12,10 @@ class ProgrammesController < ApplicationController
 	    end
   		respond_to do |format|
         	format.html
-        	format.csv {send_data @programmes.to_csv(@region_id), type: 'text/csv', disposition: 'attachment', filename: "synthese_programme.csv"}
-    	end
+          format.xlsx {
+            response.headers['Content-Disposition'] = 'attachment; filename="synthese_programme.xlsx"'
+          }
+      end
   	end
 
   	def import

@@ -2,6 +2,7 @@
 	<div class="fr-grid-row fr-grid-row--gutters">
 		<div class="fr-col-12 fr-col-lg-12">
 			<h1 class="fr-my-6w">Nouveau redéploiement</h1>
+
 			<% if Date.today <= Date.new(2023,10,31)%>
 			<div class="fr-alert fr-alert--info fr-mb-3w"  data-form-target="info">
 			    <h3 class="fr-alert__title">Vous pouvez effectuer plusieurs suppressions et ajouts pour un même redéploiement. Une suppression est à minima obligatoire pour effectuer un redéploiement.</h3>
@@ -12,6 +13,7 @@
 			    <h3 class="fr-alert__title">Vous ne pouvez plus effectuez de redéploiement au delà du 31 octobre de l'année en cours. </h3>			
 			</div>
 			<% end %>
+
 			<div class="fr-alert fr-alert--warning fr-mb-3w fr-hidden" data-form-target="error">
 			    <h3 class="fr-alert__title">Attention, votre redéploiement n’est pas équilibré budgétairement. </h3>
 				<p>Êtes-vous sûr·e de vouloir valider ce redéploiement ?</p>
@@ -34,8 +36,7 @@
 			<div class="fr-col-12 fr-col-lg-6">
 				<div class="fr-modal__body">
 	                <div class="fr-modal__header"></div>
-	                <div class="fr-modal__content">
-	                    
+	                <div class="fr-modal__content">	                    
 	                    <div data-form-target="formSuppression">
 	                    	<div class="fr-modal__title">
 		                        <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
@@ -59,7 +60,7 @@
 									<div class="fr-col-12 fr-col-lg-4">
 										<div class="fr-select-group">
 											<label for="date1" class="fr-label">Date effective*</label>
-											<%= f.text_field :date1, {data: { 'form-target': 'date1', controller: "flatpickr",flatpickr_date_format: "d-m-Y",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "date1",class:"fr-select",placeholder: "- Sélectionner -"} %>
+											<%= f.text_field :date1, {data: { 'form-target': 'date1', controller: "flatpickr",flatpickr_date_format: "d-m-Y",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "date1",class:"fr-select",placeholder: "- sélectionner -"} %>
 										</div>
 									</div>
 								</div>
@@ -78,7 +79,7 @@
 									</div>
 								</div>
 							</div>
-							<% (2..4).each do |i|%>
+							<% (2..10).each do |i|%>
 								<div class="fr-my-4w fr-hidden" data-form-target="content<%=i%>">
 									<div class="fr-h5 fr-mb-2w">ETP <%= i%> <button data-action="form#removeEtpSuppression" data-value="<%=i%>" class='bouton_i2' title="supprimer l'etp"><span class="fr-icon-delete-line " aria-hidden="true" data-value="<%=i%>" ></span></button></div>
 									<div class="fr-grid-row fr-grid-row--gutters">
@@ -97,7 +98,7 @@
 										<div class="fr-col-12 fr-col-lg-4">
 											<div class="fr-select-group">
 												<label for="date<%=i%>" class="fr-label">Date effective*</label>
-												<%= f.text_field "date#{i}", {data: { 'form-target': 'date'+i.to_s, controller: "flatpickr",flatpickr_date_format: "d-m-Y",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "date"+i.to_s,class:"fr-select", placeholder: "- Sélectionner -"} %>
+												<%= f.text_field "date#{i}", {data: { 'form-target': 'date'+i.to_s, controller: "flatpickr",flatpickr_date_format: "d-m-Y",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "date"+i.to_s,class:"fr-select", placeholder: "- sélectionner -"} %>
 											</div>
 										</div>
 									</div>
@@ -118,17 +119,18 @@
 								</div>
 							<% end %>
 							<div class="fr-error-text fr-hidden" data-form-target="errorAddSuppression" role="alert"> </div>
-							<div class="fr-my-4w" data-form-target="BtnAddSuppression"><button data-action="form#addSuppression" class="btn-plus" title="supprimer un nouvel ETP"> <span class="fr-fi-add-circle-fill cbleu fr-fi--sm" aria-hidden="true"></span> Supprimer un autre ETP</button></div>
+							<div class="fr-my-4w" data-form-target="BtnAddSuppression"><button data-action="form#addSuppression" class="fr-btn fr-icon-add-circle-fill fr-btn--icon-left fr-btn--secondary" title="supprimer un autre ETP"> Supprimer un autre ETP</button></div>
 						</div>
 
 						<div class="fr-hidden" data-form-target="resultSuppression">
 							<div class="fr-modal__title">
 		                        <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
 		                        ETP supprimés [<span data-form-target="countSuppression"></span>]
-		                    </div>		
+		                    </div>
+		                    <p class="fr-badge fr-mt-4w fr-badge--new fr-badge--no-icon">Coût en gestion : <span data-form-target="coutSuppression"></span> €</p>		
 		                    <p class="fr-badge fr-mt-4w fr-badge--new fr-badge--no-icon">Coût en base : <span data-form-target="coutSuppressionBase"></span> €</p>
-		                    <p class="fr-badge fr-mt-4w fr-badge--new fr-badge--no-icon">Coût en gestion : <span data-form-target="coutSuppression"></span> €</p>
-							<% (1..4).each do |i|%>
+		                    
+							<% (1..10).each do |i|%>
 								<div class="fr-my-4w fr-hidden" data-form-target='resultSuppression<%=i%>'>
 									<div class="fr-h5 fr-mb-2w">ETP <%= i %></div>
 									<span class="fr-tag">Macrograde : <span data-form-target='resultGrade<%=i%>'></span></span>
@@ -171,7 +173,7 @@
 									<div class="fr-col-12 fr-col-lg-4">
 										<div class="fr-select-group">
 											<label for="adddate1" class="fr-label">Date effective</label>
-											<%= f.text_field :adddate1, {data: { 'form-target': 'adddate1', controller: "flatpickr",flatpickr_date_format: "d-m-Y",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "adddate1",class:"fr-select", placeholder: "- Sélectionner -"} %>
+											<%= f.text_field :adddate1, {data: { 'form-target': 'adddate1', controller: "flatpickr",flatpickr_date_format: "d-m-Y",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "adddate1",class:"fr-select", placeholder: "- sélectionner -"} %>
 										</div>
 									</div>
 								</div>
@@ -191,17 +193,20 @@
 								</div>
 								<div class="fr-grid-row fr-grid-row--gutters">
 									<div class="fr-col-12 fr-col-lg-12">
-										<div class="">
-										    <fieldset class="fr-fieldset fr-fieldset--inline">
-										        <legend class="fr-fieldset__legend fr-text--regular fr-mb-1w" id='radio-inline-legend'>
-										            S'agit-il d'un emploi ponctuel ? 
+										
+										    <fieldset class="fr-fieldset fr-mb-0">
+										        <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id='radio-inline-legend'>
+										            S'agit-il d'un emploi ponctuel ?
+										            <div class="fr-text--xs fr-mb-0">Un poste ponctuel est un poste qui répond à une politique prioritaire ministérielle nécessitant des recrutements spécifiques et exceptionnels en cours d’année</div> 
 										        </legend>
-										        <div class="fr-text--xs">Un poste ponctuel est un poste qui répond à une politique prioritaire ministérielle nécessitant des recrutements spécifiques et exceptionnels en cours d’année</div>
-										        <div class="fr-fieldset__content" >
+										        
+										        <div class="fr-fieldset__element fr-fieldset__element--inline fr-mb-0">
 										            <div class="fr-radio-group">
 										                <%= f.radio_button :ponctuel1, true, id: "radio-ponctuel1", data: {'form-target': 'addponctuel1'}, checked: false  %>
 										                <label class="fr-label" for="radio-ponctuel1">Oui</label>
 										            </div>
+										        </div>
+										        <div class="fr-fieldset__element fr-fieldset__element--inline fr-mb-0">
 										            <div class="fr-radio-group">
 										                <%= f.radio_button :ponctuel1, false, checked: true, id:"radio-ponctuel2" %>
 										                <label class="fr-label" for="radio-ponctuel2">Non</label>
@@ -209,7 +214,7 @@
 										        </div>
 										        
 										    </fieldset>
-										</div>
+										
 									</div>
 								</div>
 							</div>
@@ -232,7 +237,7 @@
 										<div class="fr-col-12 fr-col-lg-4">
 											<div class="fr-select-group">
 												<label for="adddate<%=i%>" class="fr-label">Date effective*</label>
-												<%= f.text_field "adddate#{i}", {data: { 'form-target': 'adddate'+i.to_s, controller: "flatpickr",flatpickr_date_format: "d-m-Y",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "adddate"+i.to_s,class:"fr-select", placeholder: "- Sélectionner -"} %>
+												<%= f.text_field "adddate#{i}", {data: { 'form-target': 'adddate'+i.to_s, controller: "flatpickr",flatpickr_date_format: "d-m-Y",flatpickr_min_date: Date.new(Date.today.year,1,1), flatpickr_max_date: Date.new(Date.today.year,12,31)}, id: "adddate"+i.to_s,class:"fr-select", placeholder: "- sélectionner -"} %>
 											</div>
 										</div>
 									</div>
@@ -275,7 +280,7 @@
 								</div>
 							<% end %>
 							<div class="fr-error-text fr-hidden" data-form-target="errorAddAjout" role="alert"> </div>
-							<div class="fr-my-4w" data-form-target="BtnAddAjout"><button data-action="form#addAjout" class="btn-plus" title="ajouter un nuovel ETP"> <span class="fr-fi-add-circle-fill cbleu fr-fi--sm" aria-hidden="true"></span> Ajouter un autre ETP</button></div>
+							<div class="fr-my-4w" data-form-target="BtnAddAjout"><button data-action="form#addAjout" class="fr-btn fr-icon-add-circle-fill fr-btn--icon-left fr-btn--secondary" title="ajouter un autre ETP">  Ajouter un autre ETP</button></div>
 						</div>
 
 						<div class="fr-hidden" data-form-target="resultAjout">
@@ -283,8 +288,9 @@
 		                        <span class="fr-fi-arrow-right-line fr-fi--lg"></span>
 		                        ETP ajoutés [<span data-form-target="countAjout"></span>]
 		                    </div>
+		                    <p class="fr-badge fr-mt-4w fr-badge--new fr-badge--no-icon">Coût en gestion : <span data-form-target="coutAjout"></span> €</p>	
 		                    <p class="fr-badge fr-mt-4w fr-badge--new fr-badge--no-icon">Coût en base : <span data-form-target="coutAjoutBase"></span> €</p>	
-		                    <p class="fr-badge fr-mt-4w fr-badge--new fr-badge--no-icon">Coût en gestion : <span data-form-target="coutAjout"></span> €</p>		
+		                    	
 							<% (1..4).each do |i|%>
 								<div class="fr-my-4w fr-hidden" data-form-target='resultAjout<%=i%>'>
 									<div class="fr-h5 fr-mb-2w">ETP <%= i %></div>

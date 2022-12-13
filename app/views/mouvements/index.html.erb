@@ -10,25 +10,25 @@
 		<div class="fr-col-12 fr-col-lg-3">
 			<div class="fr-callout ">
 		    	<p class="fr-callout__title"><%= format_number(@etp_supp )%> ETP</p>
-		    	<p class="fr-callout__text"> ETP supprimés</p>
+		    	<p class="fr-callout__text">supprimés</p>
 			</div>
 		</div>
 		<div class="fr-col-12 fr-col-lg-3">
 			<div class="fr-callout ">
-		    	<p class="fr-callout__title"><% if @etp_cible != 0 %><%= format_number((@etp_supp/@etp_cible)*100) %><%else%>0<%end%>%</p>
-		    	<p class="fr-callout__text"> % ETP supprimés</p>
+		    	<p class="fr-callout__title"><% if @etp_cible != 0 %><%= format_number((@etp_supp/@etp_cible)*100) %><%else%>0<%end%>% ETP</p>
+		    	<p class="fr-callout__text">supprimés</p>
 			</div>
 		</div>
 		<div class="fr-col-12 fr-col-lg-3">
 			<div class="fr-callout ">
-		    	<p class="fr-callout__title"><%= number_with_delimiter(@credits_gestion, :delimiter => ' ')%> € </p>
-		    	<p class="fr-callout__text"> Mouv. en gestion</p>
+		    	<p class="fr-callout__title"><%= number_with_delimiter(@credits_gestion, locale: :fr)%> € </p>
+		    	<p class="fr-callout__text">mouv. en gestion</p>
 			</div>
 		</div>
 		<div class="fr-col-12 fr-col-lg-3">
 			<div class="fr-callout ">
-		    	<p class="fr-callout__title"><%= number_with_delimiter(@cout_etp, :delimiter => ' ')%> €</p>
-		    	<p class="fr-callout__text"> Mouv. en base </p>
+		    	<p class="fr-callout__title"><%= number_with_delimiter(@cout_etp, locale: :fr)%> €</p>
+		    	<p class="fr-callout__text">mouv. en base </p>
 			</div>
 		</div>
 	
@@ -38,9 +38,9 @@
 			<h2 class="fr-my-2w">Historique des <% if current_user.statut != "ministere"%>redéploiements [<%= @redeploiements.count%>] et <%end%>mouvements [<%= @mouvements.count%>]</h2>
 			<div class="fr-download">
 			    <p>
-			        <%= link_to historique_path(format: :csv), class: "fr-download__link" do %> Télécharger l'historique des mouvements
+			        <%= link_to historique_path(format: :xlsx), class: "fr-download__link" do %> Télécharger l'historique des mouvements
 			            <span class="fr-download__detail">
-			                CSV
+			                Format .xlsx
 			            </span>
 			        <%end %>
 			    </p>
@@ -59,8 +59,8 @@
 			      			<% if redeploiement.suppression > 0 %>
 			      			<p class="fr-badge fr-badge--blue-cumulus"><%= redeploiement.suppression %> <% if redeploiement.suppression > 1 %>suppressions<%else%>suppression<%end%></p><% end %>
 
-			      			<p class="fr-badge fr-badge--new fr-badge--no-icon"><%= number_with_delimiter(redeploiement.credits_gestion.to_i, :delimiter => ' ')%>€ /
-					      	<%= number_with_delimiter(redeploiement.cout_etp.to_i, :delimiter => ' ')%>€</p>
+			      			<p class="fr-badge fr-badge--new fr-badge--no-icon"><%= number_with_delimiter(redeploiement.credits_gestion.to_i, locale: :fr)%>€ /
+					      	<%= number_with_delimiter(redeploiement.cout_etp.to_i, locale: :fr)%>€</p>
 			            </button>
 			        </h3>
 			      		
@@ -87,16 +87,16 @@
 							      	<% redeploiement.mouvements.each do |mouvement|%>
 							      	<tr>
 								      	<td><%= mouvement.grade%></td>
-								      	<td><% if mouvement.quotite%1 != 0 %><%= mouvement.quotite %><%else%><%= mouvement.quotite.to_i %><%end%></td>
+								      	<td><% if mouvement.quotite%1 != 0 %><%= format_number(mouvement.quotite) %><%else%><%= mouvement.quotite.to_i %><%end%></td>
 								      	<td><%= l(mouvement.date_effet,format: "%e/%m/%y")%></td>
-								      	<td><%= mouvement.etpt%></td>
+								      	<td><%= format_number(mouvement.etpt)%></td>
 								      	
 								      	<td><% if mouvement.type_mouvement == "ajout"%><p class="fr-badge fr-badge--green-emeraude"><%= mouvement.type_mouvement%></p> <% if mouvement.ponctuel == true %><p class="fr-badge fr-badge--green-emeraude">ponctuel</p><%end%><% else %><p class="fr-badge fr-badge--blue-cumulus"><%= mouvement.type_mouvement%></p> <% end %></td>
 								      	<td><%= mouvement.service.nom%></td>
 								      	<td><%= mouvement.programme.numero %></td>
 								      	
-								      	<td><%= number_with_delimiter(mouvement.credits_gestion.to_i, :delimiter => ' ')%>€</td>
-								      	<td><%= number_with_delimiter(mouvement.cout_etp.to_i, :delimiter => ' ')%>€</td>
+								      	<td><%= number_with_delimiter(mouvement.credits_gestion.to_i, locale: :fr)%>€</td>
+								      	<td><%= number_with_delimiter(mouvement.cout_etp.to_i, locale: :fr)%>€</td>
 								     
 								     </tr>
 							      	<% end %>
@@ -168,14 +168,14 @@
 					      	<td><%= mouvement.grade%></td>
 					      	<td><% if mouvement.quotite%1 != 0 %><%= mouvement.quotite %><%else%><%= mouvement.quotite.to_i %><%end%></td>
 					      	<td><%= l(mouvement.date_effet,format: "%e/%m/%y")%></td>
-					      	<td><%= mouvement.etpt%></td>
+					      	<td><%= format_number(mouvement.etpt)%></td>
 					      	
 					      	<td><% if mouvement.type_mouvement == "ajout"%><p class="fr-badge fr-badge--green-emeraude"><%= mouvement.type_mouvement%></p> <% if mouvement.ponctuel == true %><p class="fr-badge fr-badge--green-emeraude">ponctuel</p><%end%><% else %><p class="fr-badge fr-badge--blue-cumulus"><%= mouvement.type_mouvement%></p> <% end %></td>
 					      	<td><%= mouvement.service.nom%></td>
 					      	<td><%= mouvement.programme.numero %></td>
 					      	
-					      	<td><%= number_with_delimiter(mouvement.credits_gestion.to_i, :delimiter => ' ')%>€</td>
-					      	<td><%= number_with_delimiter(mouvement.cout_etp.to_i, :delimiter => ' ')%>€</td>
+					      	<td><%= number_with_delimiter(mouvement.credits_gestion.to_i, locale: :fr)%>€</td>
+					      	<td><%= number_with_delimiter(mouvement.cout_etp.to_i, locale: :fr)%>€</td>
 					     
 					     </tr>
 				      	<% end %>

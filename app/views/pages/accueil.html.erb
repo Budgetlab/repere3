@@ -8,26 +8,26 @@
 	<div class="fr-grid-row fr-grid-row--gutters">
 		<div class="fr-col-12 fr-col-lg-3">
 			<div class="fr-callout ">
-		    	<p class="fr-callout__title"><%= format_number(@etp_cible) %></p>
-		    	<p class="fr-callout__text"> ETP cibles </p>
+		    	<p class="fr-callout__title"><%= format_number(@etp_cible) %> ETP</p>
+		    	<p class="fr-callout__text">notifiés </p>
 			</div>
 		</div>
 		<div class="fr-col-12 fr-col-lg-3">
 			<div class="fr-callout ">
 		    	<p class="fr-callout__title"><%= format_number(@etp_3)%> ETP</p>
-		    	<p class="fr-callout__text"> 3% ETP cibles</p>
+		    	<p class="fr-callout__text">redéployables (3%)</p>
 			</div>
 		</div>
 		<div class="fr-col-12 fr-col-lg-3">
 			<div class="fr-callout ">
 		    	<p class="fr-callout__title"><%= format_number(@etp_supp )%> ETP</p>
-		    	<p class="fr-callout__text"> ETP supprimés</p>
+		    	<p class="fr-callout__text">supprimés</p>
 			</div>
 		</div>
 		<div class="fr-col-12 fr-col-lg-3">
 			<div class="fr-callout ">
-		    	<p class="fr-callout__title"><% if @etp_cible != 0 %><%= format_number((@etp_supp/@etp_cible)*100) %><%else%>0<%end%>%</p>
-		    	<p class="fr-callout__text"> % ETP supprimés</p>
+		    	<p class="fr-callout__title"><% if @etp_cible != 0 %><%= format_number((@etp_supp/@etp_cible)*100) %><%else%>0<%end%>% ETP</p>
+		    	<p class="fr-callout__text">supprimés</p>
 			</div>
 		</div>
 	
@@ -73,9 +73,9 @@
 				<div class="fr-col-12 fr-col-lg-12">
 					<div class="fr-download">
 					    <p>
-					        <%= link_to programmes_path(format: :csv), class: "fr-download__link" do %> Télécharger la table de synthèse par programme
+					        <%= link_to programmes_path(format: :xlsx), class: "fr-download__link" do %> Télécharger la table de synthèse par programme
 					            <span class="fr-download__detail">
-					                CSV
+					                Format .xlsx
 					            </span>
 					        <%end %>
 					    </p>
@@ -85,8 +85,8 @@
 							<thead>
 								<tr>
 									<th scope="col">Programme</th>
-									<th scope="col">Effectifs cibles</th>
-									<th scope="col">Plafond ETPT</th>
+									<th scope="col">Effectifs notifiés</th>
+									<th scope="col">ETPT notifiés</th>
 									<th scope="col">Plafond 3% ETP</th>
 									<th scope="col">ETP supprimés</th>
 									<th scope="col">% ETP supprimés</th>
@@ -116,7 +116,7 @@
 									<td><%= programme.numero %></td>
 									<td><%= format_number(@objectifs.where(programme_id: programme.id).sum('etp_cible'))%></td>
 									<td><%= format_number(@objectifs.where(programme_id: programme.id).sum('etpt_plafond'))%></td>
-									<td><%= "%g" % ("%.1f" % (0.03*@objectifs.where(programme_id: programme.id).sum('etp_cible')).to_f ) %></td>							
+									<td><%= format_number((0.03*@objectifs.where(programme_id: programme.id).sum('etp_cible')).round(1)) %></td>							
 									<td><%= format_number(@mouvements.where(programme_id: programme.id, type_mouvement: "suppression").sum('quotite'))%></td>
 									<td><% if @objectifs.where(programme_id: programme.id).sum('etp_cible') != 0%><%= format_number((@mouvements.where(programme_id: programme.id, type_mouvement: "suppression").sum('quotite')/(0.03*@objectifs.where(programme_id: programme.id).sum('etp_cible')))*100)%><%else%>0<%end%>%</td>
 									<td><%= format_number(@mouvements.where(programme_id: programme.id, type_mouvement: "ajout").sum('quotite'))%></td>
@@ -136,7 +136,7 @@
 		<% if current_user.statut == "admin" || current_user.statut == "ministere"%>
 		<div id="tabpanel-405-panel" class="fr-tabs__panel " role="tabpanel" aria-labelledby="tabpanel-405" tabindex="0">
 			<div class="fr-grid-row fr-grid-row--gutters">
-				<div class="fr-col-6 fr-col-lg-12">
+				<div class="fr-col-12 fr-col-lg-12">
 					<div data-highcharts-target="canvasRegion1"></div>
 				</div>
 				<div class="fr-col-12 fr-col-lg-10 fr-col-offset-lg-1">
@@ -146,9 +146,9 @@
 				<div class="fr-col-12 fr-col-lg-12">
 					<div class="fr-download">
 					    <p>
-					        <%= link_to regions_path(format: :csv), class: "fr-download__link" do %> Télécharger la table de synthèse par région
+					        <%= link_to regions_path(format: :xlsx), class: "fr-download__link" do %> Télécharger la table de synthèse par région
 					            <span class="fr-download__detail">
-					                CSV
+					                Format .xlsx
 					            </span>
 					        <%end %>
 					    </p>
@@ -158,8 +158,8 @@
 							<thead>
 								<tr>
 									<th scope="col">Région</th>
-									<th scope="col">Effectifs cibles</th>
-									<th scope="col">Plafond ETPT </th>
+									<th scope="col">Effectifs notifiés</th>
+									<th scope="col">ETPT notifiés</th>
 									<th scope="col">Plafond 3% ETP</th>
 									<th scope="col">ETP supprimés</th>
 									<th scope="col">% ETP supprimés</th>
@@ -191,7 +191,7 @@
 									<td><%= region.nom %></td>
 									<td><%= format_number(@objectifs.where(region_id: region.id).sum('etp_cible'))%></td>
 									<td><%= format_number(@objectifs.where(region_id: region.id).sum('etpt_plafond'))%></td>
-									<td><%= "%g" % ("%.1f" % (0.03*@objectifs.where(region_id: region.id).sum('etp_cible')).to_f ) %></td>				
+									<td><%= format_number((0.03*@objectifs.where(region_id: region.id).sum('etp_cible')).round(1)) %></td>				
 									<td><%= format_number(@mouvements.where(region_id: region.id, type_mouvement: "suppression").sum('quotite'))%></td>
 									<td><%= format_number(@mouvements.where(region_id: region.id, type_mouvement: "suppression").sum('quotite')/@objectifs.where(region_id: region.id).sum('etp_cible')*100)%>%</td>
 									<td><%= format_number(@mouvements.where(region_id: region.id, type_mouvement: "ajout").sum('quotite'))%></td>

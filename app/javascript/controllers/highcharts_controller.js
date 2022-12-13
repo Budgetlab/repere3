@@ -76,6 +76,9 @@ export default class extends Controller {
               fontFamily: "Marianne",
               },
       },
+      lang: {
+        decimalPoint: ",",
+      },
       exporting:{enabled: false},
       // Let the center circle be transparent
       colors: couleurs,
@@ -145,7 +148,7 @@ export default class extends Controller {
         borderRadius: 16,
         backgroundColor: "rgba(245, 245, 245, 1)",
         headerFormat: '',
-        pointFormat: '<b>{point.name} :</b> {point.value} ETP',
+        pointFormat: '<b>{point.name} :</b> {point.value:,.1f} ETP',
         valueDecimals: 1,
     }
     }
@@ -164,6 +167,9 @@ export default class extends Controller {
                 },
                 type: 'column',  
                                   
+          },
+          lang: {
+            decimalPoint: ",",
           },
           exporting:{enabled: false},
           colors: ["rgba(183, 167, 63, 0.6)", "var(--background-action-low-blue-ecume-active)"],
@@ -580,7 +586,7 @@ export default class extends Controller {
           colors: ["#DAD29E", "var(--background-action-low-brown-opera)"],
           
           title: {
-              text: 'ETP ajoutés et supprimés dans le temps (date du mouvement)',
+              text: 'ETP ajoutés et supprimés dans le temps (date de saisie)',
              
               style: {
                 fontSize: '13px',
@@ -650,7 +656,7 @@ export default class extends Controller {
           colors: ["#DAD29E", "var(--background-action-low-brown-opera)"],
           
           title: {
-              text: "Départs et arrivées d'ETP à date effective",
+              text: "Départs et arrivées d'ETP à date effective du mouvement",
              
               style: {
                 fontSize: '13px',

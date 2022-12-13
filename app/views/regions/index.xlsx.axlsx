@@ -1,0 +1,16 @@
+
+    wb = xlsx_package.workbook
+	wb.add_worksheet(name: "Buttons") do |sheet|
+	  sheet.add_row %W{ Region Effectifs\ cibles Plafond\ ETPT Plafond\ 3%\ ETP ETP\ supprimés %ETP\ supprimés ETP\ ajoutés ETPT\ supprimés ETPT\ ajoutés Mouvements\ en\ gestion\ (LFR) Mouvements\ en\ base\ (PLF\ N+1) }
+    
+    
+      sheet.add_row ["Total", Objectif.where("date >= ?",Date.new(Date.today.year, 1,1)).sum('etp_cible').round(1), Objectif.where("date >= ?",Date.new(Date.today.year, 1,1)).sum('etpt_plafond').round(2), (0.03*Objectif.where("date >= ?",Date.new(Date.today.year, 1,1)).sum('etp_cible')).round(1), Mouvement.where(type_mouvement: "suppression").where("date >= ?",Date.new(Date.today.year, 1,1)).sum('quotite').round(1), 
+          ((Mouvement.where(type_mouvement: "suppression").where("date >= ?",Date.new(Date.today.year, 1,1)).sum('quotite')/Objectif.where("date >= ?",Date.new(Date.today.year, 1,1)).sum('etp_cible'))*100).round(2),Mouvement.where(type_mouvement: "ajout").where("date >= ?",Date.new(Date.today.year, 1,1)).sum('quotite').round(1), 
+          Mouvement.where(type_mouvement: "suppression").where("date >= ?",Date.new(Date.today.year, 1,1)).sum('etpt').round(2),Mouvement.where(type_mouvement: "ajout").where("date >= ?",Date.new(Date.today.year, 1,1)).sum('etpt').round(2), Mouvement.where("date >= ?",Date.new(Date.today.year, 1,1)).sum('credits_gestion').to_i,Mouvement.where("date >= ?",Date.new(Date.today.year, 1,1)).sum('cout_etp').to_i]
+      @regions.each do |region|
+        sheet.add_row [region.nom,region.objectifs.where(programme_id: @programme_id).where("date >= ?",Date.new(Date.today.year, 1,1)).sum('etp_cible').round(1), region.objectifs.where(programme_id: @programme_id).where("date >= ?",Date.new(Date.today.year, 1,1)).sum('etpt_plafond').round(2), (0.03*region.objectifs.where(programme_id: @programme_id).where("date >= ?",Date.new(Date.today.year, 1,1)).sum('etp_cible')).round(1), region.mouvements.where(type_mouvement: "suppression", programme_id: @programme_id).where("date >= ?",Date.new(Date.today.year, 1,1)).sum('quotite').round(1), 
+          ((region.mouvements.where(type_mouvement: "suppression", programme_id: @programme_id).where("date >= ?",Date.new(Date.today.year, 1,1)).sum('quotite')/region.objectifs.where(programme_id: @programme_id).where("date >= ?",Date.new(Date.today.year, 1,1)).sum('etp_cible'))*100).round(2),region.mouvements.where(type_mouvement: "ajout",programme_id: @programme_id).where("date >= ?",Date.new(Date.today.year, 1,1)).sum('quotite').round(1), 
+          region.mouvements.where(type_mouvement: "suppression", programme_id: @programme_id).where("date >= ?",Date.new(Date.today.year, 1,1)).sum('etpt').round(2),region.mouvements.where(type_mouvement: "ajout", programme_id: @programme_id).where("date >= ?",Date.new(Date.today.year, 1,1)).sum('etpt').round(2), region.mouvements.where(programme_id: @programme_id).where("date >= ?",Date.new(Date.today.year, 1,1)).sum('credits_gestion').to_i,region.mouvements.where(programme_id: @programme_id).where("date >= ?",Date.new(Date.today.year, 1,1)).sum('cout_etp').to_i]
+      
+      end
+	end

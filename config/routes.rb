@@ -4,7 +4,7 @@ Rails.application.routes.draw do
       :path_names =>  {:sign_in => "connexion", :sign_out => "logout"},
       controllers: {sessions: 'sessions'}
     root 'pages#accueil'
-    get 'users' => "users#index"
+    get 'utilisateurs' => "users#index"
     post 'import_users' => "users#import"
     get 'regions' => "regions#index"
     get 'programmes' => "programmes#index"
@@ -34,7 +34,10 @@ Rails.application.routes.draw do
     get '/page_introuvable', to: 'pages#error_404'
     match "/404", to: 'pages#error_404', via: :all
     match "/500", to: 'pages#error_500', via: :all
+    get "/422", to: 'pages#error_404'
   end
   get '/', to: redirect('/repere3')
-  get '/*path', to: redirect('/repere3/page_introuvable')
+  get '/500', to: redirect('/repere3/500')
+  get '/*path', to: redirect('/repere3')
+  
 end

@@ -20,8 +20,8 @@ class MouvementsController < ApplicationController
       @etp_cible = Objectif.where(programme_id: @programme_id).where('date >= ? AND date <= ?',@start,@end).sum('etp_cible')          
       @redeploiements = []
     end
-    @etp_supp = @mouvements.where(type_mouvement: "suppression").sum('quotite')
-    @etp_3 = 0.03 * @etp_cible
+    @etp_supp = @mouvements.where(type_mouvement: "suppression").sum('quotite').round(1)
+    @etp_3 = (0.03 * @etp_cible).round(1)
     @credits_gestion = @mouvements.sum('credits_gestion').to_i
     @cout_etp = @mouvements.sum('cout_etp').to_i
 
@@ -30,7 +30,7 @@ class MouvementsController < ApplicationController
     end
     respond_to do |format|
         format.html
-        format.csv {send_data @mouvements.to_csv, type: 'text/csv', disposition: 'attachment', filename: "historique.csv"}
+        format.xlsx
     end
   end
 
@@ -48,19 +48,21 @@ class MouvementsController < ApplicationController
     @cout_supp_gestion = 0
     @cout_add_base = 0
     @cout_add_gestion = 0
-    (0..3).to_a.each do |i|
+    (0..9).to_a.each do |i|
       if !@suppressions[i].nil? && @suppressions[i] != ""
         @cout_etp = Cout.where('programme_id = ? AND categorie = ?',Programme.where(numero: params[:programmes][i].to_i).first.id, params[:grades][i]).first.cout
         @cout_supp_base += -(params[:quotites][i].to_f * @cout_etp).to_i
         @cout_supp_gestion += -(params[:quotites][i].to_f * @cout_etp * (DateTime.new(Date.today.year,12,31)-params[:dates][i].to_date).to_i / 365).to_i
       end
+    end
+    (0..3).to_a.each do |i|
       if !@ajouts[i].nil? && @ajouts[i] != ""
         @cout_etp = Cout.where('programme_id = ? AND categorie = ?',Programme.where(numero: params[:addprogrammes][i].to_i).first.id, params[:addgrades][i]).first.cout
         @cout_add_gestion = (params[:addquotites][i].to_f * @cout_etp * (DateTime.new(Date.today.year,12,31)-params[:adddates][i].to_date).to_i / 365).to_i
-        if params[:ponctuel][i] == "true"
+        if params[:ponctuel][i] == true
           @cout_add_base += 0 
         else
-          @cout_add_base += (params[:quotites][i].to_f * @cout_etp).to_i #valider le cout etp car programme nouveau pas supp 
+          @cout_add_base += (params[:addquotites][i].to_f * @cout_etp).to_i #valider le cout etp car programme nouveau pas supp 
         end 
       end 
     end
@@ -78,9 +80,9 @@ class MouvementsController < ApplicationController
     @redeploiement.save 
 
     @lien = Mouvement.count+1
-    @suppressions = [params[:grade1],params[:grade2],params[:grade3],params[:grade4]]
+    @suppressions = [params[:grade1],params[:grade2],params[:grade3],params[:grade4],params[:grade5],params[:grade6],params[:grade7],params[:grade8],params[:grade9],params[:grade10]]
     @ajouts = [params[:addgrade1],params[:addgrade2],params[:addgrade3],params[:addgrade4]]
-    (1..4).to_a.each do |i|
+    (1..10).to_a.each do |i|
       if !@suppressions[i-1].nil? && @suppressions[i-1] != ""
         @mouvement = Mouvement.new
         @mouvement.date = Date.today
@@ -102,7 +104,9 @@ class MouvementsController < ApplicationController
         @redeploiement.suppression += 1
         @redeploiement.cout_etp += @mouvement.cout_etp
         @redeploiement.credits_gestion += @mouvement.credits_gestion
-      end 
+      end
+    end
+    (1..4).to_a.each do |i| 
       if !@ajouts[i-1].nil? && @ajouts[i-1] != ""
         @mouvement = Mouvement.new
         @mouvement.date = Date.today

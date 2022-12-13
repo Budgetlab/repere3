@@ -22,9 +22,9 @@ class PagesController < ApplicationController
       @programmes = Programme.where(ministere_id: @ministere.id).order(numero: :asc)      
     end
 
-    @etp_cible = @objectifs.sum('etp_cible')
-    @etp_3 = 0.03 * @etp_cible
-    @etpt_plafond = @objectifs.sum('etpt_plafond')
+    @etp_cible = @objectifs.sum('etp_cible').round(1)
+    @etp_3 = (0.03 * @etp_cible).round(1)
+    @etpt_plafond = @objectifs.sum('etpt_plafond').round(2)
     @etp_supp = @mouvements.where(type_mouvement: "suppression").sum('quotite').round(1)  
 
     @etp_supp_a = @mouvements.where('type_mouvement = ? AND grade = ?', "suppression", 'A').sum('quotite').round(1)
@@ -86,13 +86,15 @@ class PagesController < ApplicationController
   end
 
   def error_404
-      if params[:path] && params[:path] == "500"
-        render 'error_500'
-      end 
+    if params[:path] && params[:path] == "500"
+      render 'error_500'
+    else 
+      render status: 404
+    end 
   end 
 
   def error_500
-        
+    render status: 500
   end
 
   def mentions_legales
