@@ -337,9 +337,10 @@ export default class extends Controller {
     this.addgrade1Target,this.addgrade2Target,this.addgrade3Target,this.addgrade4Target, this.addquotite1Target,this.addquotite2Target,this.addquotite3Target,this.addquotite4Target,this.adddate1Target,this.adddate2Target,this.adddate3Target,this.adddate4Target,this.addprogramme1Target,this.addprogramme2Target,this.addprogramme3Target,this.addprogramme4Target,this.addservice1Target,this.addservice2Target,this.addservice3Target,this.addservice4Target];
     const result_targets = [this.resultGrade1Target,this.resultGrade2Target,this.resultGrade3Target,this.resultGrade4Target,this.resultGrade5Target,this.resultGrade6Target,this.resultGrade7Target,this.resultGrade8Target,this.resultGrade9Target,this.resultGrade10Target, this.resultQuotite1Target,this.resultQuotite2Target,this.resultQuotite3Target,this.resultQuotite4Target,this.resultQuotite5Target,this.resultQuotite6Target,this.resultQuotite7Target,this.resultQuotite8Target,this.resultQuotite9Target,this.resultQuotite10Target,this.resultDate1Target,this.resultDate2Target,this.resultDate3Target,this.resultDate4Target,this.resultDate5Target,this.resultDate6Target,this.resultDate7Target,this.resultDate8Target,this.resultDate9Target,this.resultDate10Target,this.resultProgramme1Target,this.resultProgramme2Target,this.resultProgramme3Target,this.resultProgramme4Target,this.resultProgramme5Target,this.resultProgramme6Target,this.resultProgramme7Target,this.resultProgramme8Target,this.resultProgramme9Target,this.resultProgramme10Target,this.resultService1Target,this.resultService2Target,this.resultService3Target,this.resultService4Target,this.resultService5Target,this.resultService6Target,this.resultService7Target,this.resultService8Target,this.resultService9Target,this.resultService10Target,
     this.resultaddGrade1Target,this.resultaddGrade2Target,this.resultaddGrade3Target,this.resultaddGrade4Target, this.resultaddQuotite1Target,this.resultaddQuotite2Target,this.resultaddQuotite3Target,this.resultaddQuotite4Target,this.resultaddDate1Target,this.resultaddDate2Target,this.resultaddDate3Target,this.resultaddDate4Target,this.resultaddProgramme1Target,this.resultaddProgramme2Target,this.resultaddProgramme3Target,this.resultaddProgramme4Target,this.resultaddService1Target,this.resultaddService2Target,this.resultaddService3Target,this.resultaddService4Target];
+
     const ponctuel_targets = [ this.addponctuel1Target,this.addponctuel2Target,this.addponctuel3Target,this.addponctuel4Target];
     const result_ponctuel_targets = [this.resultaddPonctuel1Target,this.resultaddPonctuel2Target,this.resultaddPonctuel3Target,this.resultaddPonctuel4Target]
-    const arr = Array.from({length:(60)},(v,k)=>k);
+    const arr = Array.from({length:(70)},(v,k)=>k);
     if (isValid == true) {
       this.formSuppressionTarget.classList.add('fr-hidden');
       this.resultSuppressionTarget.classList.remove('fr-hidden');
@@ -394,7 +395,6 @@ export default class extends Controller {
       
       const body = {grades: grades, addgrades: addgrades,programmes: programmes, addprogrammes: addprogrammes, quotites: quotites, addquotites: addquotites, dates: dates, adddates: adddates, ponctuel: ponctuel};
       
-      console.log(body);
       fetch(url, { 
         method: 'POST', 
         body: JSON.stringify(body),
