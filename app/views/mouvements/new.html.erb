@@ -32,7 +32,42 @@
 	<% if Date.today <= Date.new(2023,10,31)%>
 	<div>
 		<%= form_with(url: mouvements_path, method: :post, data: {'form-target': "form", action: "change->form#formChange"}) do |f|%>
-		<div class="fr-grid-row fr-grid-row--gutters fr-mb-4w" >
+			<div class="fr-grid-row fr-grid-row--gutters fr-mb-4w" >
+				<div class="fr-col-12">
+					<div class="fr-modal__body">
+						<div class="fr-modal__header"></div>
+						<div class="fr-modal__content fr-mb-4w">
+							<div class="fr-h5">S'agit-il d'un redéploiement ponctuel ?</div>
+							<div data-form-target="ponctuelContent">
+								<fieldset class="fr-fieldset fr-mb-0">
+								<legend class="fr-fieldset__legend--regular fr-fieldset__legend" id='radio-inline-legend'>
+									Un poste ponctuel est un poste qui répond à une politique prioritaire ministérielle nécessitant des recrutements spécifiques et exceptionnels en cours d’année. Lors d'un redéploiement ponctuel les coûts en base (année N+1) sont nuls pour tous les mouvements.
+								</legend>
+
+								<div class="fr-fieldset__element fr-fieldset__element--inline fr-mb-0">
+								<div class="fr-radio-group">
+									<%= f.radio_button :ponctuel, true, id: "radio-ponctuel", data: {'form-target': 'addponctuel'}, checked: false  %>
+									<label class="fr-label" for="radio-ponctuel">Oui</label>
+								</div>
+							</div>
+								<div class="fr-fieldset__element fr-fieldset__element--inline fr-mb-0">
+								<div class="fr-radio-group">
+									<%= f.radio_button :ponctuel, false, checked: true, id:"ponctuel2" %>
+									<label class="fr-label" for="ponctuel">Non</label>
+								</div>
+							</div>
+
+								</fieldset>
+							</div>
+							<div data-form-target="ponctuelResult" class="fr-hidden">
+								<div data-form-target='resultponctuel'></div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<div class="fr-grid-row fr-grid-row--gutters fr-mb-4w" >
 			<div class="fr-col-12 fr-col-lg-6">
 				<div class="fr-modal__body">
 	                <div class="fr-modal__header"></div>
@@ -191,32 +226,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="fr-grid-row fr-grid-row--gutters">
-									<div class="fr-col-12 fr-col-lg-12">
-										
-										    <fieldset class="fr-fieldset fr-mb-0">
-										        <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id='radio-inline-legend'>
-										            S'agit-il d'un emploi ponctuel ?
-										            <div class="fr-text--xs fr-mb-0">Un poste ponctuel est un poste qui répond à une politique prioritaire ministérielle nécessitant des recrutements spécifiques et exceptionnels en cours d’année</div> 
-										        </legend>
-										        
-										        <div class="fr-fieldset__element fr-fieldset__element--inline fr-mb-0">
-										            <div class="fr-radio-group">
-										                <%= f.radio_button :ponctuel1, true, id: "radio-ponctuel1", data: {'form-target': 'addponctuel1'}, checked: false  %>
-										                <label class="fr-label" for="radio-ponctuel1">Oui</label>
-										            </div>
-										        </div>
-										        <div class="fr-fieldset__element fr-fieldset__element--inline fr-mb-0">
-										            <div class="fr-radio-group">
-										                <%= f.radio_button :ponctuel1, false, checked: true, id:"radio-ponctuel2" %>
-										                <label class="fr-label" for="radio-ponctuel2">Non</label>
-										            </div>
-										        </div>
-										        
-										    </fieldset>
-										
-									</div>
-								</div>
+
 							</div>
 							<% (2..4).each do |i|%>
 								<div class="fr-my-4w fr-hidden" data-form-target="addcontent<%=i%>">
@@ -255,28 +265,7 @@
 											</div>
 										</div>
 									</div>
-									<div class="fr-grid-row fr-grid-row--gutters">
-									<div class="fr-col-12 fr-col-lg-12">
-										<div class="">
-										    <fieldset class="fr-fieldset fr-fieldset--inline">
-										        <legend class="fr-fieldset__legend fr-text--regular fr-mb-1w" id='radio-inline-legend'>
-										            S'agit-il d'un emploi ponctuel ? 
-										        </legend>
-										        <div class="fr-fieldset__content" >
-										            <div class="fr-radio-group">
-										                <%= f.radio_button "ponctuel#{i}", true, id: "radio-ponctuel1"+i.to_s, data: {'form-target': 'addponctuel'+i.to_s},checked: false  %>
-										                <label class="fr-label" for="radio-ponctuel1<%=i%>">Oui</label>
-										            </div>
-										            <div class="fr-radio-group">
-										                <%= f.radio_button "ponctuel#{i}", false, checked: true, id:"radio-ponctuel2"+i.to_s %>
-										                <label class="fr-label" for="radio-ponctuel2<%=i%>">Non</label>
-										            </div>
-										        </div>
-										        
-										    </fieldset>
-										</div>
-									</div>
-								</div>
+
 								</div>
 							<% end %>
 							<div class="fr-error-text fr-hidden" data-form-target="errorAddAjout" role="alert"> </div>
@@ -299,7 +288,6 @@
 									<span class="fr-tag">Date effective : <span data-form-target='resultaddDate<%=i%>'></span></span>
 									<span class="fr-tag">Programme : <span data-form-target='resultaddProgramme<%=i%>'></span> </span>
 									<span class="fr-tag">Service : <span data-form-target='resultaddService<%=i%>'></span> </span>
-									<span class="fr-tag">Ajout ponctuel : <span data-form-target='resultaddPonctuel<%=i%>'></span> </span>
 								</div>
 							<% end %>
 						</div>

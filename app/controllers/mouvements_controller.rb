@@ -59,12 +59,13 @@ class MouvementsController < ApplicationController
       if !@ajouts[i].nil? && @ajouts[i] != ""
         @cout_etp = Cout.where('programme_id = ? AND categorie = ?',Programme.where(numero: params[:addprogrammes][i].to_i).first.id, params[:addgrades][i]).first.cout
         @cout_add_gestion = (params[:addquotites][i].to_f * @cout_etp * (DateTime.new(Date.today.year,12,31)-params[:adddates][i].to_date).to_i / 365).to_i
-        if params[:ponctuel][i] == true
-          @cout_add_base += 0 
-        else
-          @cout_add_base += (params[:addquotites][i].to_f * @cout_etp).to_i #valider le cout etp car programme nouveau pas supp 
-        end 
+        @cout_add_base += (params[:addquotites][i].to_f * @cout_etp).to_i #valider le cout etp car programme nouveau pas supp
       end 
+    end
+
+    if params[:ponctuel] == true
+      @cout_add_base = 0
+      @cout_supp_base = 0
     end
     response = {cout_supp_base: @cout_supp_base, cout_supp_gestion: @cout_supp_gestion, cout_add_base: @cout_add_base, cout_add_gestion: @cout_add_gestion}
     render json: response
@@ -95,7 +96,12 @@ class MouvementsController < ApplicationController
         @mouvement.programme_id = Programme.where(numero: params["programme#{i}"].to_i).first.id
         @mouvement.service_id = Service.where(nom: params["service#{i}"], programme_id: Programme.where(numero: params["programme#{i}"].to_i).first.id).first.id
         @cout_etp = Cout.where('programme_id = ? AND categorie = ?',Programme.where(numero: params["programme#{i}"].to_i).first.id, params["grade#{i}"]).first.cout
-        @mouvement.cout_etp = -(params["quotite#{i}"].to_f * @cout_etp).round(2)
+        if params["ponctuel"] == "true"
+          @mouvement.ponctuel = true
+          @mouvement.cout_etp = 0
+        else
+          @mouvement.cout_etp = -(params["quotite#{i}"].to_f * @cout_etp).round(2)
+        end
         @mouvement.credits_gestion = -(params["quotite#{i}"].to_f * @cout_etp * (DateTime.new(Date.today.year,12,31)-params["date#{i}"].to_date).to_i / 365).round(2)
         @mouvement.etpt =  (params["quotite#{i}"].to_f * (params["date#{i}"].to_date-DateTime.new(Date.today.year,1,1)).to_i / 365).round(2)
         @mouvement.mouvement_lien = @redeploiement.id
@@ -124,7 +130,7 @@ class MouvementsController < ApplicationController
         @mouvement.mouvement_lien = @redeploiement.id
         @mouvement.redeploiement = @redeploiement
         
-        if params["ponctuel#{i}"] == "true" 
+        if params["ponctuel"] == "true"
           @mouvement.ponctuel = true 
           @mouvement.cout_etp = 0 
         else

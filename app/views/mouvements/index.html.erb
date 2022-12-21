@@ -54,10 +54,10 @@
 			            	Redéploiement n°<%= redeploiement.id%> effectué le <%= l(redeploiement.created_at,format: "%e/%m/%y") %> 
 			      			<% if current_user.statut == "admin" || current_user.statut == "ministere"%><p class="fr-badge fr-badge--purple-glycine"><%= redeploiement.region.nom%></p><% end %> 
 
-			      			<% if redeploiement.ajout > 0 %><p class="fr-badge fr-badge--green-emeraude"><%= redeploiement.ajout %> <% if redeploiement.ajout > 1 %>ajouts<%else%>ajout<%end%> </p><%end%>
+			      			<% if redeploiement.ajout > 0 %><p class="fr-badge fr-badge--green-emeraude"><%= pluralize(redeploiement.ajout,'ajout') %> </p><%end%>
 
 			      			<% if redeploiement.suppression > 0 %>
-			      			<p class="fr-badge fr-badge--blue-cumulus"><%= redeploiement.suppression %> <% if redeploiement.suppression > 1 %>suppressions<%else%>suppression<%end%></p><% end %>
+			      			<p class="fr-badge fr-badge--blue-cumulus"><%= pluralize(redeploiement.suppression,'suppression')%></p><% end %>
 
 			      			<p class="fr-badge fr-badge--new fr-badge--no-icon"><%= number_with_delimiter(redeploiement.credits_gestion.to_i, locale: :fr)%>€ /
 					      	<%= number_with_delimiter(redeploiement.cout_etp.to_i, locale: :fr)%>€</p>
@@ -91,7 +91,7 @@
 								      	<td><%= l(mouvement.date_effet,format: "%e/%m/%y")%></td>
 								      	<td><%= format_number(mouvement.etpt)%></td>
 								      	
-								      	<td><% if mouvement.type_mouvement == "ajout"%><p class="fr-badge fr-badge--green-emeraude"><%= mouvement.type_mouvement%></p> <% if mouvement.ponctuel == true %><p class="fr-badge fr-badge--green-emeraude">ponctuel</p><%end%><% else %><p class="fr-badge fr-badge--blue-cumulus"><%= mouvement.type_mouvement%></p> <% end %></td>
+								      	<td><% if mouvement.type_mouvement == "ajout"%><p class="fr-badge fr-badge--green-emeraude"><%= mouvement.type_mouvement%></p> <% else %><p class="fr-badge fr-badge--blue-cumulus"><%= mouvement.type_mouvement%></p> <% end %> <% if mouvement.ponctuel == true %><p class="fr-badge fr-badge--new fr-badge--no-icon">ponctuel</p><%end%></td>
 								      	<td><%= mouvement.service.nom%></td>
 								      	<td><%= mouvement.programme.numero %></td>
 								      	

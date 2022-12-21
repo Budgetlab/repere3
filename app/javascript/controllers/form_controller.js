@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static get targets() {
-  return ['form','submitBouton','error','BtnPreview','BtnModifier','info',
+  return ['form','submitBouton','error','BtnPreview','BtnModifier','info','addponctuel','resultponctuel','ponctuelContent','ponctuelResult',
   'content1','grade1','quotite1','date1','programme1','service1',
   'content2', 'grade2','quotite2','date2','programme2','service2',
   'content3','grade3','quotite3','date3','programme3','service3',
@@ -14,10 +14,10 @@ export default class extends Controller {
   'content9','grade9','quotite9','date9','programme9','service9',
   'content10','grade10','quotite10','date10','programme10','service10',
   'formSuppression','BtnAddSuppression','errorAddSuppression','countSuppression','coutSuppression','coutSuppressionBase',
-  'addcontent1','addgrade1','addquotite1','adddate1','addprogramme1','addservice1','addponctuel1',
-  'addcontent2','addgrade2','addquotite2','adddate2','addprogramme2','addservice2','addponctuel2',
-  'addcontent3','addgrade3','addquotite3','adddate3','addprogramme3','addservice3','addponctuel3',
-  'addcontent4','addgrade4','addquotite4','adddate4','addprogramme4','addservice4','addponctuel4',
+  'addcontent1','addgrade1','addquotite1','adddate1','addprogramme1','addservice1',
+  'addcontent2','addgrade2','addquotite2','adddate2','addprogramme2','addservice2',
+  'addcontent3','addgrade3','addquotite3','adddate3','addprogramme3','addservice3',
+  'addcontent4','addgrade4','addquotite4','adddate4','addprogramme4','addservice4',
   'formAjout','BtnAddAjout','errorAddAjout','countAjout','coutAjout','coutAjoutBase',
   'resultSuppression','resultSuppression1','resultSuppression2','resultSuppression3','resultSuppression4','resultSuppression5','resultSuppression6','resultSuppression7','resultSuppression8','resultSuppression9','resultSuppression10',
   'resultGrade1','resultQuotite1','resultDate1','resultProgramme1','resultService1',
@@ -31,10 +31,10 @@ export default class extends Controller {
   'resultGrade9','resultQuotite9','resultDate9','resultProgramme9','resultService9',
   'resultGrade10','resultQuotite10','resultDate10','resultProgramme10','resultService10',
   'resultAjout','resultAjout1','resultAjout2','resultAjout3','resultAjout4',
-  'resultaddGrade1','resultaddQuotite1','resultaddDate1','resultaddProgramme1','resultaddService1','resultaddPonctuel1',
-  'resultaddGrade2','resultaddQuotite2','resultaddDate2','resultaddProgramme2','resultaddService2','resultaddPonctuel2',
-  'resultaddGrade3','resultaddQuotite3','resultaddDate3','resultaddProgramme3','resultaddService3','resultaddPonctuel3',
-  'resultaddGrade4','resultaddQuotite4','resultaddDate4','resultaddProgramme4','resultaddService4','resultaddPonctuel4',
+  'resultaddGrade1','resultaddQuotite1','resultaddDate1','resultaddProgramme1','resultaddService1',
+  'resultaddGrade2','resultaddQuotite2','resultaddDate2','resultaddProgramme2','resultaddService2',
+  'resultaddGrade3','resultaddQuotite3','resultaddDate3','resultaddProgramme3','resultaddService3',
+  'resultaddGrade4','resultaddQuotite4','resultaddDate4','resultaddProgramme4','resultaddService4',
   'success',
   ];
   }
@@ -338,8 +338,6 @@ export default class extends Controller {
     const result_targets = [this.resultGrade1Target,this.resultGrade2Target,this.resultGrade3Target,this.resultGrade4Target,this.resultGrade5Target,this.resultGrade6Target,this.resultGrade7Target,this.resultGrade8Target,this.resultGrade9Target,this.resultGrade10Target, this.resultQuotite1Target,this.resultQuotite2Target,this.resultQuotite3Target,this.resultQuotite4Target,this.resultQuotite5Target,this.resultQuotite6Target,this.resultQuotite7Target,this.resultQuotite8Target,this.resultQuotite9Target,this.resultQuotite10Target,this.resultDate1Target,this.resultDate2Target,this.resultDate3Target,this.resultDate4Target,this.resultDate5Target,this.resultDate6Target,this.resultDate7Target,this.resultDate8Target,this.resultDate9Target,this.resultDate10Target,this.resultProgramme1Target,this.resultProgramme2Target,this.resultProgramme3Target,this.resultProgramme4Target,this.resultProgramme5Target,this.resultProgramme6Target,this.resultProgramme7Target,this.resultProgramme8Target,this.resultProgramme9Target,this.resultProgramme10Target,this.resultService1Target,this.resultService2Target,this.resultService3Target,this.resultService4Target,this.resultService5Target,this.resultService6Target,this.resultService7Target,this.resultService8Target,this.resultService9Target,this.resultService10Target,
     this.resultaddGrade1Target,this.resultaddGrade2Target,this.resultaddGrade3Target,this.resultaddGrade4Target, this.resultaddQuotite1Target,this.resultaddQuotite2Target,this.resultaddQuotite3Target,this.resultaddQuotite4Target,this.resultaddDate1Target,this.resultaddDate2Target,this.resultaddDate3Target,this.resultaddDate4Target,this.resultaddProgramme1Target,this.resultaddProgramme2Target,this.resultaddProgramme3Target,this.resultaddProgramme4Target,this.resultaddService1Target,this.resultaddService2Target,this.resultaddService3Target,this.resultaddService4Target];
 
-    const ponctuel_targets = [ this.addponctuel1Target,this.addponctuel2Target,this.addponctuel3Target,this.addponctuel4Target];
-    const result_ponctuel_targets = [this.resultaddPonctuel1Target,this.resultaddPonctuel2Target,this.resultaddPonctuel3Target,this.resultaddPonctuel4Target]
     const arr = Array.from({length:(70)},(v,k)=>k);
     if (isValid == true) {
       this.formSuppressionTarget.classList.add('fr-hidden');
@@ -372,13 +370,14 @@ export default class extends Controller {
       arr.forEach((indice)=>{
         this.replaceHtml(form_targets[indice], result_targets[indice]);
       });
-      [0,1,2,3].forEach((indice) => {
-        if (ponctuel_targets[indice].checked == true){
-          result_ponctuel_targets[indice].innerHTML = "Oui";
+
+        if (this.addponctuelTarget.checked == true){
+          this.resultponctuelTarget.innerHTML = "Oui";
         }else{
-          result_ponctuel_targets[indice].innerHTML = "Non";
+          this.resultponctuelTarget.innerHTML = "Non";
         }
-      });
+      this.ponctuelResultTarget.classList.remove('fr-hidden');
+      this.ponctuelContentTarget.classList.add('fr-hidden');
       this.infoTarget.classList.add('fr-hidden');
       // mettre à jour les couts 
       const token = document.querySelector('meta[name="csrf-token"]').content;
@@ -391,7 +390,7 @@ export default class extends Controller {
       const addquotites = [this.addquotite1Target.value, this.addquotite2Target.value, this.addquotite3Target.value, this.addquotite4Target.value];
       const dates = [this.date1Target.value, this.date2Target.value, this.date3Target.value, this.date4Target.value, this.date5Target.value, this.date6Target.value, this.date7Target.value, this.date8Target.value, this.date9Target.value, this.date10Target.value];
       const adddates = [this.adddate1Target.value, this.adddate2Target.value, this.adddate3Target.value, this.adddate4Target.value];
-      const ponctuel = [this.addponctuel1Target.checked, this.addponctuel2Target.checked, this.addponctuel3Target.checked, this.addponctuel4Target.checked];
+      const ponctuel = this.addponctuelTarget.checked;
       
       const body = {grades: grades, addgrades: addgrades,programmes: programmes, addprogrammes: addprogrammes, quotites: quotites, addquotites: addquotites, dates: dates, adddates: adddates, ponctuel: ponctuel};
       
@@ -435,6 +434,8 @@ export default class extends Controller {
     this.infoTarget.classList.remove('fr-hidden');
     this.errorTarget.classList.add('fr-hidden');
     this.successTarget.classList.add('fr-hidden');
+    this.ponctuelResultTarget.classList.add('fr-hidden');
+    this.ponctuelContentTarget.classList.remove('fr-hidden');
   }
 
   replaceHtml(form, result){
