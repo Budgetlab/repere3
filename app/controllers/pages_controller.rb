@@ -2,113 +2,98 @@ class PagesController < ApplicationController
   before_action :authenticate_user!
 
   def accueil
+    @start = Date.new(Date.today.year, 1, 1)
 
-    @start = Date.new(Date.today.year,1,1)
-    @end = Date.new(Date.today.year,12,31)
-
-    if current_user.statut == "admin"
-      @mouvements = Mouvement.where('date >= ? AND date <= ?',@start,@end).order(date: :desc)
-      @objectifs = Objectif.where('date >= ? AND date <= ?',@start,@end)
+    case current_user.statut
+    when 'admin'
       @programmes = Programme.all.order(numero: :asc)
-    elsif current_user.statut == "prefet" || current_user.statut == "CBR"
-      @mouvements = Mouvement.where(region_id: current_user.region_id).where('date >= ? AND date <= ?',@start,@end).order(date: :desc)      
-      @objectifs = Objectif.where('region_id = ? AND date >= ? AND date <= ?',current_user.region_id, @start,@end)
+      @regions = Region.all.order(nom: :asc)
+    when 'prefet', 'CBR'
       @programmes = Programme.all.order(numero: :asc)
-    elsif current_user.statut == "ministere"
+      @regions = Region.where(id: current_user.region_id)
+    when 'ministere'
       @ministere = Ministere.where(nom: current_user.nom).first
-      @programme_id = Programme.where(ministere_id: @ministere.id).pluck(:id)
-      @mouvements = Mouvement.where(programme_id: @programme_id).where('date >= ? AND date <= ?',@start,@end).order(date: :desc)     
-      @objectifs = Objectif.where(programme_id: @programme_id).where('date >= ? AND date <= ?',@start,@end)         
-      @programmes = Programme.where(ministere_id: @ministere.id).order(numero: :asc)      
+      @programmes = Programme.where(ministere_id: @ministere.id).order(numero: :asc)
+      @regions = Region.all.order(nom: :asc)
     end
+    @array_programme_mvt = @programmes.includes(:mouvements).where(mouvements: { region_id: @regions.pluck(:id) }).since_date(@start).pluck(:programme_id, :type_mouvement, :quotite, :etpt, :cout_etp, :credits_gestion, :grade)
+    @array_programme_obj = @programmes.includes(:objectifs).where(objectifs: { region_id: @regions.pluck(:id) }).since_date(@start).pluck(:programme_id, :etp_cible, :etpt_plafond)
 
-    @etp_cible = @objectifs.sum('etp_cible').round(1)
+    @array_region_mvt = @regions.includes(:mouvements).where(mouvements: { programme_id: @programmes.pluck(:id) }).since_date(@start).pluck(:region_id, :type_mouvement, :quotite, :etpt, :cout_etp, :credits_gestion, :grade)
+    @array_region_obj = @regions.includes(:objectifs).where(objectifs: { programme_id: @programmes.pluck(:id) }).since_date(@start).pluck(:region_id, :etp_cible, :etpt_plafond)
+
+    @etp_cible = @array_programme_obj.sum{ |s| s[1] }.round(1)
+    @etpt_plafond = @array_programme_obj.sum{ |s| s[2] }.round(1)
     @etp_3 = (0.03 * @etp_cible).round(1)
-    @etpt_plafond = @objectifs.sum('etpt_plafond').round(2)
-    @etp_supp = @mouvements.where(type_mouvement: "suppression").sum('quotite').round(1)  
+    @credits = @array_programme_mvt.sum{ |s| s[5] }.to_i
+    @couts_etp = @array_programme_mvt.sum{ |s| s[4] }.to_i
 
-    @etp_supp_a = @mouvements.where('type_mouvement = ? AND grade = ?', "suppression", 'A').sum('quotite').round(1)
-    @etp_supp_b = @mouvements.where('type_mouvement = ? AND grade = ?', "suppression", 'B').sum('quotite').round(1)
-    @etp_supp_c = @mouvements.where('type_mouvement = ? AND grade = ?', "suppression", 'C').sum('quotite').round(1)
-    @etp_add = @mouvements.where(type_mouvement: "ajout").sum('quotite').round(1)
-    @etp_add_a = @mouvements.where('type_mouvement = ? AND grade = ?', "ajout", 'A').sum('quotite').round(1)
-    @etp_add_b = @mouvements.where('type_mouvement = ? AND grade = ?', "ajout", 'B').sum('quotite').round(1)
-    @etp_add_c = @mouvements.where('type_mouvement = ? AND grade = ?', "ajout", 'C').sum('quotite').round(1)
-
-    @etpt_supp = @mouvements.where(type_mouvement: "suppression").sum('etpt').round(2)
-    @etpt_supp_a = @mouvements.where('type_mouvement = ? AND grade = ?', "suppression", 'A').sum('etpt').round(2)
-    @etpt_supp_b = @mouvements.where('type_mouvement = ? AND grade = ?', "suppression", 'B').sum('etpt').round(2)
-    @etpt_supp_c = @mouvements.where('type_mouvement = ? AND grade = ?', "suppression", 'C').sum('etpt').round(2)
-    @etpt_add = @mouvements.where(type_mouvement: "ajout").sum('etpt').round(2)
-    @etpt_add_a = @mouvements.where('type_mouvement = ? AND grade = ?', "ajout", 'A').sum('etpt').round(2)
-    @etpt_add_b = @mouvements.where('type_mouvement = ? AND grade = ?', "ajout", 'B').sum('etpt').round(2)
-    @etpt_add_c = @mouvements.where('type_mouvement = ? AND grade = ?', "ajout", 'C').sum('etpt').round(2)
-
-    @regions = Region.all.order(nom: :asc)
+    @etp_supp = []
+    @etp_add = []
+    @etpt_supp = []
+    @etpt_add = []
+    ['A', 'B', 'C'].each do |letter|
+      @etp_supp << @array_programme_mvt.select { |a| a[1] == 'suppression' && a[6] == letter }.sum { |s| s[2] }.round(1)
+      @etp_add << @array_programme_mvt.select { |a| a[1] == 'ajout' && a[6] == letter }.sum { |s| s[2] }.round(1)
+      @etpt_supp << @array_programme_mvt.select { |a| a[1] == 'suppression' && a[6] == letter }.sum { |s| s[3] }.round(1)
+      @etpt_add << @array_programme_mvt.select { |a| a[1] == 'ajout' && a[6] == letter }.sum { |s| s[3] }.round(1)
+    end
     @etp_supp_region = []
     @etp_plafond = []
     @etp_region = []
     @regions.each do |region|
-      @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "ajout", 'A', region.id).sum('quotite').round(1)
-      @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "ajout", 'B', region.id).sum('quotite').round(1)
-      @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "ajout", 'C', region.id).sum('quotite').round(1)
-      @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "suppression", 'A', region.id).sum('quotite').round(1)      
-      @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "suppression", 'B', region.id).sum('quotite').round(1)
-      @etp_region << @mouvements.where('type_mouvement = ? AND grade = ? AND region_id = ?', "suppression", 'C', region.id).sum('quotite').round(1)
-
-      @etp_supp_region << @mouvements.where(region_id: region.id, type_mouvement: "suppression").sum('quotite').round(1)
-      @etp_plafond << (0.03*Objectif.where('region_id = ? AND date >= ? AND date <= ?',region.id,@start,@end).sum('etp_cible')).round(1)
+      ['ajout', 'suppression'].each do |action|
+        ['A', 'B', 'C'].each do |category|
+          @etp_region << @array_region_mvt.select { |a| a[0] == region.id && a[1] == action && a[6] == category }.sum { |s| s[2] }.round(1)
+        end
+      end
+      @etp_plafond << @array_region_obj.select { |a| a[0] == region.id }.sum { |s| 0.03*s[1] }.round(1)
     end
 
     @ept_prog = []
     @etp_supp_prog = []
     @programmes.each do |programme|
-      @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "ajout", 'A', programme.id).sum('quotite').round(1)
-      @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "ajout", 'B', programme.id).sum('quotite').round(1)
-      @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "ajout", 'C', programme.id).sum('quotite').round(1)
-      @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "suppression", 'A', programme.id).sum('quotite').round(1)      
-      @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "suppression", 'B', programme.id).sum('quotite').round(1)
-      @ept_prog << @mouvements.where('type_mouvement = ? AND grade = ? AND programme_id = ?', "suppression", 'C', programme.id).sum('quotite').round(1)
-     
-      @etp_supp_prog << @mouvements.where('type_mouvement = ? AND programme_id = ?', "suppression", programme.id).sum('quotite').round(1)
-     end 
+      ['ajout', 'suppression'].each do |action|
+        ['A', 'B', 'C'].each do |category|
+          @ept_prog << @array_programme_mvt.select { |a| a[0] == programme.id && a[1] == action && a[6] == category }.sum { |s| s[2] }.round(1)
+        end
+      end
+      @etp_supp_prog << @array_programme_mvt.select { |a| a[0] == programme.id && a[1] == 'suppression' }.sum { |s| s[2] }.round(1)
+    end
 
     @mouvements_ajout = []
     @etp_time_ajout = []
     @mouvements_supp = []
     @etp_time_supp = []
+    @hash_date = Mouvement.group("DATE_TRUNC('month', date)").group(:type_mouvement).sum(:quotite)
+    @hash_date_effet = Mouvement.group("DATE_TRUNC('month', date)").group(:type_mouvement).sum(:quotite)
     (0..11).to_a.each do |i|
-      @mouvements_ajout << @mouvements.where(type_mouvement: "suppression").where('date >= ? AND date <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite').round(1)
-      @mouvements_supp <<  @mouvements.where(type_mouvement: "ajout").where('date >= ? AND date <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite').round(1)
-      @etp_time_ajout << @mouvements.where(type_mouvement: "ajout").where('date_effet >= ? AND date_effet <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite').round(1)
-      @etp_time_supp << @mouvements.where(type_mouvement: "suppression").where('date_effet >= ? AND date_effet <= ?', @start + i.month, @start + i.month + 1.month - 1.day).sum('quotite').round(1)
+      @mouvements_ajout << @hash_date.select { |key, value| key == [Date.new(Date.today.year, i+1, 1), 'ajout'] }.values.sum.round(1)
+      @mouvements_supp <<  @hash_date.select { |key, value| key == [Date.new(Date.today.year, i+1, 1), 'suppression'] }.values.sum.round(1)
+      @etp_time_ajout << @hash_date_effet.select { |key, value| key == [Date.new(Date.today.year, i+1, 1), 'ajout'] }.values.sum.round(1)
+      @etp_time_supp << @hash_date_effet.select { |key, value| key == [Date.new(Date.today.year, i+1, 1), 'suppression'] }.values.sum.round(1)
     end
   end
 
   def error_404
-    if params[:path] && params[:path] == "500"
+    if params[:path] && params[:path] == '500'
       render 'error_500'
-    else 
+    else
       render status: 404
-    end 
-  end 
+    end
+  end
 
   def error_500
     render status: 500
   end
 
-  def mentions_legales
-  end 
-  
-  def accessibilite
-  end
+  def mentions_legales; end
 
-  def donnees_personnelles
-  end
+  def accessibilite; end
 
-  def plan 
-  end 
+  def donnees_personnelles; end
 
-  def faq
-  end 
+  def plan; end
+
+  def faq; end
 end

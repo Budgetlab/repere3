@@ -35,7 +35,7 @@
 	</div>
 	<div class="fr-grid-row fr-grid-row--gutters fr-mb-4w">
 		<div class="fr-col-12 fr-col-lg-12">
-			<h2 class="fr-my-2w">Historique des <% if current_user.statut != "ministere"%>redéploiements [<%= @redeploiements.count%>] et <%end%>mouvements [<%= @mouvements.count%>]</h2>
+			<h2 class="fr-my-2w">Historique des <% if current_user.statut != "ministere"%>redéploiements [<%= @mouvements_array.map { |subarray| subarray[0] }.uniq.count%>] et <%end%>mouvements [<%= @mouvements_array.length%>]</h2>
 			<div class="fr-download">
 			    <p>
 			        <%= link_to historique_path(format: :xlsx), class: "fr-download__link" do %> Télécharger l'historique des mouvements
@@ -52,7 +52,7 @@
 			        <h3 class="fr-accordion__title">
 			            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="<%=redeploiement.id%>">
 			            	Redéploiement n°<%= redeploiement.id%> effectué le <%= l(redeploiement.created_at,format: "%e/%m/%y") %> 
-			      			<% if current_user.statut == "admin" || current_user.statut == "ministere"%><p class="fr-badge fr-badge--purple-glycine"><%= redeploiement.region.nom%></p><% end %> 
+			      			<% if current_user.statut == "admin" || current_user.statut == "ministere"%><p class="fr-badge fr-badge--purple-glycine"><%= redeploiement.region.nom%></p><% end %>
 
 			      			<% if redeploiement.ajout > 0 %><p class="fr-badge fr-badge--green-emeraude"><%= pluralize(redeploiement.ajout,'ajout') %> </p><%end%>
 

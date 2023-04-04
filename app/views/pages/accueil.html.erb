@@ -1,5 +1,5 @@
 
-<div class="fr-container"  data-controller="highcharts" data-highcharts-mvtcount="<%=@mouvements.count%>" data-highcharts-showregion="<%= current_user.statut == "admin" || current_user.statut == "ministere"%>" data-highcharts-categories="[<%=@etp_supp_a%>,<%=@etp_supp_b%>,<%=@etp_supp_c%>]"  data-highcharts-categories2="[<%=@etp_add_a%>,<%=@etp_add_b%>,<%=@etp_add_c%>]" data-highcharts-regions="<%= @regions.pluck(:nom)%>" data-highcharts-regionsun="<%= @etp_region%>" data-highcharts-region2="<%= @etp_supp_region%>" data-highcharts-plafond="<%= @etp_plafond%>" data-highcharts-programmes="<%= @programmes.pluck(:numero)%>" data-highcharts-programme1="<%= @ept_prog%>" data-highcharts-progetp="<%=@etp_supp_prog%>" data-highcharts-time1="<%= @etp_time_ajout%>" data-highcharts-time2="<%= @etp_time_supp%>" data-highcharts-ajout="<%=@mouvements_ajout%>" data-highcharts-suppression="<%= @mouvements_supp%>">    
+<div class="fr-container"  data-controller="highcharts" data-highcharts-mvtcount="<%=@array_programme_mvt.length%>" data-highcharts-showregion="<%= current_user.statut == "admin" || current_user.statut == "ministere"%>" data-highcharts-categories="<%=@etp_supp%>"  data-highcharts-categories2="<%=@etp_add%>" data-highcharts-regions="<%= @regions.pluck(:nom)%>" data-highcharts-regionsun="<%= @etp_region%>" data-highcharts-region2="<%= @etp_supp_region%>" data-highcharts-plafond="<%= @etp_plafond%>" data-highcharts-programmes="<%= @programmes.pluck(:numero)%>" data-highcharts-programme1="<%= @ept_prog%>" data-highcharts-progetp="<%=@etp_supp_prog%>" data-highcharts-time1="<%= @etp_time_ajout%>" data-highcharts-time2="<%= @etp_time_supp%>" data-highcharts-ajout="<%=@mouvements_ajout%>" data-highcharts-suppression="<%= @mouvements_supp%>">
 	<div class="fr-grid-row fr-grid-row--gutters">
 		<div class="fr-col-12 fr-col-lg-12">
 			<h1 class="fr-my-6w"><%= current_user.nom%></h1>
@@ -9,7 +9,7 @@
 		<div class="fr-col-12 fr-col-lg-3">
 			<div class="fr-callout ">
 		    	<p class="fr-callout__title"><%= format_number(@etp_cible) %> ETP</p>
-		    	<p class="fr-callout__text">notifiés </p>
+		    	<p class="fr-callout__text">notifiés</p>
 			</div>
 		</div>
 		<div class="fr-col-12 fr-col-lg-3">
@@ -20,13 +20,13 @@
 		</div>
 		<div class="fr-col-12 fr-col-lg-3">
 			<div class="fr-callout ">
-		    	<p class="fr-callout__title"><%= format_number(@etp_supp )%> ETP</p>
+		    	<p class="fr-callout__title"><%= format_number(@etp_supp.sum )%> ETP</p>
 		    	<p class="fr-callout__text">supprimés</p>
 			</div>
 		</div>
 		<div class="fr-col-12 fr-col-lg-3">
 			<div class="fr-callout ">
-		    	<p class="fr-callout__title"><% if @etp_cible != 0 %><%= format_number((@etp_supp/@etp_cible)*100) %><%else%>0<%end%>% ETP</p>
+		    	<p class="fr-callout__title"><% if @etp_cible != 0 %><%= format_number((@etp_supp.sum/@etp_cible)*100) %><%else%>0<%end%>% ETP</p>
 		    	<p class="fr-callout__text">supprimés</p>
 			</div>
 		</div>
@@ -103,27 +103,31 @@
 									<td><%= format_number(@etp_cible) %></td>
 									<td><%= format_number(@etpt_plafond)%></td>
 									<td><%= format_number(@etp_3)%></td>
-									<td><%= format_number(@etp_supp)%></td>
-									<td><% if @etp_cible != 0 %><%= format_number((@etp_supp/@etp_cible)*100) %><%else%>0<%end%>%</td>
-									<td><%= format_number(@etp_add)%></td>
-									<td><%= format_number(@etpt_supp)%></td>
-									<td><%= format_number(@etpt_add)%></td>
-									<td><%= format_number(@mouvements.sum('credits_gestion').to_i)%> €</td>
-									<td><%= format_number(@mouvements.sum('cout_etp').to_i)%> €</td>
+									<td><%= format_number(@etp_supp.sum)%></td>
+									<td><% if @etp_cible != 0 %><%= format_number((@etp_supp.sum/@etp_cible)*100) %><%else%>0<%end%>%</td>
+									<td><%= format_number(@etp_add.sum)%></td>
+									<td><%= format_number(@etpt_supp.sum)%></td>
+									<td><%= format_number(@etpt_add.sum)%></td>
+									<td><%= format_number(@credits)%> €</td>
+									<td><%= format_number(@couts_etp)%> €</td>
 								</tr>
 								<% @programmes.each do |programme|%>
+									<% etp_cible_sum = @array_programme_obj.select{|a| a[0] == programme.id }.sum{|s| s[1]} %>
+									<% etpt_plafond_sum = @array_programme_obj.select{|a| a[0] == programme.id }.sum{|s| s[2]} %>
+									<% etp_cible_3_percent = (etp_cible_sum * 0.03).round(1) %>
+
 								<tr>
 									<td><%= programme.numero %></td>
-									<td><%= format_number(@objectifs.where(programme_id: programme.id).sum('etp_cible'))%></td>
-									<td><%= format_number(@objectifs.where(programme_id: programme.id).sum('etpt_plafond'))%></td>
-									<td><%= format_number((0.03*@objectifs.where(programme_id: programme.id).sum('etp_cible')).round(1)) %></td>							
-									<td><%= format_number(@mouvements.where(programme_id: programme.id, type_mouvement: "suppression").sum('quotite'))%></td>
-									<td><% if @objectifs.where(programme_id: programme.id).sum('etp_cible') != 0%><%= format_number((@mouvements.where(programme_id: programme.id, type_mouvement: "suppression").sum('quotite')/(0.03*@objectifs.where(programme_id: programme.id).sum('etp_cible')))*100)%><%else%>0<%end%>%</td>
-									<td><%= format_number(@mouvements.where(programme_id: programme.id, type_mouvement: "ajout").sum('quotite'))%></td>
-									<td><%= format_number(@mouvements.where(programme_id: programme.id, type_mouvement: "suppression").sum('etpt'))%></td>
-									<td><%= format_number(@mouvements.where(programme_id: programme.id, type_mouvement: "ajout").sum('etpt'))%></td>
-									<td><%= format_number(@mouvements.where(programme_id: programme.id).sum('credits_gestion').to_i)%> €</td>
-									<td><%= format_number(@mouvements.where(programme_id: programme.id).sum('cout_etp').to_i)%> €</td>
+									<td><%= format_number(etp_cible_sum)%></td>
+									<td><%= format_number(etpt_plafond_sum)%></td>
+									<td><%= format_number(etp_cible_3_percent) %></td>
+									<td><%= format_number(@array_programme_mvt.select{|a| a[0] == programme.id && a[1] == "suppression"}.sum{|s| s[2]})%></td>
+									<td><% if etp_cible_sum!= 0%><%= format_number((@array_programme_mvt.select{|a| a[0] == programme.id && a[1] == "suppression"}.sum{|s| s[2]}/etp_cible_sum)*100)%><%else%>0<%end%>%</td>
+									<td><%= format_number(@array_programme_mvt.select{|a| a[0] == programme.id && a[1] == "ajout"}.sum{|s| s[2]})%></td>
+									<td><%= format_number(@array_programme_mvt.select{|a| a[0] == programme.id && a[1] == "suppression"}.sum{|s| s[3]})%></td>
+									<td><%= format_number(@array_programme_mvt.select{|a| a[0] == programme.id && a[1] == "ajout"}.sum{|s| s[3]})%></td>
+									<td><%= format_number(@array_programme_mvt.select{|a| a[0] == programme.id }.sum{|s| s[5]}.to_i)%> €</td>
+									<td><%= format_number(@array_programme_mvt.select{|a| a[0] == programme.id }.sum{|s| s[4]}.to_i)%> €</td>
 								</tr>
 								<% end %>
 							</tbody>
@@ -177,29 +181,30 @@
 									<td><%= format_number(@etp_cible) %></td>
 									<td><%= format_number(@etpt_plafond)%></td>
 									<td><%= format_number(@etp_3)%></td>
-									<td><%= format_number(@etp_supp)%></td>
-									<td><% if @etp_cible != 0 %><%= format_number((@etp_supp/@etp_cible)*100) %><%else%>0<%end%>%</td>
-									<td><%= format_number(@etp_add)%></td>								
-									
-									<td><%= format_number(@etpt_supp)%></td>
-									<td><%= format_number(@etpt_add)%></td>
-									<td><%= format_number(@mouvements.sum('credits_gestion').to_i)%> €</td>
-									<td><%= format_number(@mouvements.sum('cout_etp').to_i)%> €</td>
+									<td><%= format_number(@etp_supp.sum)%></td>
+									<td><% if @etp_cible != 0 %><%= format_number((@etp_supp.sum/@etp_cible)*100) %><%else%>0<%end%>%</td>
+									<td><%= format_number(@etp_add.sum)%></td>
+									<td><%= format_number(@etpt_supp.sum)%></td>
+									<td><%= format_number(@etpt_add.sum)%></td>
+									<td><%= format_number(@credits)%> €</td>
+									<td><%= format_number(@couts_etp)%> €</td>
 								</tr>
 								<% @regions.each_with_index do |region,i|%>
+								<% etp_cible_sum = @array_region_obj.select{|a| a[0] == region.id }.sum{|s| s[1]} %>
+								<% etpt_plafond_sum = @array_region_obj.select{|a| a[0] == region.id }.sum{|s| s[2]} %>
+								<% etp_cible_3_percent = (etp_cible_sum * 0.03).round(1) %>
 								<tr>
 									<td><%= region.nom %></td>
-									<td><%= format_number(@objectifs.where(region_id: region.id).sum('etp_cible'))%></td>
-									<td><%= format_number(@objectifs.where(region_id: region.id).sum('etpt_plafond'))%></td>
-									<td><%= format_number((0.03*@objectifs.where(region_id: region.id).sum('etp_cible')).round(1)) %></td>				
-									<td><%= format_number(@mouvements.where(region_id: region.id, type_mouvement: "suppression").sum('quotite'))%></td>
-									<td><%= format_number(@mouvements.where(region_id: region.id, type_mouvement: "suppression").sum('quotite')/@objectifs.where(region_id: region.id).sum('etp_cible')*100)%>%</td>
-									<td><%= format_number(@mouvements.where(region_id: region.id, type_mouvement: "ajout").sum('quotite'))%></td>
-									
-									<td><%= format_number(@mouvements.where(region_id: region.id, type_mouvement: "suppression").sum('etpt') )%></td>
-									<td><%= format_number(@mouvements.where(region_id: region.id, type_mouvement: "ajout").sum('etpt') )%></td>
-									<td><%= format_number(@mouvements.where(region_id: region.id).sum('credits_gestion').to_i)%> €</td>
-									<td><%= format_number(@mouvements.where(region_id: region.id).sum('cout_etp').to_i)%> €</td>
+									<td><%= format_number(etp_cible_sum)%></td>
+									<td><%= format_number(etpt_plafond_sum)%></td>
+									<td><%= format_number(etp_cible_3_percent) %></td>
+									<td><%= format_number(@array_region_mvt.select{|a| a[0] == region.id && a[1] == "suppression"}.sum{|s| s[2]})%></td>
+									<td><% if etp_cible_sum!= 0%><%= format_number((@array_region_mvt.select{|a| a[0] == region.id && a[1] == "suppression"}.sum{|s| s[2]}/etp_cible_sum)*100)%><%else%>0<%end%>%</td>
+									<td><%= format_number(@array_region_mvt.select{|a| a[0] == region.id && a[1] == "ajout"}.sum{|s| s[2]})%></td>
+									<td><%= format_number(@array_region_mvt.select{|a| a[0] == region.id && a[1] == "suppression"}.sum{|s| s[3]})%></td>
+									<td><%= format_number(@array_region_mvt.select{|a| a[0] == region.id && a[1] == "ajout"}.sum{|s| s[3]})%></td>
+									<td><%= format_number(@array_region_mvt.select{|a| a[0] == region.id }.sum{|s| s[5]}.to_i)%> €</td>
+									<td><%= format_number(@array_region_mvt.select{|a| a[0] == region.id }.sum{|s| s[4]}.to_i)%> €</td>
 								</tr>
 								<% end %>
 							</tbody>
@@ -229,17 +234,17 @@
 							<tbody>
 								<tr class="total">
 									<td>Total</td>
-									<td><%=format_number(@etp_supp)%></td><td><%= format_number(@etp_add)%></td>
-									<td><%= format_number(@etpt_supp)%></td><td><%= format_number(@etpt_add)%></td>
+									<td><%=format_number(@etp_supp.sum)%></td><td><%= format_number(@etp_add.sum)%></td>
+									<td><%= format_number(@etpt_supp.sum)%></td><td><%= format_number(@etpt_add.sum)%></td>
 								</tr>
 								<tr><td>A</td>
-									<td><%=format_number(@etp_supp_a)%></td><td><%= format_number(@etp_add_a)%></td><td><%= format_number(@etpt_supp_a)%></td><td><%= format_number(@etpt_add_a)%></td>
+									<td><%=format_number(@etp_supp[0])%></td><td><%= format_number(@etp_add[0])%></td><td><%= format_number(@etpt_supp[0])%></td><td><%= format_number(@etpt_add[0])%></td>
 								</tr>
 								<tr><td>B</td>
-									<td><%=format_number(@etp_supp_b)%></td><td><%= format_number(@etp_add_b)%></td><td><%= format_number(@etpt_supp_b)%></td><td><%= format_number(@etpt_add_b)%></td>
+									<td><%=format_number(@etp_supp[1])%></td><td><%= format_number(@etp_add[1])%></td><td><%= format_number(@etpt_supp[1])%></td><td><%= format_number(@etpt_add[1])%></td>
 								</tr>
 								<tr><td>C</td>
-									<td><%=format_number(@etp_supp_c)%></td><td><%= format_number(@etp_add_c)%></td><td><%= format_number(@etpt_supp_c)%></td><td><%= format_number(@etpt_add_c)%></td>
+									<td><%=format_number(@etp_supp[2])%></td><td><%= format_number(@etp_add[2])%></td><td><%= format_number(@etpt_supp[2])%></td><td><%= format_number(@etpt_add[2])%></td>
 								</tr>
 							</tbody>
 						</table>

@@ -187,13 +187,29 @@ export default class extends Controller {
             categories: programmes,
             title: {
               text: 'N° du Programme',
+                style: {
+                    color: 'var(--text-title-grey)',
+                },
             },
+              labels: {
+                  style: {
+                      color: 'var(--text-title-grey)',
+                  },
+              },
           },
           yAxis: {
             min: 0,
             title: {
               text: "Nombre d'ETP supprimés",
+                style: {
+                    color: 'var(--text-title-grey)',
+                },
             },
+              labels: {
+                  style: {
+                      color: 'var(--text-title-grey)',
+                  },
+              },
           },
           tooltip: {
               borderColor: 'transparent',
@@ -253,12 +269,25 @@ export default class extends Controller {
           },
           xAxis: {
             categories: regions,
+              labels: {
+                  style: {
+                      color: 'var(--text-title-grey)',
+                  },
+              },
           },
           yAxis: {
             min: 0,
             title: {
               text: 'ETP',
+                style: {
+                    color: 'var(--text-title-grey)',
+                },
             },
+              labels: {
+                  style: {
+                      color: 'var(--text-title-grey)',
+                  },
+              },
           },
           tooltip: {
               borderColor: 'transparent',
@@ -268,7 +297,10 @@ export default class extends Controller {
 
           },
           legend: {
-              shadow: false
+              shadow: false,
+              itemStyle: {
+                  color: 'var(--text-title-grey)',
+              },
           },
           plotOptions: {
               column: {
@@ -595,13 +627,26 @@ export default class extends Controller {
                 },
           },
           xAxis: {
-            categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre','Novembre','Décembre']
+            categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre','Novembre','Décembre'],
+              labels: {
+                  style: {
+                      color: 'var(--text-title-grey)',
+                  },
+              },
           },
           yAxis: {
             min: 0,
             title: {
               text: 'ETP',
+                style: {
+                    color: 'var(--text-title-grey)',
+                },
             },
+              labels: {
+                  style: {
+                      color: 'var(--text-title-grey)',
+                  },
+              },
             stackLabels: {
                 enabled: true,
                 style: {
@@ -609,6 +654,11 @@ export default class extends Controller {
                 }
             }
           },
+        legend: {
+            itemStyle: {
+                color: 'var(--text-title-grey)',
+            },
+        },
           tooltip: {
               borderColor: 'transparent',
               borderRadius: 16,
@@ -665,13 +715,26 @@ export default class extends Controller {
                 },
           },
           xAxis: {
-            categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre','Novembre','Décembre']
+            categories: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre','Novembre','Décembre'],
+              labels: {
+                  style: {
+                      color: 'var(--text-title-grey)',
+                  },
+              },
           },
           yAxis: {
             min: 0,
             title: {
               text: 'ETP',
+                style: {
+                    color: 'var(--text-title-grey)',
+                },
             },
+              labels: {
+                  style: {
+                      color: 'var(--text-title-grey)',
+                  },
+              },
             stackLabels: {
                 enabled: true,
                 style: {
@@ -679,6 +742,11 @@ export default class extends Controller {
                 }
             }
           },
+        legend: {
+            itemStyle: {
+                color: 'var(--text-title-grey)',
+            },
+        },
           tooltip: {
               borderColor: 'transparent',
               borderRadius: 16,
