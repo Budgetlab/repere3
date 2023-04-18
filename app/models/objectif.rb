@@ -13,7 +13,7 @@ class Objectif < ApplicationRecord
       next if idx == 0 # skip header
       row_data = Hash[[headers, row].transpose]
       if Programme.where(numero: row_data['programme'].to_i).count > 0 && Region.where(nom: row_data['region']).count > 0
-          @objectif = Objectif.new 
+          @objectif = Objectif.new
           @objectif.date = Date.new(2023,1,1)
           @objectif.etp_cible = row_data['etp cible'].to_f.round(1)
           @objectif.etpt_plafond = row_data['etpt plafond'].to_f.round(2)

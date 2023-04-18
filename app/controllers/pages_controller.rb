@@ -47,6 +47,7 @@ class PagesController < ApplicationController
           @etp_region << @array_region_mvt.select { |a| a[0] == region.id && a[1] == action && a[6] == category }.sum { |s| s[2] }.round(1)
         end
       end
+      @etp_supp_region << @array_region_mvt.select { |a| a[0] == region.id && a[1] == 'suppression' }.sum { |s| s[2] }.round(1)
       @etp_plafond << @array_region_obj.select { |a| a[0] == region.id }.sum { |s| 0.03*s[1] }.round(1)
     end
 
@@ -66,7 +67,7 @@ class PagesController < ApplicationController
     @mouvements_supp = []
     @etp_time_supp = []
     @hash_date = Mouvement.group("DATE_TRUNC('month', date)").group(:type_mouvement).sum(:quotite)
-    @hash_date_effet = Mouvement.group("DATE_TRUNC('month', date)").group(:type_mouvement).sum(:quotite)
+    @hash_date_effet = Mouvement.group("DATE_TRUNC('month', date_effet)").group(:type_mouvement).sum(:quotite)
     (0..11).to_a.each do |i|
       @mouvements_ajout << @hash_date.select { |key, value| key == [Date.new(Date.today.year, i+1, 1), 'ajout'] }.values.sum.round(1)
       @mouvements_supp <<  @hash_date.select { |key, value| key == [Date.new(Date.today.year, i+1, 1), 'suppression'] }.values.sum.round(1)
