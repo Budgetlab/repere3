@@ -1,4 +1,4 @@
-
+<% content_for :title do %>Accueil | REPERE3 <% end %>
 <div class="fr-container"  data-controller="highcharts" data-highcharts-mvtcount="<%=@array_programme_mvt.length%>" data-highcharts-showregion="<%= current_user.statut == "admin" || current_user.statut == "ministere"%>" data-highcharts-categories="<%=@etp_supp%>"  data-highcharts-categories2="<%=@etp_add%>" data-highcharts-regions="<%= @regions.pluck(:nom)%>" data-highcharts-regionsun="<%= @etp_region%>" data-highcharts-region2="<%= @etp_supp_region%>" data-highcharts-plafond="<%= @etp_plafond%>" data-highcharts-programmes="<%= @programmes.pluck(:numero)%>" data-highcharts-programme1="<%= @ept_prog%>" data-highcharts-progetp="<%=@etp_supp_prog%>" data-highcharts-time1="<%= @etp_time_ajout%>" data-highcharts-time2="<%= @etp_time_supp%>" data-highcharts-ajout="<%=@mouvements_ajout%>" data-highcharts-suppression="<%= @mouvements_supp%>">
 	<div class="fr-grid-row fr-grid-row--gutters">
 		<div class="fr-col-12 fr-col-lg-12">

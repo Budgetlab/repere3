@@ -1,11 +1,12 @@
-<div class="fr-container">    
-        		<div class="fr-grid-row fr-grid-row--gutters">
-          			<div class="fr-col-12 fr-col-lg-12">
-          				<h1 class="fr-my-6w">Questions fréquentes </h1>
+<% content_for :title do %>FAQ | REPERE3 <% end %>
+<div class="fr-container">
+	<div class="fr-grid-row fr-grid-row--gutters">
+		<div class="fr-col-12 fr-col-lg-12">
+			<h1 class="fr-my-6w">Questions fréquentes </h1>
 		  		
-		  		<div class="fr-mb-2w">Cette foire aux questions se propose de recenser et d’apporter des éléments de réponse aux interrogations des acteurs du dispositif. Pour toutes vos questions et besoins de renseignements supplémentaires, veuillez nous contacter par mail à l'adresse mail suivante : <a href="mailto:budget.lab@finances.gouv.fr" target="_blank">budget.lab@finances.gouv.fr</a></div>
+			<div class="fr-mb-2w">Cette foire aux questions se propose de recenser et d’apporter des éléments de réponse aux interrogations des acteurs du dispositif. Pour toutes vos questions et besoins de renseignements supplémentaires, veuillez nous contacter par mail à l'adresse mail suivante : <a href="mailto:budget.lab@finances.gouv.fr" target="_blank">budget.lab@finances.gouv.fr</a></div>
 		  		
-		  		<% if current_user.statut=="CBR" || current_user.statut=="admin" %>
+			<% if current_user.statut=="CBR" || current_user.statut=="admin" %>
 		  		<div class="fr-mb-2w fr-downloads-group fr-downloads-group--bordered">
 		  			<ul><li>
 		  			<div class="fr-download"><p><a class="fr-download__link" href="/Memo.pdf" download>Télécharger le mémo outil pour CBR <span class="fr-download__detail">PDF – 119 ko</span></a></p></div>
@@ -14,19 +15,17 @@
 		  			<div class="fr-download"><p><a class="fr-download__link" href="/Formulaire.xlsx" download>Télécharger le formulaire de liaison destiné au SGARE <span class="fr-download__detail">XLSX – 21 ko</span></a></p></div>
 		  			</li></ul>
 		  		</div>
-		  		<% end %>
+			<% end %>
 
-		  		<h2 class="fr-my-2w">Liste des questions</h2>
-		  		<div class="fr-accordions-group fr-mb-4w">
-
+			<h2 class="fr-my-2w">Liste des questions</h2>
+			<div class="fr-accordions-group fr-mb-4w">
 		  			<section class="fr-accordion">
 				        <h3 class="fr-accordion__title">
 				            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-114">D’où sont issues les données d’effectifs présentées sur les pages de l’outil REPERE3 ? (effectifs notifiés, ETP redéployables)</button>
 				        </h3>
         				<div class="fr-collapse" id="accordion-114">
-					    
 					      	Ces données sont fournies par le secrétariat général de chaque ministère en cohérence avec les notifications de plafond d’emploi et de crédits de masse salariale (titre 2) réalisées par les administrations centrales responsables de programme (RPROG) aux responsables de budgets opérationnels de programme (BOP) en région. Elles sont renseignées en début d’année par la direction du budget dans son rôle d’administrateur de l’outil REPERE3 (https://budgetlab.finances.gouv.fr/repere3). Le secrétariat général de chaque ministère, en sa fonction de responsable de la fonction financière ministérielle (RFFIM), est responsable de la conformité entre les chiffres transmis à la direction du budget et ceux notifiés aux RBOP, sous réserve des précisions et corrections de périmètres pouvant intervenir en tout débat d’année.
-					    </div>
+					    	</div>
 				  	</section>
 
 				  	<section class="fr-accordion">
@@ -34,7 +33,6 @@
 				            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-115">Quel est le périmètre de l’administration territoriale de l’Etat (ATE) ?</button>
 				        </h3>
         				<div class="fr-collapse" id="accordion-115">
-
 									L’ATE au sens budgétaire du terme est constituée des seuls programmes 124 (ministère de la culture), 134 (MEFSIN),  155 (ministère du travail, du plein emploi et de l’insertion), 206, 215 (Ministère de l’agriculture et de la souveraineté alimentaire), 217 (ministère de la transition écologique et de la cohésion des territoires) et 354 (Ministère de l’intérieur et de l’outre-mer).
 								</div>
 				  	</section>
@@ -44,12 +42,11 @@
 				            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-116">Que signifient les différentes notions ?</button>
 				        </h3>
         				<div class="fr-collapse" id="accordion-116">
-					    
 					      	<div><b>•	Effectifs notifiés </b>: cet effectif est mesuré en équivalents temps plein (ETP) et traduit la vision budgétaire en support d’emplois.</div>
-							<div><b>•	ETPT notifiés </b>: cet effectif est mesuré en équivalents temps plein travaillés (ETPT) et donne une vision plus opérationnelle rapportée au temps (mois) de l’effectif dont peut disposer le RBOP régional (préfet de région) sur l’ensemble du champ constitué par les programmes inclus dans l’administration territoriale de l’Etat (ATE).</div>
-							<div><b>•	ETP redéployés </b>: cette notion mesure en ETP l’impact des redéploiements opérés en région (suppression) par application du dispositif décrit dans la circulaire conjointe MTFP-MCP du 22/12/2021. La donnée est de zéro en début d’exercice et progresse jusqu’à un maximum constitué par le produit de l’effectif-cible (ETP) et de 3%.</div>
+									<div><b>•	ETPT notifiés </b>: cet effectif est mesuré en équivalents temps plein travaillés (ETPT) et donne une vision plus opérationnelle rapportée au temps (mois) de l’effectif dont peut disposer le RBOP régional (préfet de région) sur l’ensemble du champ constitué par les programmes inclus dans l’administration territoriale de l’Etat (ATE).</div>
+									<div><b>•	ETP redéployés </b>: cette notion mesure en ETP l’impact des redéploiements opérés en région (suppression) par application du dispositif décrit dans la circulaire conjointe MTFP-MCP du 22/12/2021. La donnée est de zéro en début d’exercice et progresse jusqu’à un maximum constitué par le produit de l’effectif-cible (ETP) et de 3%.</div>
 							
-					    </div>
+					    	</div>
 				  	</section>
 
 				  	<section class="fr-accordion">
@@ -57,9 +54,8 @@
 				            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-117">Existe-t-il un lien technique fonctionnel entre l’outil et CHORUS ou un autre SI (RH notamment) ?</button>
 				        </h3>
         				<div class="fr-collapse" id="accordion-117">
-					    
 					      	Non, il n’y a pas de déversement dans un autre système d'information des mouvements saisis dans l’outil. REPERE3 est un outil de synthèse et de transparence de l’information, alimenté en début d’année par les ministères et la direction du budget et en cours de gestion par les CBR. Ses résultats sont le cas échéant reportés par la direction du budget dans les applications de gestion des lois de finance.
-					    </div>
+					    	</div>
 				  	</section>
 
 				  	<section class="fr-accordion">
@@ -67,9 +63,8 @@
 				            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-118">Que prend-on en considération comme assiette ? Les ETP ou la vision en cible ?</button>
 				        </h3>
         				<div class="fr-collapse" id="accordion-118">
-					    
 					      	La vision en organigramme (ou en cible) ne peut être retenue, dès lors que les postes pour être redéployés supposent un financement. L’assiette de redéploiement  ne comporte que les ETP financés en titre 2 sur le BOP concerné pour l’année en cours.
-					    </div>
+					    	</div>
 				  	</section>
 
 				  	<section class="fr-accordion">
@@ -77,9 +72,8 @@
 				            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-119">Le plafond des 3 % (applicable à la somme des effectifs financés une année donnée sur les BOP du périmètre ATE d’une région) pour les redéploiements tient-il compte de la quotité de travail des emplois supprimés et ajoutés ?</button>
 				        </h3>
         				<div class="fr-collapse" id="accordion-119">
-					    
 					      	Dans la rubrique « accueil » de l’outil REPERE3, les données du « tableau synthèse ETPT par catégorie » relatives aux emplois ajoutés et supprimés tiennent compte des dates de suppression et d'ajout des emplois et de la quotité de travail associée aux emplois ajoutés et supprimés.
-					    </div>
+					    	</div>
 				  	</section>
 
 				  	<section class="fr-accordion">
@@ -87,12 +81,11 @@
 				            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-120">Quel est le mécanisme de compensation budgétaire ? Impacte-t-il le niveau régional ?</button>
 				        </h3>
         				<div class="fr-collapse" id="accordion-120">
-					    
 					      	Le dispositif de redéploiement des emplois dans la limite de 3% s’équilibre par versement, le cas échéant, au plan national, de compensations entre programmes, tant en emplois qu’en masse salariale (crédits de T2).
 							Deux modalités peuvent utilisées pour la compensation au titre de l’année de gestion ; comme pour l’extension en année pleine. Ainsi, au titre de l’année N, le financement du total des emplois nets transférés sera assuré en PLFR de fin d’année ; le PLF N+1 prendra en compte, quant à lui, le cas échéant, le coût annuel total de l’emploi s’il a vocation à être pérennisé. Toutefois, dès lors que l’impact en base est mineur, il peut être décidé par la direction du budget de procéder par acte réglementaire au transfert de crédits et d'emplois depuis un programme de crédits non répartis (le P551 en 2022, par exemple).
 							Le sujet de la compensation budgétaire consolidée entre programmes relève des acteurs nationaux (RFFIM, RPROG, DB) et pas des acteurs en région.
 
-					    </div>
+					    	</div>
 				  	</section>
 
 				  	<section class="fr-accordion">
@@ -100,7 +93,6 @@
 				            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-121">A quel moment de la procédure utilise-t-on les coefficients de conversion entre catégories ?</button>
 				        </h3>
         				<div class="fr-collapse" id="accordion-121">
-					    
 					      	La circulaire prévoit qu’« une fongibilité entre emplois de catégories différentes est possible et s'effectuera sur la base d'un coefficient de conversion entre catégories défini chaque année par la direction du budget sur la base des coûts salariaux constatés ». Un redéploiement consistant en la suppression d'un emploi de catégorie B ou C d'un programme pour créer un emploi de catégorie A sur un autre programme est donc autorisé. 
 							La couverture en masse salariale (colonne « <span class="tu">mouvements en gestion</span> » et « <span class="tu">mouvements en base </span>») s’opérera sur la base des coûts salariaux du programme bénéficiaire du redéploiement ou cessionnaire.
 									Pour cette raison, les coûts moyens par ETP, par catégorie ou macro-grade du programme cessionnaire, seront pris comme référence pour établir le montant consolidé de la compensation budgétaire versée in fine.
@@ -128,19 +120,15 @@
 							</div>
 
 							<span class="tu">Note de lecture</span> : la lecture s’effectue en ligne : un emploi de A peut-être redéployé en 1 A ou 1,4 B ou 1,7 C.
-
-							
 					    </div>
 				  	</section>
 
 				  	<section class="fr-accordion">
 				        <h3 class="fr-accordion__title">
 				            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-122">A quoi s’applique concrètement la date limite de saisie fixée en début de gestion pour les redéploiements :
-						à la prise d’effet prévisionnelle de la création de poste ?
-						à la date de saisie dans l’outil </button>
+						à la prise d’effet prévisionnelle de la création de poste ? à la date de saisie dans l’outil </button>
 				        </h3>
         				<div class="fr-collapse" id="accordion-122">
-					    
 					      	Une date limite sera précisée en début de gestion pour arrêter les saisies dans l’outil Repère3 puis rappelée en fin de période de recours au dispositif..
 							Cette date a été fixée pour pouvoir consolider, dans le projet de loi de finances de fin de gestion (nouvelle appellation des LFR de fin d’année selon la loi organique du 28/12/2021 relative à la modernisation de la gestion des finances publiques), les mouvements de crédits et d’emplois permettant d’assurer la « couverture budgétaire » des recrutements opérés en cours d’année grâce au dispositif de redéploiement. 
 							Il est fait l’hypothèse que les programmes concernés assurent « en trésorerie T2 » le financement des rémunérations servies sur les postes concernés, au cours de l’année avant la mise en place de cette compensation budgétaire (entre le 1er janvier et le 31 octobre).
@@ -154,7 +142,6 @@
 						à la date de saisie dans l’outil </button>
 				        </h3>
         				<div class="fr-collapse" id="accordion-123">
-					    
 					      	<div>La notion de vacance est une notion dynamique. Elle se mesure à un instant t et peut évoluer tout au long de l’année en fonction des décisions de gestion des administrations. Pour le suivi budgétaire, il est habituel de la mesurer au 31 décembre de l’année mais elle peut être mesurée tout au long de l’année pour des considérations de pilotage des emplois. </div>
 
 									<div>La vacance est définie dans la circulaire comme une « absence de recrutement fléché et certain – sortie de concours ou processus de mobilité, par exemple ». Un poste fléché pour l’accueil d’un agent recruté par concours ou en mobilité ne donnera pas nécessairement lieu à un « recrutement certain », surtout dans les territoires peu attractifs. </div>
@@ -172,7 +159,6 @@
 				            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-124">Peut-on envisager des redéploiements inférieurs à 12 mois (poste non pérenne) pour une mission particulière ? </button>
 				        </h3>
         				<div class="fr-collapse" id="accordion-124">
-					    
 					      	<div>La circulaire prévoit que « le préfet précise au contrôleur si le redéploiement envisagé est pérenne ou non ». Si le préfet indique « non pérenne », il coche la case indiquant que le redéploiement concerne un emploi ponctuel. Il y alors un seul mouvement en gestion (LFR) correspondant uniquement à l'emploi supprimé.</div>
 									<div>Un redéploiement peut obéir à un besoin ponctuel lié à la mise en œuvre des feuilles de route des préfets et de leurs missions. Dès lors qu’un redéploiement répond à un besoin ponctuel, non récurrent, il n’est a priori pas reconduit sur l’exercice suivant. Il s’ensuit que l’impact en masse salariale porte sur la seule année de gestion N : le projet de loi de finances de fin de gestion devra prendre en considération le besoin de financement de cet emploi sur le programme ponctuellement porteur. Le portage de cet emploi par le nouveau programme d’accueil n’impactera pas N+1 et ne sera donc pas traité en PLF par la direction du budget, de manière consolidée au plan national.</div>
 									<div>A cette précision relative à la pérennité du redéploiement s’ajoute celle des durées respectives de financement par les programmes « cédant » et « cessionnaire » au titre de l’année de gestion. Lors de la saisie du transfert d’effectif dans l’outil, la durée de financement d’un emploi respectivement par le programme cédant et par le programme cessionnaire est prise en compte pro rata temporis. </div>
@@ -185,7 +171,6 @@
 				            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-125">Les opérateurs de l’Etat tels que les agences régionales de santé sont-ils inclus dans le périmètre du dispositif de redéploiement ?</button>
 				        </h3>
         				<div class="fr-collapse" id="accordion-125">
-					    
 					      	<div>Le dispositif ne s’applique qu’aux administrations de l’Etat en région figurant dans le périmètre de l’administration territoriale de l’Etat. Le périmètre est régional et les suppressions et redéploiements ne peuvent porter que sur les programmes éligibles. 
 							Les programmes concernés sont décrits dans l’annexe de la circulaire et sont repris dans un menu déroulant de l’outil REPERE3. La circulaire s’applique exclusivement à ces programmes. </div>
 							<div>
@@ -199,7 +184,6 @@
 				            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-126">Le dispositif modifie-t-il les procédures de recrutement au niveau local ?</button>
 				        </h3>
         				<div class="fr-collapse" id="accordion-126">
-					    
 					      	Les procédures de recrutement sont celles retenues par les différents ministères employeurs. Elles ne sont pas modifiées par le nouveau dispositif dit « 3% ».La DGAFP disposera au plan national d’un droit de « requêtage » dans l’outil identique à celui dont dispose la direction du budget. La connaissance qu’elle tirera de l’exploitation de l’outil lui permettra dès lors de répondre aux éventuelles questions RH posées par les acteurs, notamment dans le cadre de son rôle d’animation des PFRH.
 					    </div>
 				  	</section>
@@ -209,7 +193,6 @@
 				            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-127">L’agent, personne physique, candidat à un poste bénéficiant d’un redéploiement, accède-t-il à l’information selon laquelle son support d’emploi est intégré dans le mécanisme de redéploiement possible ?</button>
 				        </h3>
         				<div class="fr-collapse" id="accordion-127">
-					    
 					      	<div>Non car cela est indifférent à sa discussion avec son futur employeur sur le contenu du poste et sur les conditions d’emploi (position statutaire, niveau de rémunération, etc…). Le mécanisme de suivi des redéploiements et de compensation budgétaire n’intéresse en réalité que les acteurs du pilotage budgétaire des crédits et des emplois de titre 2 sur les programmes concernés. </div>
 					      	<div>
 							Les fiches de postes redéployés feront l’objet d’une publication et d’appels à candidature dans les mêmes conditions que les emplois notifiés par le RPROG au RBOP. </div>
@@ -222,12 +205,10 @@
 						Récupère-t-on les « rompus de temps partiel » pour constituer des ETP « pleins » ?</button>
 				        </h3>
         				<div class="fr-collapse" id="accordion-128">
-					    
 					      	L’outil comporte une rubrique permettant de renseigner la quotité d’emploi par rapport au temps plein ; la masse salariale correspondante est automatiquement calculée par l’outil à hauteur de cette quotité. Toutefois, les données entrées au moment de la suppression sur le programme initialement porteur ne lient pas pour la suite. Soit l’emploi transféré est occupé car l’agent est volontaire pour le « suivre » (nouvel employeur – nouveau programme support), alors la masse salariale correspondant à sa rémunération le suit ; soit le poste est vacant au moment de son redéploiement – situation de référence pour la circulaire –, et la quotité travaillée est supposée de 100 %. Le recrutement sur le nouveau programme support à une quotité travaillée différente – par hypothèse plus importante – n’est pas bloquante.
 					    </div>
 				  	</section>
-				</div>
-
-					</div>
-				</div>
-		  	</div>
+			</div>
+		</div>
+	</div>
+</div>

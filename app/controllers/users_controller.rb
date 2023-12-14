@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :authenticate_user!	
+  before_action :authenticate_user!
   protect_from_forgery with: :null_session
   before_action :require_admin
   def index; end

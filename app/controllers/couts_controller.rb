@@ -2,7 +2,11 @@ class CoutsController < ApplicationController
   before_action :authenticate_user!
   protect_from_forgery with: :null_session
   before_action :require_admin, except: [:couts]
-  def index; end
+
+  # page pour voir tous les couts et importer le fichier des coûts
+  def index
+    @couts = Cout.all.joins(:programme)
+  end
 
   def import
     Cout.import(params[:file])
@@ -11,6 +15,9 @@ class CoutsController < ApplicationController
     end
   end
 
-  def couts; end
+  # page Répartition des coûts ETP annuels
+  def couts
+    @programmes = Programme.all.includes(:ministere, :couts).order(:numero)
+  end
 
 end

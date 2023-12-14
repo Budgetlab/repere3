@@ -1,4 +1,5 @@
-<div class="fr-container" data-controller="form">    
+<% content_for :title do %>Historique | REPERE3 <% end %>
+<div class="fr-container" data-controller="form">
 	<div class="fr-grid-row fr-grid-row--gutters">
 		<div class="fr-col-12 fr-col-lg-12">
 			<h1 class="fr-my-6w"><%= current_user.nom %></h1>
@@ -48,7 +49,7 @@
 			<% if current_user.statut != "ministere"%>
 			<div class="fr-accordions-group" >				
 				<% @redeploiements.each do |redeploiement| %>
-				<section class="fr-accordion">
+					<section class="fr-accordion">
 			        <h3 class="fr-accordion__title">
 			            <button class="fr-accordion__btn" aria-expanded="false" aria-controls="<%=redeploiement.id%>">
 			            	Redéploiement n°<%= redeploiement.id%> effectué le <%= l(redeploiement.created_at,format: "%e/%m/%y") %> 
@@ -65,24 +66,21 @@
 			        </h3>
 			      		
 			      	<div class="fr-collapse" id="<%= redeploiement.id%>">
-			      		<div class="fr-table fr-mb-3w fr-table--no-caption" >
+			      		<div class="fr-table fr-mb-3w fr-table--no-caption">
 			      			<table>
 						      	<thead>
 						        <tr>
 						        	<th scope="col pr">Macrograde</th>
 						        	<th scope="col">Quotité ETP</th>
 						        	<th scope="col">Date effective</th>	
-						          	<th scope="col">ETPT</th>	
+											<th scope="col">ETPT</th>
 						        	<th scope="col">Type  </th>
 						        	<th scope="col">Service concerné</th>
 						        	<th scope="col">Programme</th>
-						          	 
-					            	<th scope="col">Mouvements en gestion (LFR)</th> 
-					            	<th scope="col">Mouvements en base (PLF N+1)</th>   
-					            	
+											<th scope="col">Mouvements en gestion (LFR)</th>
+											<th scope="col">Mouvements en base (PLF N+1)</th>
 						        </tr>
 						      	</thead>
-
 						      	<tbody>
 							      	<% redeploiement.mouvements.each do |mouvement|%>
 							      	<tr>
@@ -90,15 +88,12 @@
 								      	<td><% if mouvement.quotite%1 != 0 %><%= format_number(mouvement.quotite) %><%else%><%= mouvement.quotite.to_i %><%end%></td>
 								      	<td><%= l(mouvement.date_effet,format: "%e/%m/%y")%></td>
 								      	<td><%= format_number(mouvement.etpt)%></td>
-								      	
 								      	<td><% if mouvement.type_mouvement == "ajout"%><p class="fr-badge fr-badge--green-emeraude"><%= mouvement.type_mouvement%></p> <% else %><p class="fr-badge fr-badge--blue-cumulus"><%= mouvement.type_mouvement%></p> <% end %> <% if mouvement.ponctuel == true %><p class="fr-badge fr-badge--new fr-badge--no-icon">ponctuel</p><%end%></td>
 								      	<td><%= mouvement.service.nom%></td>
 								      	<td><%= mouvement.programme.numero %></td>
-								      	
 								      	<td><%= number_with_delimiter(mouvement.credits_gestion.to_i, locale: :fr)%>€</td>
 								      	<td><%= number_with_delimiter(mouvement.cout_etp.to_i, locale: :fr)%>€</td>
-								     
-								     </tr>
+								     	</tr>
 							      	<% end %>
 						      	</tbody>
 						    </table>
@@ -108,60 +103,59 @@
 							<button class="fr-btn fr-btn--secondary" title="Supprimer" data-fr-opened="false" aria-controls="fr-modal-<%=redeploiement.id%>">Supprimer le redéploiement</button>
 						</div>
 						<dialog aria-labelledby="fr-modal-title-modal-<%=redeploiement.id%>" role="dialog" id="fr-modal-<%=redeploiement.id%>" class="fr-modal">
-						    <div class="fr-container fr-container--fluid fr-container-md">
-						        <div class="fr-grid-row fr-grid-row--center">
-						            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
-						                <div class="fr-modal__body">
-						                    <div class="fr-modal__header">
-						                        <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="fr-modal-<%=redeploiement.id%>">Fermer</button>
-						                    </div>
-						                    <div class="fr-modal__content">
-						                        <h1 id="fr-modal-title-modal-<%=redeploiement.id%>" class="fr-modal__title"><span class="fr-fi-arrow-right-line fr-fi--lg"></span>Supprimer ce redéploiement ?</h1>
-						                        <% if Date.today > redeploiement.mouvements.pluck(:date_effet).min%>
-						                        <div class="fr-alert fr-alert--warning fr-mb-3w">
+							<div class="fr-container fr-container--fluid fr-container-md">
+								<div class="fr-grid-row fr-grid-row--center">
+									<div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+										<div class="fr-modal__body">
+											<div class="fr-modal__header">
+												<button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="fr-modal-<%=redeploiement.id%>">Fermer</button>
+											</div>
+											<div class="fr-modal__content">
+												<h1 id="fr-modal-title-modal-<%=redeploiement.id%>" class="fr-modal__title"><span class="fr-fi-arrow-right-line fr-fi--lg"></span>Supprimer ce redéploiement ?</h1>
+												<% if Date.today > redeploiement.mouvements.pluck(:date_effet).min%>
+													<div class="fr-alert fr-alert--warning fr-mb-3w">
 												    <h3 class="fr-alert__title">Attention</h3>
 												    <p>Vous êtes sur le point de supprimer un redéploiement qui a déjà eu lieu. Êtes-vous sûr·e de vouloir supprimer ce redéploiement ?</p>
-												</div>
-						                        
-						                        <%else%>
-						                        <p>Êtes-vous sûr·e de vouloir supprimer ce redéploiement ?</p>
-						                        <% end %>
-						                        <%= link_to suppression_path(id: redeploiement.id),data: {"turbo-method": :post}, class: "fr-btn fr-btn--secondary" do %>Supprimer le redéploiement<% end%>
-						                    </div>
-						                </div>
-						            </div>
-						        </div>
-						    </div>
+													</div>
+												<%else%>
+													<p>Êtes-vous sûr·e de vouloir supprimer ce redéploiement ?</p>
+												<% end %>
+												<%= link_to suppression_path(id: redeploiement.id),data: {"turbo-method": :post}, class: "fr-btn fr-btn--secondary" do %>Supprimer le redéploiement<% end%>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 						</dialog>
 						<%end%>
 					</div>
 								      	
-			    </section>
+			    	</section>
 			    <% end %>			  	
 			</div>
 			<% end %>
+
 			<% if current_user.statut == "ministere"%>
-			<div class="fr-table fr-mb-3w fr-table--no-caption" >
-				<table>
-			      	<thead>
+				<div class="fr-table fr-mb-3w fr-table--no-caption">
+					<table>
+						<thead>
 			        <tr>
 			        	<th scope="col pr">Date</th>
 			        	<th scope="col pr">Région</th>
 			        	<th scope="col pr">Macrograde</th>
 			        	<th scope="col">Quotité ETP</th>
 			        	<th scope="col">Date effective</th>	
-			          	<th scope="col">ETPT</th>	
+								<th scope="col">ETPT</th>
 			        	<th scope="col">Type  </th>
 			        	<th scope="col">Service concerné</th>
 			        	<th scope="col">Programme</th>			          	 
-		            	<th scope="col">Mouvements en gestion (LFR)</th> 
-		            	<th scope="col">Mouvements en base (PLF N+1)</th>   
-		            	
-			        </tr>
-			      	</thead>
+								<th scope="col">Mouvements en gestion (LFR)</th>
+								<th scope="col">Mouvements en base (PLF N+1)</th>
+							</tr>
+						</thead>
 
-			      	<tbody>
-				      	<% @mouvements.each do |mouvement|%>
+						<tbody>
+						<% @mouvements.each do |mouvement|%>
 				      	<tr>
 				      		<td><%= l(mouvement.date,format: "%e/%m/%y") %></td>
 				      		<td><p class="fr-badge fr-badge--purple-glycine"><%= mouvement.region.nom %></p></td>
@@ -169,19 +163,16 @@
 					      	<td><% if mouvement.quotite%1 != 0 %><%= mouvement.quotite %><%else%><%= mouvement.quotite.to_i %><%end%></td>
 					      	<td><%= l(mouvement.date_effet,format: "%e/%m/%y")%></td>
 					      	<td><%= format_number(mouvement.etpt)%></td>
-					      	
 					      	<td><% if mouvement.type_mouvement == "ajout"%><p class="fr-badge fr-badge--green-emeraude"><%= mouvement.type_mouvement%></p> <% if mouvement.ponctuel == true %><p class="fr-badge fr-badge--green-emeraude">ponctuel</p><%end%><% else %><p class="fr-badge fr-badge--blue-cumulus"><%= mouvement.type_mouvement%></p> <% end %></td>
 					      	<td><%= mouvement.service.nom%></td>
 					      	<td><%= mouvement.programme.numero %></td>
-					      	
 					      	<td><%= number_with_delimiter(mouvement.credits_gestion.to_i, locale: :fr)%>€</td>
 					      	<td><%= number_with_delimiter(mouvement.cout_etp.to_i, locale: :fr)%>€</td>
-					     
 					     </tr>
-				      	<% end %>
-			      	</tbody>
-			    </table>
-			</div>
+						<% end %>
+						</tbody>
+					</table>
+				</div>
 			<% end %>
 		</div>
 	</div>

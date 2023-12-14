@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
     redirect_back_or root_path
   end
   before_action :configure_permitted_parameters, if: :devise_controller?
-
+  before_action :set_global_variable
 
   def redirect_back_or(path)
     redirect_to request.referer || path
@@ -39,4 +39,10 @@ class ApplicationController < ActionController::Base
       redirect_to root_path
     end
   end
+
+  # fonction pour déclarer les variables globales dans l'application
+  def set_global_variable
+    @annee = Date.today.year
+  end
+
 end
