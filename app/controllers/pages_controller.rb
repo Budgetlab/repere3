@@ -2,25 +2,16 @@ class PagesController < ApplicationController
   before_action :authenticate_user!
 
   def accueil
-    @start = Date.new(Date.today.year, 1, 1)
+    date_debut = Date.new(@annee, 1, 1)
+    @regions = set_regions
+    @programmes = set_programmes
+    @ministere = Ministere.where(nom: current_user.nom).first if current_user.statut == 'ministere'
 
-    case current_user.statut
-    when 'admin'
-      @programmes = Programme.all.order(numero: :asc)
-      @regions = Region.all.order(nom: :asc)
-    when 'prefet', 'CBR'
-      @programmes = Programme.all.order(numero: :asc)
-      @regions = Region.where(id: current_user.region_id)
-    when 'ministere'
-      @ministere = Ministere.where(nom: current_user.nom).first
-      @programmes = Programme.where(ministere_id: @ministere.id).order(numero: :asc)
-      @regions = Region.all.order(nom: :asc)
-    end
-    @array_programme_mvt = @programmes.includes(:mouvements).where(mouvements: { region_id: @regions.pluck(:id) }).since_date(@start).pluck(:programme_id, :type_mouvement, :quotite, :etpt, :cout_etp, :credits_gestion, :grade)
-    @array_programme_obj = @programmes.includes(:objectifs).where(objectifs: { region_id: @regions.pluck(:id) }).since_date(@start).pluck(:programme_id, :etp_cible, :etpt_plafond)
+    @array_programme_mvt = @programmes.includes(:mouvements).where(mouvements: { region_id: @regions.pluck(:id) }).since_date(date_debut).pluck(:programme_id, :type_mouvement, :quotite, :etpt, :cout_etp, :credits_gestion, :grade)
+    @array_programme_obj = @programmes.includes(:objectifs).where(objectifs: { region_id: @regions.pluck(:id) }).since_date(date_debut).pluck(:programme_id, :etp_cible, :etpt_plafond)
 
-    @array_region_mvt = @regions.includes(:mouvements).where(mouvements: { programme_id: @programmes.pluck(:id) }).since_date(@start).pluck(:region_id, :type_mouvement, :quotite, :etpt, :cout_etp, :credits_gestion, :grade)
-    @array_region_obj = @regions.includes(:objectifs).where(objectifs: { programme_id: @programmes.pluck(:id) }).since_date(@start).pluck(:region_id, :etp_cible, :etpt_plafond)
+    @array_region_mvt = @regions.includes(:mouvements).where(mouvements: { programme_id: @programmes.pluck(:id) }).since_date(date_debut).pluck(:region_id, :type_mouvement, :quotite, :etpt, :cout_etp, :credits_gestion, :grade)
+    @array_region_obj = @regions.includes(:objectifs).where(objectifs: { programme_id: @programmes.pluck(:id) }).since_date(date_debut).pluck(:region_id, :etp_cible, :etpt_plafond)
 
     @etp_cible = @array_programme_obj.sum{ |s| s[1] }.round(1)
     @etpt_plafond = @array_programme_obj.sum{ |s| s[2] }.round(1)
@@ -97,4 +88,13 @@ class PagesController < ApplicationController
   def plan; end
 
   def faq; end
+
+  private
+  def set_regions
+    ['CBR', 'DCB'].include?(current_user.statut) ? Region.where(id: current_user.region_id) : Region.all.order(nom: :asc)
+  end
+
+  def set_programmes
+    current_user.statut == 'ministere' ? Programme.where(ministere_id: @ministere.id).order(numero: :asc) : Programme.all.order(numero: :asc)
+  end
 end
