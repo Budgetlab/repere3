@@ -3,15 +3,16 @@ class PagesController < ApplicationController
 
   def accueil
     date_debut = Date.new(@annee, 1, 1)
+    date_fin = Date.new(@annee, 12, 31)
     @regions = set_regions
     @programmes = set_programmes
     @ministere = Ministere.where(nom: current_user.nom).first if current_user.statut == 'ministere'
 
-    @array_programme_mvt = @programmes.includes(:mouvements).where(mouvements: { region_id: @regions.pluck(:id) }).since_date(date_debut).pluck(:programme_id, :type_mouvement, :quotite, :etpt, :cout_etp, :credits_gestion, :grade)
-    @array_programme_obj = @programmes.includes(:objectifs).where(objectifs: { region_id: @regions.pluck(:id) }).since_date(date_debut).pluck(:programme_id, :etp_cible, :etpt_plafond)
+    @array_programme_mvt = @programmes.includes(:mouvements).where(mouvements: { region_id: @regions.pluck(:id), date: date_debut..date_fin }).pluck(:programme_id, :type_mouvement, :quotite, :etpt, :cout_etp, :credits_gestion, :grade)
+    @array_programme_obj = @programmes.includes(:objectifs).where(objectifs: { region_id: @regions.pluck(:id), date: date_debut..date_fin }).pluck(:programme_id, :etp_cible, :etpt_plafond)
 
-    @array_region_mvt = @regions.includes(:mouvements).where(mouvements: { programme_id: @programmes.pluck(:id) }).since_date(date_debut).pluck(:region_id, :type_mouvement, :quotite, :etpt, :cout_etp, :credits_gestion, :grade)
-    @array_region_obj = @regions.includes(:objectifs).where(objectifs: { programme_id: @programmes.pluck(:id) }).since_date(date_debut).pluck(:region_id, :etp_cible, :etpt_plafond)
+    @array_region_mvt = @regions.includes(:mouvements).where(mouvements: { programme_id: @programmes.pluck(:id), date: date_debut..date_fin }).pluck(:region_id, :type_mouvement, :quotite, :etpt, :cout_etp, :credits_gestion, :grade)
+    @array_region_obj = @regions.includes(:objectifs).where(objectifs: { programme_id: @programmes.pluck(:id), date: date_debut..date_fin }).pluck(:region_id, :etp_cible, :etpt_plafond)
 
     @etp_cible = @array_programme_obj.sum{ |s| s[1] }.round(1)
     @etpt_plafond = @array_programme_obj.sum{ |s| s[2] }.round(1)

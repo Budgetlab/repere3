@@ -4,20 +4,21 @@ class MouvementsController < ApplicationController
 
   def index
     date_debut = Date.new(@annee, 1, 1)
+    date_fin = Date.new(@annee, 12, 31)
     case current_user.statut
     when 'admin'
       @redeploiements = Redeploiement.includes(:region, mouvements: [:service, :programme]).where(created_at: date_debut..).order(created_at: :desc)
       @mouvements_array = @redeploiements.pluck(:redeploiement_id, :type_mouvement, 'mouvements.quotite', 'mouvements.cout_etp', 'mouvements.credits_gestion')
-      @etp_cible = Objectif.since_date(date_debut).sum(:etp_cible)
+      @etp_cible = Objectif.where(date: date_debut..date_fin).sum(:etp_cible)
     when 'prefet', 'CBR'
       @redeploiements = Redeploiement.includes(mouvements: [:service, :programme]).where(region_id: current_user.region_id, created_at: date_debut..).order(created_at: :desc)
       @mouvements_array = @redeploiements.pluck(:redeploiement_id, :type_mouvement, 'mouvements.quotite', 'mouvements.cout_etp', 'mouvements.credits_gestion')
-      @etp_cible = Objectif.since_date(date_debut).where(region_id: current_user.region_id).sum(:etp_cible)
+      @etp_cible = Objectif.where(date: date_debut..date_fin).where(region_id: current_user.region_id).sum(:etp_cible)
     when 'ministere'
       @ministere = Ministere.where(nom: current_user.nom).first
       @programme_id = Programme.where(ministere_id: @ministere.id).pluck(:id)
       @mouvements = Mouvement.includes(:service, :programme).since_date(date_debut).where(programme_id: @programme_id).order(created_at: :desc)
-      @etp_cible = Objectif.since_date(date_debut).where(programme_id: @programme_id).sum(:etp_cible)
+      @etp_cible = Objectif.where(date: date_debut..date_fin).where(programme_id: @programme_id).sum(:etp_cible)
       @redeploiements = []
       @mouvements_array = @mouvements.pluck(:id, :type_mouvement, :quotite, :cout_etp, :credits_gestion)
     end
