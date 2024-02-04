@@ -5,8 +5,8 @@ class PagesController < ApplicationController
     date_debut = Date.new(@annee, 1, 1)
     date_fin = Date.new(@annee, 12, 31)
     @regions = set_regions
-    @programmes = set_programmes
     @ministere = Ministere.where(nom: current_user.nom).first if current_user.statut == 'ministere'
+    @programmes = set_programmes
 
     @array_programme_mvt = @programmes.includes(:mouvements).where(mouvements: { region_id: @regions.pluck(:id), date: date_debut..date_fin }).pluck(:programme_id, :type_mouvement, :quotite, :etpt, :cout_etp, :credits_gestion, :grade)
     @array_programme_obj = @programmes.includes(:objectifs).where(objectifs: { region_id: @regions.pluck(:id), date: date_debut..date_fin }).pluck(:programme_id, :etp_cible, :etpt_plafond)
