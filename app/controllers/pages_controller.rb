@@ -92,7 +92,7 @@ class PagesController < ApplicationController
 
   private
   def set_regions
-    ['CBR', 'DCB'].include?(current_user.statut) ? Region.where(id: current_user.region_id) : Region.all.order(nom: :asc)
+    ['CBR', 'prefet'].include?(current_user.statut) ? Region.where(id: current_user.region_id) : Region.all.order(nom: :asc)
   end
 
   def set_programmes
