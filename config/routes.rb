@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   scope(:path => '/repere3') do
+    devise_for :admin_users, ActiveAdmin::Devise.config
+    ActiveAdmin.routes(self)
     devise_for :users, :path => "",
       :path_names =>  {:sign_in => "connexion", :sign_out => "logout"},
       controllers: {sessions: 'sessions'}

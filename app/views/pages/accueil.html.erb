@@ -1,277 +1,348 @@
-<% content_for :title do %>Accueil | REPERE3 <% end %>
-<div class="fr-container"  data-controller="highcharts" data-highcharts-mvtcount="<%=@array_programme_mvt.length%>" data-highcharts-showregion="<%= current_user.statut == "admin" || current_user.statut == "ministere"%>" data-highcharts-categories="<%=@etp_supp%>"  data-highcharts-categories2="<%=@etp_add%>" data-highcharts-regions="<%= @regions.pluck(:nom)%>" data-highcharts-regionsun="<%= @etp_region%>" data-highcharts-region2="<%= @etp_supp_region%>" data-highcharts-plafond="<%= @etp_plafond%>" data-highcharts-programmes="<%= @programmes.pluck(:numero)%>" data-highcharts-programme1="<%= @ept_prog%>" data-highcharts-progetp="<%=@etp_supp_prog%>" data-highcharts-time1="<%= @etp_time_ajout%>" data-highcharts-time2="<%= @etp_time_supp%>" data-highcharts-ajout="<%=@mouvements_ajout%>" data-highcharts-suppression="<%= @mouvements_supp%>">
-	<div class="fr-grid-row fr-grid-row--gutters">
-		<div class="fr-col-12 fr-col-lg-12">
-			<h1 class="fr-my-6w"><%= current_user.nom%></h1>
-		</div>
-	</div>
-	<div class="fr-grid-row fr-grid-row--gutters">
-		<div class="fr-col-12 fr-col-lg-3">
-			<div class="fr-callout ">
-		    	<p class="fr-callout__title"><%= format_number(@etp_cible) %> ETP</p>
-		    	<p class="fr-callout__text">notifiés</p>
-			</div>
-		</div>
-		<div class="fr-col-12 fr-col-lg-3">
-			<div class="fr-callout ">
-		    	<p class="fr-callout__title"><%= format_number(@etp_3)%> ETP</p>
-		    	<p class="fr-callout__text">redéployables (3%)</p>
-			</div>
-		</div>
-		<div class="fr-col-12 fr-col-lg-3">
-			<div class="fr-callout ">
-		    	<p class="fr-callout__title"><%= format_number(@etp_supp.sum )%> ETP</p>
-		    	<p class="fr-callout__text">supprimés</p>
-			</div>
-		</div>
-		<div class="fr-col-12 fr-col-lg-3">
-			<div class="fr-callout ">
-		    	<p class="fr-callout__title"><% if @etp_cible != 0 %><%= format_number((@etp_supp.sum/@etp_cible)*100) %><%else%>0<%end%>% ETP</p>
-		    	<p class="fr-callout__text">supprimés</p>
-			</div>
-		</div>
-	
-	</div>
-	<div class="fr-grid-row fr-grid-row--gutters">
-		<div class="fr-col-12 fr-col-lg-12">
-			<h2 class="fr-my-2w">Synthèse des redéploiements</h2>
-		</div>
-	</div>
+<% content_for :title do %>Accueil | REPERE3
+<% end %>
+<div class="fr-container" data-controller="highcharts" data-highcharts-mvtcount="<%= @array_programme_mvt.length %>" data-highcharts-showregion="<%= current_user.statut == "admin" || current_user.statut == "ministere" %>" data-highcharts-categories="<%= @etp_supp %>" data-highcharts-categories2="<%= @etp_add %>" data-highcharts-regions="<%= @regions.pluck(:nom) %>" data-highcharts-regionsun="<%= @etp_region %>" data-highcharts-region2="<%= @etp_supp_region %>" data-highcharts-plafond="<%= @etp_plafond %>" data-highcharts-programmes="<%= @programmes.pluck(:numero) %>" data-highcharts-programme1="<%= @ept_prog %>" data-highcharts-progetp="<%= @etp_supp_prog %>" data-highcharts-time1="<%= @etp_time_ajout %>" data-highcharts-time2="<%= @etp_time_supp %>" data-highcharts-ajout="<%= @mouvements_ajout %>" data-highcharts-suppression="<%= @mouvements_supp %>">
+  <div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-12 fr-col-lg-12">
+      <h1 class="fr-my-6w"><%= current_user.nom %></h1>
+    </div>
+  </div>
+  <div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-12 fr-col-lg-3">
+      <div class="fr-callout ">
+        <p class="fr-callout__title"><%= format_number(@etp_cible) %> ETP</p>
+        <p class="fr-callout__text">notifiés</p>
+      </div>
+    </div>
+    <div class="fr-col-12 fr-col-lg-3">
+      <div class="fr-callout ">
+        <p class="fr-callout__title"><%= format_number(@etp_3) %> ETP</p>
+        <p class="fr-callout__text">redéployables (3%)</p>
+      </div>
+    </div>
+    <div class="fr-col-12 fr-col-lg-3">
+      <div class="fr-callout ">
+        <p class="fr-callout__title"><%= format_number(@etp_supp.sum) %> ETP</p>
+        <p class="fr-callout__text">supprimés</p>
+      </div>
+    </div>
+    <div class="fr-col-12 fr-col-lg-3">
+      <div class="fr-callout ">
+        <p class="fr-callout__title">
+          <% if @etp_cible != 0 %><%= format_number((@etp_supp.sum / @etp_cible) * 100) %>
+          <% else %>0
+          <% end %>% ETP</p>
+        <p class="fr-callout__text">supprimés</p>
+      </div>
+    </div>
 
-	<div class="fr-tabs fr-mb-6w">
-	    <ul class="fr-tabs__list" role="tablist" aria-label="Synthese des redéploiements">
-	    	
-	        <li role="presentation">
-	            <button id="tabpanel-404" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="0" role="tab" aria-selected="true" aria-controls="tabpanel-404-panel">Synthèse par programme</button>
-	        </li>
-	        <% if current_user.statut == "admin" || current_user.statut == "ministere"%>
-	        <li role="presentation">
-	            <button id="tabpanel-405" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-405-panel"  >Synthèse par région</button>
-	        </li>
-	        <%end%>
-	        
-	        <li role="presentation">
-	            <button id="tabpanel-406" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-406-panel">Synthèse par catégorie</button>
-	        </li>
-	        <li role="presentation">
-	            <button id="tabpanel-407" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-407-panel">Synthèse temporelle</button>
-	        </li>
-	    </ul>
-	    
-				
-		<div id="tabpanel-404-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tabpanel-404" tabindex="0">
-			<div class="fr-grid-row fr-grid-row--gutters">
-			
-				<div class="fr-col-12 fr-col-lg-6">
-					<div data-highcharts-target="canvasProgramme2"></div>
-				</div>				
-				<div class="fr-col-12 fr-col-lg-6">
-					<div data-highcharts-target="canvasProgramme1"></div>
-				</div>
-				
+  </div>
+  <div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-12 fr-col-lg-12">
+      <h2 class="fr-my-2w">Synthèse des redéploiements</h2>
+    </div>
+  </div>
 
-				<div class="fr-col-12 fr-col-lg-12">
-					<div class="fr-download">
-					    <p>
-					        <%= link_to programmes_path(format: :xlsx), class: "fr-download__link" do %> Télécharger la table de synthèse par programme
-					            <span class="fr-download__detail">
+  <div class="fr-tabs fr-mb-6w">
+    <ul class="fr-tabs__list" role="tablist" aria-label="Synthese des redéploiements">
+
+      <li role="presentation">
+        <button id="tabpanel-404" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="0" role="tab" aria-selected="true" aria-controls="tabpanel-404-panel">Synthèse
+          par programme
+        </button>
+      </li>
+      <% if current_user.statut == "admin" || current_user.statut == "ministere" %>
+        <li role="presentation">
+          <button id="tabpanel-405" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-405-panel">Synthèse
+            par région
+          </button>
+        </li>
+      <% end %>
+
+      <li role="presentation">
+        <button id="tabpanel-406" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-406-panel">Synthèse
+          par catégorie
+        </button>
+      </li>
+      <li role="presentation">
+        <button id="tabpanel-407" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-407-panel">Synthèse
+          temporelle
+        </button>
+      </li>
+    </ul>
+
+
+    <div id="tabpanel-404-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tabpanel-404" tabindex="0">
+      <div class="fr-grid-row fr-grid-row--gutters">
+
+        <div class="fr-col-12 fr-col-lg-6">
+          <div data-highcharts-target="canvasProgramme2"></div>
+        </div>
+        <div class="fr-col-12 fr-col-lg-6">
+          <div data-highcharts-target="canvasProgramme1"></div>
+        </div>
+
+
+        <div class="fr-col-12 fr-col-lg-12">
+          <div class="fr-download">
+            <p>
+              <%= link_to programmes_path(format: :xlsx), class: "fr-download__link" do %> Télécharger la table de
+                synthèse par programme
+                <span class="fr-download__detail">
 					                Format .xlsx
 					            </span>
-					        <%end %>
-					    </p>
-					</div>
-					<div class="fr-table fr-mb-3w fr-table--no-caption">
-						<table>
-							<thead>
-								<tr>
-									<th scope="col">Programme</th>
-									<th scope="col">Effectifs notifiés</th>
-									<th scope="col">ETPT notifiés</th>
-									<th scope="col">Plafond 3% ETP</th>
-									<th scope="col">ETP supprimés</th>
-									<th scope="col">% ETP supprimés</th>
-									<th scope="col">ETP ajoutés</th>
-									<th scope="col">ETPT supprimés</th>
-									<th scope="col">ETPT ajoutés</th>
-									<th scope="col">Mouvement en gestion (LFR)</th>
-									<th scope="col">Mouvement en base (PLF N+1)</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr class="total">
-									<td>Total</td>
-									<td><%= format_number(@etp_cible) %></td>
-									<td><%= format_number(@etpt_plafond)%></td>
-									<td><%= format_number(@etp_3)%></td>
-									<td><%= format_number(@etp_supp.sum)%></td>
-									<td><% if @etp_cible != 0 %><%= format_number((@etp_supp.sum/@etp_cible)*100) %><%else%>0<%end%>%</td>
-									<td><%= format_number(@etp_add.sum)%></td>
-									<td><%= format_number(@etpt_supp.sum)%></td>
-									<td><%= format_number(@etpt_add.sum)%></td>
-									<td><%= format_number(@credits)%> €</td>
-									<td><%= format_number(@couts_etp)%> €</td>
-								</tr>
-								<% @programmes.each do |programme|%>
-									<% etp_cible_sum = @array_programme_obj.select{|a| a[0] == programme.id }.sum{|s| s[1]} %>
-									<% etpt_plafond_sum = @array_programme_obj.select{|a| a[0] == programme.id }.sum{|s| s[2]} %>
-									<% etp_cible_3_percent = (etp_cible_sum * 0.03).round(1) %>
+              <% end %>
+            </p>
+          </div>
+          <div class="fr-table--md fr-table fr-table--bordered fr-table--no-caption fr-mb-3w">
+            <div class="fr-table__wrapper">
+              <div class="fr-table__container">
+                <div class="fr-table__content">
+                  <table class="fr-cell--multiline">
+                    <thead>
+                    <tr>
+                      <th scope="col" class="fr-cell--fixed">Programme</th>
+                      <th scope="col">Effectifs notifiés</th>
+                      <th scope="col">ETPT notifiés</th>
+                      <th scope="col">Plafond 3% ETP</th>
+                      <th scope="col">ETP supprimés</th>
+                      <th scope="col">% ETP supprimés</th>
+                      <th scope="col">ETP ajoutés</th>
+                      <th scope="col">ETPT supprimés</th>
+                      <th scope="col">ETPT ajoutés</th>
+                      <th scope="col">Mouvement en gestion (LFR)</th>
+                      <th scope="col">Mouvement en base (PLF N+1)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="fr-table--total">
+                      <th class="fr-cell--fixed">Total</th>
+                      <td class="fr-cell--right"><%= format_number(@etp_cible) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etpt_plafond) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etp_3) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etp_supp.sum) %></td>
+                      <td class="fr-cell--right">
+                        <% if @etp_cible != 0 %><%= format_number((@etp_supp.sum / @etp_cible) * 100) %>
+                        <% else %>0
+                        <% end %>%
+                      </td>
+                      <td class="fr-cell--right"><%= format_number(@etp_add.sum) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etpt_supp.sum) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etpt_add.sum) %></td>
+                      <td class="fr-cell--right"><%= format_number(@credits) %> €</td>
+                      <td class="fr-cell--right"><%= format_number(@couts_etp) %> €</td>
+                    </tr>
+                    <% @programmes.each do |programme| %>
+                      <% etp_cible_sum = @array_programme_obj.select { |a| a[0] == programme.id }.sum { |s| s[1] } %>
+                      <% etpt_plafond_sum = @array_programme_obj.select { |a| a[0] == programme.id }.sum { |s| s[2] } %>
+                      <% etp_cible_3_percent = (etp_cible_sum * 0.03).round(1) %>
 
-								<tr>
-									<td><%= programme.numero %></td>
-									<td><%= format_number(etp_cible_sum)%></td>
-									<td><%= format_number(etpt_plafond_sum)%></td>
-									<td><%= format_number(etp_cible_3_percent) %></td>
-									<td><%= format_number(@array_programme_mvt.select{|a| a[0] == programme.id && a[1] == "suppression"}.sum{|s| s[2]})%></td>
-									<td><% if etp_cible_sum!= 0%><%= format_number((@array_programme_mvt.select{|a| a[0] == programme.id && a[1] == "suppression"}.sum{|s| s[2]}/etp_cible_sum)*100)%><%else%>0<%end%>%</td>
-									<td><%= format_number(@array_programme_mvt.select{|a| a[0] == programme.id && a[1] == "ajout"}.sum{|s| s[2]})%></td>
-									<td><%= format_number(@array_programme_mvt.select{|a| a[0] == programme.id && a[1] == "suppression"}.sum{|s| s[3]})%></td>
-									<td><%= format_number(@array_programme_mvt.select{|a| a[0] == programme.id && a[1] == "ajout"}.sum{|s| s[3]})%></td>
-									<td><%= format_number(@array_programme_mvt.select{|a| a[0] == programme.id }.sum{|s| s[5]}.to_i)%> €</td>
-									<td><%= format_number(@array_programme_mvt.select{|a| a[0] == programme.id }.sum{|s| s[4]}.to_i)%> €</td>
-								</tr>
-								<% end %>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		<% if current_user.statut == "admin" || current_user.statut == "ministere"%>
-		<div id="tabpanel-405-panel" class="fr-tabs__panel " role="tabpanel" aria-labelledby="tabpanel-405" tabindex="0">
-			<div class="fr-grid-row fr-grid-row--gutters">
-				<div class="fr-col-12 fr-col-lg-12">
-					<div data-highcharts-target="canvasRegion1"></div>
-				</div>
-				<div class="fr-col-12 fr-col-lg-10 fr-col-offset-lg-1">
-					<div data-highcharts-target="canvasRegionSunburst"></div>
-				</div>
-				
-				<div class="fr-col-12 fr-col-lg-12">
-					<div class="fr-download">
-					    <p>
-					        <%= link_to regions_path(format: :xlsx), class: "fr-download__link" do %> Télécharger la table de synthèse par région
-					            <span class="fr-download__detail">
+                      <tr>
+                        <th class="fr-cell--fixed">P<%= programme.numero %></th>
+                        <td class="fr-cell--right"><%= format_number(etp_cible_sum) %></td>
+                        <td class="fr-cell--right"><%= format_number(etpt_plafond_sum) %></td>
+                        <td class="fr-cell--right"><%= format_number(etp_cible_3_percent) %></td>
+                        <td class="fr-cell--right"><%= format_number(@array_programme_mvt.select { |a| a[0] == programme.id && a[1] == "suppression" }.sum { |s| s[2] }) %></td>
+                        <td class="fr-cell--right">
+                          <% if etp_cible_sum != 0 %><%= format_number((@array_programme_mvt.select { |a| a[0] == programme.id && a[1] == "suppression" }.sum { |s| s[2] } / etp_cible_sum) * 100) %>
+                          <% else %>0
+                          <% end %>%
+                        </td>
+                        <td class="fr-cell--right"><%= format_number(@array_programme_mvt.select { |a| a[0] == programme.id && a[1] == "ajout" }.sum { |s| s[2] }) %></td>
+                        <td class="fr-cell--right"><%= format_number(@array_programme_mvt.select { |a| a[0] == programme.id && a[1] == "suppression" }.sum { |s| s[3] }) %></td>
+                        <td class="fr-cell--right"><%= format_number(@array_programme_mvt.select { |a| a[0] == programme.id && a[1] == "ajout" }.sum { |s| s[3] }) %></td>
+                        <td class="fr-cell--right"><%= format_number(@array_programme_mvt.select { |a| a[0] == programme.id }.sum { |s| s[5] }.to_i) %>
+                          €
+                        </td>
+                        <td class="fr-cell--right"><%= format_number(@array_programme_mvt.select { |a| a[0] == programme.id }.sum { |s| s[4] }.to_i) %>
+                          €
+                        </td>
+                      </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if current_user.statut == "admin" || current_user.statut == "ministere" %>
+      <div id="tabpanel-405-panel" class="fr-tabs__panel " role="tabpanel" aria-labelledby="tabpanel-405" tabindex="0">
+        <div class="fr-grid-row fr-grid-row--gutters">
+          <div class="fr-col-12 fr-col-lg-12">
+            <div data-highcharts-target="canvasRegion1"></div>
+          </div>
+          <div class="fr-col-12 fr-col-lg-10 fr-col-offset-lg-1">
+            <div data-highcharts-target="canvasRegionSunburst"></div>
+          </div>
+
+          <div class="fr-col-12 fr-col-lg-12">
+            <div class="fr-download">
+              <p>
+                <%= link_to regions_path(format: :xlsx), class: "fr-download__link" do %> Télécharger la table de
+                  synthèse par région
+                  <span class="fr-download__detail">
 					                Format .xlsx
 					            </span>
-					        <%end %>
-					    </p>
-					</div>
-					<div class="fr-table fr-mb-3w fr-table--no-caption">
-						<table>
-							<thead>
-								<tr>
-									<th scope="col">Région</th>
-									<th scope="col">Effectifs notifiés</th>
-									<th scope="col">ETPT notifiés</th>
-									<th scope="col">Plafond 3% ETP</th>
-									<th scope="col">ETP supprimés</th>
-									<th scope="col">% ETP supprimés</th>
-									<th scope="col">ETP ajoutés</th>
-									
-									<th scope="col">ETPT supprimés</th>
-									<th scope="col">ETPT ajoutés</th>
-									<th scope="col">Mouvement en gestion (LFR)</th>
-									<th scope="col">Mouvement en base (PLF N+1)</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr class="total">
-									<td>Total</td>
-									<td><%= format_number(@etp_cible) %></td>
-									<td><%= format_number(@etpt_plafond)%></td>
-									<td><%= format_number(@etp_3)%></td>
-									<td><%= format_number(@etp_supp.sum)%></td>
-									<td><% if @etp_cible != 0 %><%= format_number((@etp_supp.sum/@etp_cible)*100) %><%else%>0<%end%>%</td>
-									<td><%= format_number(@etp_add.sum)%></td>
-									<td><%= format_number(@etpt_supp.sum)%></td>
-									<td><%= format_number(@etpt_add.sum)%></td>
-									<td><%= format_number(@credits)%> €</td>
-									<td><%= format_number(@couts_etp)%> €</td>
-								</tr>
-								<% @regions.each_with_index do |region,i|%>
-								<% etp_cible_sum = @array_region_obj.select{|a| a[0] == region.id }.sum{|s| s[1]} %>
-								<% etpt_plafond_sum = @array_region_obj.select{|a| a[0] == region.id }.sum{|s| s[2]} %>
-								<% etp_cible_3_percent = (etp_cible_sum * 0.03).round(1) %>
-								<tr>
-									<td><%= region.nom %></td>
-									<td><%= format_number(etp_cible_sum)%></td>
-									<td><%= format_number(etpt_plafond_sum)%></td>
-									<td><%= format_number(etp_cible_3_percent) %></td>
-									<td><%= format_number(@array_region_mvt.select{|a| a[0] == region.id && a[1] == "suppression"}.sum{|s| s[2]})%></td>
-									<td><% if etp_cible_sum!= 0%><%= format_number((@array_region_mvt.select{|a| a[0] == region.id && a[1] == "suppression"}.sum{|s| s[2]}/etp_cible_sum)*100)%><%else%>0<%end%>%</td>
-									<td><%= format_number(@array_region_mvt.select{|a| a[0] == region.id && a[1] == "ajout"}.sum{|s| s[2]})%></td>
-									<td><%= format_number(@array_region_mvt.select{|a| a[0] == region.id && a[1] == "suppression"}.sum{|s| s[3]})%></td>
-									<td><%= format_number(@array_region_mvt.select{|a| a[0] == region.id && a[1] == "ajout"}.sum{|s| s[3]})%></td>
-									<td><%= format_number(@array_region_mvt.select{|a| a[0] == region.id }.sum{|s| s[5]}.to_i)%> €</td>
-									<td><%= format_number(@array_region_mvt.select{|a| a[0] == region.id }.sum{|s| s[4]}.to_i)%> €</td>
-								</tr>
-								<% end %>
-							</tbody>
-						</table>
-					</div>
-				</div>
-				
-			</div>
-		</div>
-		<% end %>
-		
-		<div id="tabpanel-406-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-406" tabindex="0">
-			<div class="fr-grid-row fr-grid-row--gutters">
-				<div class="fr-col-12 fr-col-lg-6">
-					
-					<div class="fr-table fr-mb-3w fr-table--no-caption">
-						<table>
-							<thead>
-								<tr>
-									<th scope="col">Macrograde</th>
-									<th scope="col">ETP supprimés</th>
-									<th scope="col">ETP ajoutés</th>
-									<th scope="col">ETPT supprimés</th>
-									<th scope="col">ETPT ajoutés</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr class="total">
-									<td>Total</td>
-									<td><%=format_number(@etp_supp.sum)%></td><td><%= format_number(@etp_add.sum)%></td>
-									<td><%= format_number(@etpt_supp.sum)%></td><td><%= format_number(@etpt_add.sum)%></td>
-								</tr>
-								<tr><td>A</td>
-									<td><%=format_number(@etp_supp[0])%></td><td><%= format_number(@etp_add[0])%></td><td><%= format_number(@etpt_supp[0])%></td><td><%= format_number(@etpt_add[0])%></td>
-								</tr>
-								<tr><td>B</td>
-									<td><%=format_number(@etp_supp[1])%></td><td><%= format_number(@etp_add[1])%></td><td><%= format_number(@etpt_supp[1])%></td><td><%= format_number(@etpt_add[1])%></td>
-								</tr>
-								<tr><td>C</td>
-									<td><%=format_number(@etp_supp[2])%></td><td><%= format_number(@etp_add[2])%></td><td><%= format_number(@etpt_supp[2])%></td><td><%= format_number(@etpt_add[2])%></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-				<div class="fr-col-12 fr-col-lg-3">
-					<div>
-						<div data-highcharts-target="canvasCategorie"></div>
+                <% end %>
+              </p>
+            </div>
+            <div class="fr-table--md fr-table fr-table--bordered fr-table--no-caption fr-mb-3w">
+              <div class="fr-table__wrapper">
+                <div class="fr-table__container">
+                  <div class="fr-table__content">
+                    <table class="fr-cell--multiline">
+                      <caption></caption>
+                      <thead>
+                      <tr>
+                        <th scope="col" class="fr-cell--fixed">Région</th>
+                        <th scope="col">Effectifs notifiés</th>
+                        <th scope="col">ETPT notifiés</th>
+                        <th scope="col">Plafond 3% ETP</th>
+                        <th scope="col">ETP supprimés</th>
+                        <th scope="col">% ETP supprimés</th>
+                        <th scope="col">ETP ajoutés</th>
 
-					</div>
-				</div>
-				<div class="fr-col-12 fr-col-lg-3">
-					<div>
-						<div data-highcharts-target="canvasCategorie2"></div>
+                        <th scope="col">ETPT supprimés</th>
+                        <th scope="col">ETPT ajoutés</th>
+                        <th scope="col">Mouvement en gestion (LFR)</th>
+                        <th scope="col">Mouvement en base (PLF N+1)</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr class="fr-table--total">
+                        <th class="fr-cell--fixed">Total</th>
+                        <td class="fr-cell--right"><%= format_number(@etp_cible) %></td>
+                        <td class="fr-cell--right"><%= format_number(@etpt_plafond) %></td>
+                        <td class="fr-cell--right"><%= format_number(@etp_3) %></td>
+                        <td class="fr-cell--right"><%= format_number(@etp_supp.sum) %></td>
+                        <td class="fr-cell--right">
+                          <% if @etp_cible != 0 %><%= format_number((@etp_supp.sum / @etp_cible) * 100) %>
+                          <% else %>0
+                          <% end %>%
+                        </td>
+                        <td class="fr-cell--right"><%= format_number(@etp_add.sum) %></td>
+                        <td class="fr-cell--right"><%= format_number(@etpt_supp.sum) %></td>
+                        <td class="fr-cell--right"><%= format_number(@etpt_add.sum) %></td>
+                        <td class="fr-cell--right"><%= format_number(@credits) %> €</td>
+                        <td class="fr-cell--right"><%= format_number(@couts_etp) %> €</td>
+                      </tr>
+                      <% @regions.each_with_index do |region, i| %>
+                        <% etp_cible_sum = @array_region_obj.select { |a| a[0] == region.id }.sum { |s| s[1] } %>
+                        <% etpt_plafond_sum = @array_region_obj.select { |a| a[0] == region.id }.sum { |s| s[2] } %>
+                        <% etp_cible_3_percent = (etp_cible_sum * 0.03).round(1) %>
+                        <tr>
+                          <th class="fr-cell--fixed"><%= region.nom %></th>
+                          <td class="fr-cell--right"><%= format_number(etp_cible_sum) %></td>
+                          <td class="fr-cell--right"><%= format_number(etpt_plafond_sum) %></td>
+                          <td class="fr-cell--right"><%= format_number(etp_cible_3_percent) %></td>
+                          <td class="fr-cell--right"><%= format_number(@array_region_mvt.select { |a| a[0] == region.id && a[1] == "suppression" }.sum { |s| s[2] }) %></td>
+                          <td class="fr-cell--right">
+                            <% if etp_cible_sum != 0 %><%= format_number((@array_region_mvt.select { |a| a[0] == region.id && a[1] == "suppression" }.sum { |s| s[2] } / etp_cible_sum) * 100) %>
+                            <% else %>0
+                            <% end %>%
+                          </td>
+                          <td class="fr-cell--right"><%= format_number(@array_region_mvt.select { |a| a[0] == region.id && a[1] == "ajout" }.sum { |s| s[2] }) %></td>
+                          <td class="fr-cell--right"><%= format_number(@array_region_mvt.select { |a| a[0] == region.id && a[1] == "suppression" }.sum { |s| s[3] }) %></td>
+                          <td class="fr-cell--right"><%= format_number(@array_region_mvt.select { |a| a[0] == region.id && a[1] == "ajout" }.sum { |s| s[3] }) %></td>
+                          <td class="fr-cell--right"><%= format_number(@array_region_mvt.select { |a| a[0] == region.id }.sum { |s| s[5] }.to_i) %>
+                            €
+                          </td>
+                          <td class="fr-cell--right"><%= format_number(@array_region_mvt.select { |a| a[0] == region.id }.sum { |s| s[4] }.to_i) %>
+                            €
+                          </td>
+                        </tr>
+                      <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-					</div>
-				</div>
-			</div>
-		</div>
+        </div>
+      </div>
+    <% end %>
 
-		<div id="tabpanel-407-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-407" tabindex="0">		
-			<div class="fr-grid-row fr-grid-row--gutters">
-				<div class="fr-col-12 fr-col-lg-12">
-					<div data-highcharts-target="canvasTimeEtp"></div>
-					<div data-highcharts-target="canvasTime"></div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div id="tabpanel-406-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-406" tabindex="0">
+      <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-lg-6">
+
+          <div class="fr-table--md fr-table fr-table--bordered fr-table--no-caption fr-mb-3w">
+            <div class="fr-table__wrapper">
+              <div class="fr-table__container">
+                <div class="fr-table__content">
+                  <table class="fr-cell--multiline">
+                    <thead>
+                    <tr>
+                      <th scope="col">Macrograde</th>
+                      <th scope="col">ETP supprimés</th>
+                      <th scope="col">ETP ajoutés</th>
+                      <th scope="col">ETPT supprimés</th>
+                      <th scope="col">ETPT ajoutés</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="fr-table--total">
+                      <th class="fr-cell--fixed">Total</th>
+                      <td class="fr-cell--right"><%= format_number(@etp_supp.sum) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etp_add.sum) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etpt_supp.sum) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etpt_add.sum) %></td>
+                    </tr>
+                    <tr>
+                      <th class="fr-cell--fixed">A</th>
+                      <td class="fr-cell--right"><%= format_number(@etp_supp[0]) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etp_add[0]) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etpt_supp[0]) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etpt_add[0]) %></td>
+                    </tr>
+                    <tr>
+                      <th class="fr-cell--fixed">B</th>
+                      <td class="fr-cell--right"><%= format_number(@etp_supp[1]) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etp_add[1]) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etpt_supp[1]) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etpt_add[1]) %></td>
+                    </tr>
+                    <tr>
+                      <th class="fr-cell--fixed">C</th>
+                      <td class="fr-cell--right"><%= format_number(@etp_supp[2]) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etp_add[2]) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etpt_supp[2]) %></td>
+                      <td class="fr-cell--right"><%= format_number(@etpt_add[2]) %></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fr-col-12 fr-col-lg-3">
+          <div>
+            <div data-highcharts-target="canvasCategorie"></div>
+
+          </div>
+        </div>
+        <div class="fr-col-12 fr-col-lg-3">
+          <div>
+            <div data-highcharts-target="canvasCategorie2"></div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tabpanel-407-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-407" tabindex="0">
+      <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-lg-12">
+          <div data-highcharts-target="canvasTimeEtp"></div>
+          <div data-highcharts-target="canvasTime"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

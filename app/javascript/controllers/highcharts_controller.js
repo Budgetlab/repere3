@@ -152,7 +152,7 @@ export default class extends Controller {
         valueDecimals: 1,
     }
     }
-    this.chart = new Highcharts.chart(this.canvasProgramme1Target, options);
+    this.chart = Highcharts.chart(this.canvasProgramme1Target, options);
     this.chart.reflow();
   }
   syntheseProgramme2(){
@@ -237,7 +237,7 @@ export default class extends Controller {
               pointPlacement: 0
           }]
     }
-    this.chart = new Highcharts.chart(this.canvasProgramme2Target, options);
+    this.chart = Highcharts.chart(this.canvasProgramme2Target, options);
     this.chart.reflow();
   }
 
@@ -322,7 +322,7 @@ export default class extends Controller {
               pointPlacement: 0
           }]
     }
-    this.chart = new Highcharts.chart(this.canvasRegion1Target, options);
+    this.chart = Highcharts.chart(this.canvasRegion1Target, options);
     this.chart.reflow();
   }
   syntheseRegionSun(){
@@ -430,7 +430,7 @@ export default class extends Controller {
         valueDecimals: 1,
     }
     }
-    this.chart = new Highcharts.chart(this.canvasRegionSunburstTarget, options);
+    this.chart = Highcharts.chart(this.canvasRegionSunburstTarget, options);
     this.chart.reflow();
   }
  
@@ -514,7 +514,7 @@ export default class extends Controller {
               ]
           }]
     }
-    this.chart = new Highcharts.chart(this.canvasCategorieTarget, options);
+    this.chart = Highcharts.chart(this.canvasCategorieTarget, options);
     this.chart.reflow();
   }
 
@@ -598,7 +598,7 @@ export default class extends Controller {
               ]
           }]
     }
-    this.chart = new Highcharts.chart(this.canvasCategorie2Target, options);
+    this.chart = Highcharts.chart(this.canvasCategorie2Target, options);
     this.chart.reflow();
   }
 
@@ -686,7 +686,7 @@ export default class extends Controller {
               data: data1,
           }]
     }
-    this.chart = new Highcharts.chart(this.canvasTimeTarget, options);
+    this.chart = Highcharts.chart(this.canvasTimeTarget, options);
     this.chart.reflow();
   }
 
@@ -774,7 +774,7 @@ export default class extends Controller {
               data: data1,
           }]
     }
-    this.chart = new Highcharts.chart(this.canvasTimeEtpTarget, options);
+    this.chart = Highcharts.chart(this.canvasTimeEtpTarget, options);
     this.chart.reflow();
   }
 

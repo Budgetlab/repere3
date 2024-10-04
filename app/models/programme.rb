@@ -45,4 +45,11 @@ class Programme < ApplicationRecord
         end
       end
     end
+
+  def self.ransackable_attributes(auth_object = nil)
+    ["created_at", "id", "id_value", "ministere_id", "nom", "numero", "updated_at"]
+  end
+  def self.ransackable_associations(auth_object = nil)
+    ["couts", "ministere", "mouvements", "objectifs", "services"]
+  end
 end

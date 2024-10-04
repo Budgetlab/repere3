@@ -12,6 +12,10 @@ h1, h2{
 .total{
   background-color:var(--blue-france-950-100) !important;
 }
+.fr-table--total th, .fr-table--total td {
+  background-color:var(--blue-france-950-100) !important;
+}
+
 
 .highcharts-credits{
   color:var(--background-default-grey)!important;

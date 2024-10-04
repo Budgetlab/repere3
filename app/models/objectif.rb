@@ -24,4 +24,10 @@ class Objectif < ApplicationRecord
       end
     end
   end
+  def self.ransackable_attributes(auth_object = nil)
+    ["created_at", "date", "etp_cible", "etpt_plafond", "id", "id_value", "programme_id", "region_id", "updated_at"]
+  end
+  def self.ransackable_associations(auth_object = nil)
+    ["programme", "region"]
+  end
 end

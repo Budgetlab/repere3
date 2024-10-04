@@ -1,10 +1,10 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.0.6'
+ruby '3.3.5'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem 'rails', '~> 7.1.2'
+gem 'rails', '~> 7.1', '>= 7.1.4'
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem 'sprockets-rails'
@@ -48,7 +48,7 @@ gem 'sassc-rails'
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 gem 'active_link_to'
-
+gem 'activeadmin'
 gem 'caxlsx'
 gem 'caxlsx_rails'
 gem 'devise'
@@ -56,6 +56,7 @@ gem 'dotenv-rails', '~> 2.7', '>= 2.7.6'
 gem 'rails_autolink'
 gem 'rails-i18n'
 gem 'roo', '~> 2.8.0'
+gem 'pagy'
 
 
 group :development, :test do
