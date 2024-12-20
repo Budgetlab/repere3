@@ -4,6 +4,19 @@
   <div class="fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-12 fr-col-lg-12">
       <h1 class="fr-my-6w"><%= current_user.nom %></h1>
+      <div class="fr-mb-2w">
+        <ul class="fr-tags-group">
+          <% (2023..Date.today.year).to_a.each do |annee| %>
+            <li>
+              <button class="fr-tag" aria-pressed="<%= @annee_a_afficher == annee ? 'true' : 'false' %>">
+                <%= link_to historique_path(annee: annee) do %>
+                  <%= annee %>
+                <% end %>
+              </button>
+            </li>
+          <% end %>
+        </ul>
+      </div>
       <%= render 'mouvements/success' %>
     </div>
   </div>
@@ -36,7 +49,6 @@
         <p class="fr-callout__text">mouv. en base </p>
       </div>
     </div>
-
   </div>
   <div class="fr-grid-row fr-grid-row--gutters fr-mb-4w">
     <div class="fr-col-12 fr-col-lg-12">
@@ -46,8 +58,8 @@
         <% end %>mouvements [<%= @mouvements_array.length %>]</h2>
       <div class="fr-download">
         <p>
-          <%= link_to historique_path(format: :xlsx), class: "fr-download__link" do %> Télécharger l'historique des
-            mouvements
+          <%= link_to historique_path(annee: @annee_a_afficher, format: :xlsx), class: "fr-download__link" do %> Télécharger l'historique des
+            mouvements <%= @annee_a_afficher %>
             <span class="fr-download__detail">
 			                Format .xlsx
 			            </span>

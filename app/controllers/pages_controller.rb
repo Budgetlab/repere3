@@ -2,8 +2,9 @@ class PagesController < ApplicationController
   before_action :authenticate_user!
 
   def accueil
-    date_debut = Date.new(@annee, 1, 1)
-    date_fin = Date.new(@annee, 12, 31)
+    @annee_a_afficher = [2023, 2024, 2025].include?(params[:annee].to_i) ? params[:annee].to_i : @annee
+    date_debut = Date.new(@annee_a_afficher, 1, 1)
+    date_fin = Date.new(@annee_a_afficher, 12, 31)
     @regions = set_regions
     @ministere = Ministere.where(nom: current_user.nom).first if current_user.statut == 'ministere'
     @programmes = set_programmes

@@ -4,6 +4,19 @@
   <div class="fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-12 fr-col-lg-12">
       <h1 class="fr-my-6w"><%= current_user.nom %></h1>
+      <div class="fr-mb-2w">
+        <ul class="fr-tags-group">
+          <% (2023..Date.today.year).to_a.each do |annee| %>
+            <li>
+              <button class="fr-tag" aria-pressed="<%= @annee_a_afficher == annee ? 'true' : 'false' %>">
+                <%= link_to root_path(annee: annee) do %>
+                  <%= annee %>
+                <% end %>
+              </button>
+            </li>
+          <% end %>
+        </ul>
+      </div>
     </div>
   </div>
   <div class="fr-grid-row fr-grid-row--gutters">
@@ -85,7 +98,7 @@
         <div class="fr-col-12 fr-col-lg-12">
           <div class="fr-download">
             <p>
-              <%= link_to programmes_path(format: :xlsx), class: "fr-download__link" do %> Télécharger la table de
+              <%= link_to programmes_path(annee: @annee_a_afficher, format: :xlsx), class: "fr-download__link" do %> Télécharger la table de
                 synthèse par programme
                 <span class="fr-download__detail">
 					                Format .xlsx
@@ -181,7 +194,7 @@
           <div class="fr-col-12 fr-col-lg-12">
             <div class="fr-download">
               <p>
-                <%= link_to regions_path(format: :xlsx), class: "fr-download__link" do %> Télécharger la table de
+                <%= link_to regions_path(annee: @annee_a_afficher, format: :xlsx), class: "fr-download__link" do %> Télécharger la table de
                   synthèse par région
                   <span class="fr-download__detail">
 					                Format .xlsx
