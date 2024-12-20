@@ -106,6 +106,7 @@ export default class extends Controller {
             rotationMode: 'circular',
             style:{
                   color: 'var(--text-title-grey)',
+                textOutline: 0,
             }
             
         },
@@ -384,6 +385,7 @@ export default class extends Controller {
             rotationMode: 'circular',
             style:{
                   color: 'var(--text-title-grey)',
+                textOutline: 0,
             }
             
         },

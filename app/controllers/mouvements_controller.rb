@@ -1,5 +1,6 @@
 class MouvementsController < ApplicationController
   before_action :authenticate_user!
+  before_action :redirect_unless_cbr, only: [:new, :create]
   protect_from_forgery with: :null_session
 
   def index
@@ -32,11 +33,7 @@ class MouvementsController < ApplicationController
     end
   end
 
-  def new
-    return unless current_user.statut != 'CBR'
-
-    redirect_to root_path
-  end
+  def new; end
 
   def get_couts
     @suppressions = params[:grades]
@@ -177,5 +174,10 @@ params[:grade7],params[:grade8],params[:grade9],params[:grade10]]
     respond_to do |format|
       format.turbo_stream { redirect_to root_path}
     end
+  end
+
+  private
+  def redirect_unless_cbr
+    redirect_to root_path and return unless current_user.statut != 'CBR'
   end
 end
