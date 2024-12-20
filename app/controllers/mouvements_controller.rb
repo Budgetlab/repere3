@@ -178,6 +178,6 @@ params[:grade7],params[:grade8],params[:grade9],params[:grade10]]
 
   private
   def redirect_unless_cbr
-    redirect_to root_path and return unless current_user.statut != 'CBR'
+    redirect_to root_path unless current_user.statut == 'CBR'
   end
 end
