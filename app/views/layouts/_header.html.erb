@@ -53,7 +53,11 @@
                         <%= active_link_to root_path, class: "fr-nav__link", target: "_self", :active => [['pages'],['accueil']] do%>Accueil<%end%>
                     </li>
                     <li class="fr-nav__item">
+                      <% if current_user.statut == 'ministere' %>
                         <%= active_link_to historique_path, class:"fr-nav__link", target:"_self" do%>Historique des mouvements<%end%>
+                      <% else %>
+                        <%= active_link_to redeploiements_path, class:"fr-nav__link", target:"_self" do%>Historique des mouvements<%end%>
+                      <% end %>
                     </li>
                     <% if current_user.statut == "CBR"%>
                     <li class="fr-nav__item">

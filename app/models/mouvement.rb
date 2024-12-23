@@ -5,6 +5,8 @@ class Mouvement < ApplicationRecord
   belongs_to :programme
   belongs_to :redeploiement
 
+  scope :suppressions, -> { where(type_mouvement: "suppression") }
+
   require 'roo'
   def self.import(file)
   end

@@ -1,0 +1,181 @@
+<% content_for :title do %>Historique des redéploiements | REPERE3
+<% end %>
+<div class="fr-container">
+  <div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-12 fr-col-lg-12">
+      <h1 class="fr-my-6w"><%= current_user.nom %></h1>
+      <div class="fr-mb-2w">
+        <ul class="fr-tags-group">
+          <% (2023..Date.today.year).to_a.each do |annee| %>
+            <li>
+              <button class="fr-tag" aria-pressed="<%= @annee_a_afficher == annee ? 'true' : 'false' %>">
+                <%= link_to redeploiements_path(annee: annee) do %>
+                  <%= annee %>
+                <% end %>
+              </button>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+      <%= render 'mouvements/success' %>
+    </div>
+  </div>
+  <div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-12 fr-col-lg-3">
+      <div class="fr-callout ">
+        <p class="fr-callout__title"><%= format_number(@etp_supp) %></p>
+        <p class="fr-callout__text">ETP supprimés</p>
+      </div>
+    </div>
+    <div class="fr-col-12 fr-col-lg-3">
+      <div class="fr-callout ">
+        <p class="fr-callout__title">
+          <% if @etp_cible != 0 %><%= format_number((@etp_supp / @etp_cible) * 100) %>
+          <% else %>0
+          <% end %>%</p>
+        <p class="fr-callout__text">ETP supprimés</p>
+      </div>
+    </div>
+    <div class="fr-col-12 fr-col-lg-3">
+      <div class="fr-callout ">
+        <p class="fr-callout__title"><%= number_with_delimiter(@credits_gestion, locale: :fr) %> € </p>
+        <p class="fr-callout__text">mouv. en gestion</p>
+      </div>
+    </div>
+    <div class="fr-col-12 fr-col-lg-3">
+      <div class="fr-callout ">
+        <p class="fr-callout__title"><%= number_with_delimiter(@cout_etp, locale: :fr) %> €</p>
+        <p class="fr-callout__text">mouv. en base </p>
+      </div>
+    </div>
+  </div>
+  <div class="fr-grid-row fr-grid-row--gutters fr-mb-4w">
+    <div class="fr-col-12 fr-col-lg-12">
+      <h2 class="fr-my-2w">Historique des redéploiements (<%= @redeploiements_all&.count %>) et mouvements (<%= @mouvements&.count %>)</h2>
+      <div class="fr-download">
+        <p>
+          <%= link_to redeploiements_path(annee: @annee_a_afficher, format: :xlsx), class: "fr-download__link" do %> Télécharger l'historique des
+            mouvements <%= @annee_a_afficher %>
+            <span class="fr-download__detail">Format .xlsx</span>
+          <% end %>
+        </p>
+      </div>
+      <div class="fr-accordions-group fr-mb-2w">
+        <% @redeploiements.each do |redeploiement| %>
+          <section class="fr-accordion">
+            <h3 class="fr-accordion__title">
+              <button class="fr-accordion__btn" aria-expanded="false" aria-controls="<%= redeploiement.id %>">
+                Redéploiement n°<%= redeploiement.id %> effectué
+                le <%= l(redeploiement.created_at, format: "%e/%m/%y") %>
+                <% if current_user.statut == "admin" %>
+                  <p class="fr-badge fr-badge--purple-glycine"><%= redeploiement.region.nom %></p>
+                <% end %>
+
+                <% if redeploiement.ajout > 0 %>
+                  <p class="fr-badge fr-badge--green-emeraude"><%= pluralize(redeploiement.ajout, 'ajout') %> </p>
+                <% end %>
+
+                <% if redeploiement.suppression > 0 %>
+                  <p class="fr-badge fr-badge--blue-cumulus"><%= pluralize(redeploiement.suppression, 'suppression') %></p>
+                <% end %>
+
+                <p class="fr-badge fr-badge--new fr-badge--no-icon"><%= number_with_delimiter(redeploiement.credits_gestion.to_i, locale: :fr) %>
+                  € /
+                  <%= number_with_delimiter(redeploiement.cout_etp.to_i, locale: :fr) %> €</p>
+              </button>
+            </h3>
+
+            <div class="fr-collapse" id="<%= redeploiement.id %>">
+              <div class="fr-table--md fr-table fr-table--no-caption fr-mb-3w">
+                <div class="fr-table__wrapper">
+                  <div class="fr-table__container">
+                    <div class="fr-table__content">
+                      <table class="fr-cell--multiline">
+                        <thead>
+                        <tr>
+                          <th scope="col">Macrograde</th>
+                          <th scope="col">Quotité ETP</th>
+                          <th scope="col">Date effective</th>
+                          <th scope="col">ETPT</th>
+                          <th scope="col">Type</th>
+                          <th scope="col">Service concerné</th>
+                          <th scope="col">Programme</th>
+                          <th scope="col">Mouvements en gestion (LFR)</th>
+                          <th scope="col">Mouvements en base (PLF N+1)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <% redeploiement.mouvements.each do |mouvement| %>
+                          <tr>
+                            <td><%= mouvement.grade %></td>
+                            <td>
+                              <% if mouvement.quotite % 1 != 0 %><%= format_number(mouvement.quotite) %>
+                                <% else %><%= mouvement.quotite.to_i %>
+                              <% end %></td>
+                            <td><%= l(mouvement.date_effet, format: "%e/%m/%y") %></td>
+                            <td><%= format_number(mouvement.etpt) %></td>
+                            <td>
+                              <% if mouvement.type_mouvement == "ajout" %>
+                                <p class="fr-badge fr-badge--green-emeraude"><%= mouvement.type_mouvement %></p>
+                              <% else %><p class="fr-badge fr-badge--blue-cumulus"><%= mouvement.type_mouvement %></p>
+                              <% end %>
+                              <% if mouvement.ponctuel == true %>
+                                <p class="fr-badge fr-badge--new fr-badge--no-icon">ponctuel</p>
+                              <% end %></td>
+                            <td><%= mouvement.service.nom %></td>
+                            <td><%= mouvement.programme.numero %></td>
+                            <td><%= number_with_delimiter(mouvement.credits_gestion.to_i, locale: :fr) %>€</td>
+                            <td><%= number_with_delimiter(mouvement.cout_etp.to_i, locale: :fr) %>€</td>
+                          </tr>
+                        <% end %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <% if current_user.statut == "CBR" %>
+                <div>
+                  <button class="fr-btn fr-btn--secondary" title="Supprimer" data-fr-opened="false" aria-controls="fr-modal-<%= redeploiement.id %>">Supprimer
+                    le redéploiement
+                  </button>
+                </div>
+                <dialog aria-labelledby="fr-modal-title-modal-<%= redeploiement.id %>" role="dialog" id="fr-modal-<%= redeploiement.id %>" class="fr-modal">
+                  <div class="fr-container fr-container--fluid fr-container-md">
+                    <div class="fr-grid-row fr-grid-row--center">
+                      <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                        <div class="fr-modal__body">
+                          <div class="fr-modal__header">
+                            <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="fr-modal-<%= redeploiement.id %>">Fermer</button>
+                          </div>
+                          <div class="fr-modal__content">
+                            <h1 id="fr-modal-title-modal-<%= redeploiement.id %>" class="fr-modal__title">
+                              <span class="fr-fi-arrow-right-line fr-fi--lg"></span>Supprimer ce redéploiement ?</h1>
+                            <% if Date.today > redeploiement.mouvements.pluck(:date_effet).min %>
+                              <div class="fr-alert fr-alert--warning fr-mb-3w">
+                                <h3 class="fr-alert__title">Attention</h3>
+                                <p>Vous êtes sur le point de supprimer un redéploiement qui a déjà eu lieu. Êtes-vous
+                                  sûr·e de vouloir supprimer ce redéploiement ?</p>
+                              </div>
+                            <% else %>
+                              <p>Êtes-vous sûr·e de vouloir supprimer ce redéploiement ?</p>
+                            <% end %>
+                            <%= link_to redeploiement_path(id: redeploiement.id), data: { "turbo-method": :delete }, class: "fr-btn fr-btn--secondary" do %>
+                              Supprimer le redéploiement
+                            <% end %>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </dialog>
+              <% end %>
+            </div>
+
+          </section>
+        <% end %>
+      </div>
+      <%== pagy_nav_custom(@pagy) %>
+    </div>
+  </div>
+</div>

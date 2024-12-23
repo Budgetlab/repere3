@@ -7,27 +7,16 @@ class MouvementsController < ApplicationController
     @annee_a_afficher = [2023, 2024, 2025].include?(params[:annee].to_i) ? params[:annee].to_i : @annee
     date_debut = Date.new(@annee_a_afficher, 1, 1)
     date_fin = Date.new(@annee_a_afficher, 12, 31)
-    case current_user.statut
-    when 'admin'
-      @redeploiements = Redeploiement.includes(:region, mouvements: [:service, :programme]).where(created_at: date_debut..date_fin).order(created_at: :desc)
-      @mouvements_array = @redeploiements.pluck(:redeploiement_id, :type_mouvement, 'mouvements.quotite', 'mouvements.cout_etp', 'mouvements.credits_gestion')
-      @etp_cible = Objectif.where(date: date_debut..date_fin).sum(:etp_cible)
-    when 'prefet', 'CBR'
-      @redeploiements = Redeploiement.includes(mouvements: [:service, :programme]).where(region_id: current_user.region_id, created_at: date_debut..date_fin).order(created_at: :desc)
-      @mouvements_array = @redeploiements.pluck(:redeploiement_id, :type_mouvement, 'mouvements.quotite', 'mouvements.cout_etp', 'mouvements.credits_gestion')
-      @etp_cible = Objectif.where(date: date_debut..date_fin).where(region_id: current_user.region_id).sum(:etp_cible)
-    when 'ministere'
-      @ministere = Ministere.where(nom: current_user.nom).first
-      @programme_id = Programme.where(ministere_id: @ministere.id).pluck(:id)
-      @mouvements = Mouvement.includes(:service, :programme).where(programme_id: @programme_id, created_at: date_debut..date_fin).order(created_at: :desc)
-      @etp_cible = Objectif.where(date: date_debut..date_fin).where(programme_id: @programme_id).sum(:etp_cible)
-      @redeploiements = []
-      @mouvements_array = @mouvements.pluck(:id, :type_mouvement, :quotite, :cout_etp, :credits_gestion)
-    end
-    @etp_supp = @mouvements_array.select { |s| s.include?("suppression")}.sum{ |s| s[2] }.round(1)
-    @etp_3 = (0.03 * @etp_cible).round(1)
-    @credits_gestion = @mouvements_array.sum{ |s| s[4] }.to_i
-    @cout_etp = @mouvements_array.sum{ |s| s[3] }.to_i
+    @ministere = Ministere.where(nom: current_user.nom).first if current_user.statut == 'ministere'
+    @programmes_id = @ministere ? Programme.where(ministere_id: @ministere.id).pluck(:id) : Programme.all.pluck(:id).uniq
+    @objectifs = Objectif.where(date: date_debut..date_fin, programme_id: @programmes_id)
+    @mouvements_all = Mouvement.includes(:service, :programme).where(programme_id: @programmes_id, created_at: date_debut..date_fin).order(created_at: :desc)
+    @pagy, @mouvements = pagy(@mouvements_all)
+    # Calcul des totaux
+    @credits_gestion = @mouvements.sum(:credits_gestion).to_i
+    @cout_etp = @mouvements.sum(:cout_etp).to_i
+    @etp_cible = @objectifs.sum(:etp_cible)
+    @etp_supp = @mouvements.suppressions.sum(:quotite)
     respond_to do |format|
       format.html
       format.xlsx
@@ -103,10 +92,10 @@ params[:grade7],params[:grade8],params[:grade9],params[:grade10]]
           @mouvement.ponctuel = true
           @mouvement.cout_etp = 0
         else
-          @mouvement.cout_etp = -(params["quotite#{i}"].to_f * @cout_etp).round(2)
+          @mouvement.cout_etp = -(params["quotite#{i}"].to_f * @cout_etp).round
         end
         @mouvement.credits_gestion = -(params["quotite#{i}"].to_f * @cout_etp * (DateTime.new(Date.today.year,12,
-                                                                                              31)-params["date#{i}"].to_date).to_i / 365).round(2)
+                                                                                              31)-params["date#{i}"].to_date).to_i / 365).round
         @mouvement.etpt =  (params["quotite#{i}"].to_f * (params["date#{i}"].to_date-DateTime.new(Date.today.year,1,
                                                                                                   1)).to_i / 365).round(2)
         @mouvement.mouvement_lien = @redeploiement.id
@@ -133,9 +122,9 @@ params[:grade7],params[:grade8],params[:grade9],params[:grade10]]
         @cout_etp = Cout.where('programme_id = ? AND categorie = ?',
                                Programme.where(numero: params["addprogramme#{i}"].to_i).first.id, params["addgrade#{i}"]).first.cout
         @mouvement.credits_gestion = (params["addquotite#{i}"].to_f * @cout_etp * (DateTime.new(Date.today.year,12,
-                                                                                                31)-params["adddate#{i}"].to_date).to_i / 365).round(2)
+                                                                                                31)-params["adddate#{i}"].to_date).to_i / 365).round
         @mouvement.etpt =  (params["addquotite#{i}"].to_f * (DateTime.new(Date.today.year,12,
-                                                                          31)-params["adddate#{i}"].to_date ).to_i / 365).round(2)
+                                                                          31)-params["adddate#{i}"].to_date ).to_i / 365).round
         @mouvement.mouvement_lien = @redeploiement.id
         @mouvement.redeploiement = @redeploiement
         if params['ponctuel'] == 'true'
@@ -154,19 +143,11 @@ params[:grade7],params[:grade8],params[:grade9],params[:grade10]]
     @redeploiement.save
     @message = 'Redéploiement n°' + @mouvement.mouvement_lien.to_s + ' ajouté'
     respond_to do |format|
-      format.all { redirect_to historique_path, notice: @message}
+      format.all { redirect_to redeploiements_path, notice: @message}
     end
   end
 
   def update; end
-
-  def suppression
-    Redeploiement.where(id: params[:id]).destroy_all
-    # Mouvement.where(mouvement_lien: params[:id]).destroy_all
-    respond_to do |format|
-      format.turbo_stream { redirect_to historique_path, notice: 'Redéploiement supprimé' }
-    end
-  end
 
   def ajout_mouvements; end
 

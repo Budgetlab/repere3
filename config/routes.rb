@@ -20,13 +20,12 @@ Rails.application.routes.draw do
     get 'objectifs' => "objectifs#index"
     post 'import_objectifs' => "objectifs#import"
     resources :mouvements, only: [:create, :update]
+    resources :redeploiements
     get 'ajout-mouvements' => "mouvements#ajout_mouvements"
     post 'import_mouvements' => "mouvements#import"
     get 'historique' => "mouvements#index"
     get 'nouveau-redeploiement' => "mouvements#new"
-    post 'suppression' => "mouvements#suppression"
     post 'get_couts' => "mouvements#get_couts"
-    
     get '/mentions-legales', to: 'pages#mentions_legales'
     get '/donnees-personnelles', to: 'pages#donnees_personnelles'
     get '/accessibilite', to: 'pages#accessibilite'
