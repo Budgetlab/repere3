@@ -18,8 +18,8 @@ class RedeploiementsController < ApplicationController
     # Récupérer les mouvements liés aux redéploiements
     @mouvements = Mouvement.where(redeploiement_id: redeploiements_ids)
     # Calcul des totaux
-    @credits_gestion = @redeploiements_all.sum(:credits_gestion).to_i
-    @cout_etp = @redeploiements_all.sum(:cout_etp).to_i
+    @credits_gestion = @mouvements.sum(:credits_gestion).to_i
+    @cout_etp = @mouvements.sum(:cout_etp).to_i
     @etp_cible = @objectifs.sum(:etp_cible)
     @etp_supp = @mouvements.suppressions.sum(:quotite)
     respond_to do |format|

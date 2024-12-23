@@ -131,7 +131,7 @@ params[:grade7],params[:grade8],params[:grade9],params[:grade10]]
           @mouvement.ponctuel = true
           @mouvement.cout_etp = 0
         else
-          @mouvement.cout_etp = (params["addquotite#{i}"].to_f * @cout_etp).round(2) # valider le cout etp car programme nouveau pas supp
+          @mouvement.cout_etp = (params["addquotite#{i}"].to_f * @cout_etp).round # valider le cout etp car programme nouveau pas supp
         end
         @mouvement.save
         @redeploiement.ajout += 1
