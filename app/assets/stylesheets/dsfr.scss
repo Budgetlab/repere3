@@ -11673,6 +11673,96 @@ a.fr-link--close:not([href]) {
 /* ¯¯¯¯¯¯¯¯¯ *\
   PAGINATION
 \* ˍˍˍˍˍˍˍˍˍ */
+.pagy {
+  --underline-img: none;
+  --ul-type: none;
+  --ol-type: none;
+  --ul-start: 0;
+  --ol-start: 0;
+  --xl-block: 0;
+  --li-bottom: 0;
+  --ol-content: none;
+  color: var(--text-action-high-grey);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.pagy > :not([hidden]) ~ :not([hidden]) {
+  margin-left: calc(var(--spacing) * (1 - var(--space-reverse, 0)));
+  margin-right: calc(var(--spacing) * var(--space-reverse, 0));
+}
+
+.rtl .pagy > :not([hidden]) ~ :not([hidden]) {
+  --space-reverse: 1;
+}
+
+.pagy a:not([role="separator"]) { /* all but gaps */
+  --text-spacing: 0;
+  --title-spacing: 0;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  width: -moz-fit-content;
+  width: fit-content;
+  --hover-tint: var(--hover);
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  min-height: 2rem;
+  padding: 0.25rem 0.75rem;
+  min-width: 2rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  margin-bottom: 1rem;
+
+  --underline-img: none;
+  position: relative;
+}
+.pagy a::before,
+.pagy a::after {
+  display: block;
+}
+
+.pagy a[href]:hover { /* all links on hover */
+  background-color: var(--background-default-grey-hover);
+}
+
+.pagy a:not([href]) { /* all but links */
+  cursor: default;
+  pointer-events: none;
+}
+
+.pagy a[role="link"]:not([aria-current]) { /* disabled links */
+  // opacity: .6;
+  color: var(--text-disabled-grey);
+}
+
+.pagy a[aria-current] {  /* current page */
+  background-color: var(--background-active-blue-france);
+
+  --idle: transparent;
+  --hover: var(--background-active-blue-france-hover);
+  --active: var(--background-active-blue-france-active);
+  color: var(--text-inverted-blue-france);
+}
+
+.pagy label {
+  white-space: nowrap;
+  display: inline-block;
+
+  padding: 0.25rem 0.75rem;
+
+}
+
+.pagy label input {
+  all: unset;
+  border: var(--border-width) solid var(--background-current);
+  border-radius: calc(var(--rounding) / 2) !important;
+  background-color: var(--background-input);
+}
+
 .fr-pagination__link {
   --text-spacing: 0;
   --title-spacing: 0;

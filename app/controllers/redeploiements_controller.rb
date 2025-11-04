@@ -12,7 +12,7 @@ class RedeploiementsController < ApplicationController
     # Récupérer les redéploiements associés à l'année et aux régions
     @redeploiements_all = Redeploiement.where(created_at: date_debut..date_fin, region_id: @regions_id).includes(:mouvements, :region).order(created_at: :desc)
     # Paginer les redéploiements
-    @pagy, @redeploiements = pagy(@redeploiements_all)
+    @pagy, @redeploiements = pagy(:offset, @redeploiements_all)
     # Récupérer les IDs des redéploiements déjà chargés
     redeploiements_ids = @redeploiements_all.pluck(:id)
     # Récupérer les mouvements liés aux redéploiements
