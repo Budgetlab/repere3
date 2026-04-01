@@ -11,7 +11,7 @@ class MouvementsController < ApplicationController
     @programmes_id = @ministere ? Programme.where(ministere_id: @ministere.id).pluck(:id) : Programme.all.pluck(:id).uniq
     @objectifs = Objectif.where(date: date_debut..date_fin, programme_id: @programmes_id)
     @mouvements_all = Mouvement.includes(:service, :programme).where(programme_id: @programmes_id, created_at: date_debut..date_fin).order(created_at: :desc)
-    @pagy, @mouvements = pagy(:offset, @mouvements_all)
+    @pagy, @mouvements = pagy(@mouvements_all)
     # Calcul des totaux
     @credits_gestion = @mouvements.sum(:credits_gestion).to_i
     @cout_etp = @mouvements.sum(:cout_etp).to_i

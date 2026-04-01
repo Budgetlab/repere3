@@ -1,18 +1,29 @@
 ActiveAdmin.register Programme do
-
-  # See permitted parameters documentation:
-  # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
-  #
-  # Uncomment all parameters which should be permitted for assignment
-  #
   permit_params :ministere_id, :numero, :nom
-  #
-  # or
-  #
-  # permit_params do
-  #   permitted = [:ministere_id, :numero, :nom]
-  #   permitted << :other if params[:action] == 'create' && current_user.admin?
-  #   permitted
-  # end
-  
+
+  index do
+    selectable_column
+    id_column
+    column :numero
+    column :nom
+    column :ministere
+    actions
+  end
+
+  show do
+    attributes_table do
+      row :numero
+      row :nom
+      row :ministere
+    end
+  end
+
+  form do |f|
+    f.inputs do
+      f.input :ministere
+      f.input :numero
+      f.input :nom
+    end
+    f.actions
+  end
 end

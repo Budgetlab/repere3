@@ -1,5 +1,9 @@
 class Service < ApplicationRecord
   belongs_to :programme
+
+  def to_s
+    nom
+  end
   has_many :mouvements
   require 'roo'
   require 'axlsx'

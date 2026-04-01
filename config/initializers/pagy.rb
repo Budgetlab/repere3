@@ -8,7 +8,7 @@
 # Add your global options below. They will be applied globally.
 # For example:
 #
-Pagy.options[:limit] = 10               # Limit the items per page
+Pagy::OPTIONS[:limit] = 10               # Limit the items per page
 # Pagy.options[:size] = [1, 2, 2, 1]
 # Pagy.options[:page_param] = :p
 # Pagy.options[:client_max_limit] = 100   # The client can request a limit up to 100

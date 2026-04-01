@@ -1,6 +1,10 @@
 class Region < ApplicationRecord
-	has_many :objectifs
-	has_many :mouvements
+  has_many :objectifs
+  has_many :mouvements
+
+  def to_s
+    nom
+  end
 
 	def self.ransackable_associations(auth_object = nil)
 		["mouvements", "objectifs"]

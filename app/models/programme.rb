@@ -1,5 +1,9 @@
 class Programme < ApplicationRecord
   belongs_to :ministere
+
+  def to_s
+    "#{numero} - #{nom}"
+  end
   has_many :services
   has_many :couts
   has_many :objectifs

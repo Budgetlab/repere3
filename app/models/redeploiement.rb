@@ -1,5 +1,9 @@
 class Redeploiement < ApplicationRecord
   belongs_to :region
+
+  def to_s
+    "#{region&.nom} — ajout: #{ajout}, suppression: #{suppression}"
+  end
   has_many :mouvements, dependent: :destroy
 
   def self.ransackable_associations(auth_object = nil)

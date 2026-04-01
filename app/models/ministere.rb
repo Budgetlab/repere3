@@ -1,5 +1,9 @@
 class Ministere < ApplicationRecord
-	has_many :programmes
+  has_many :programmes
+
+  def to_s
+    nom
+  end
 
 	def self.ransackable_associations(auth_object = nil)
 		["programmes"]

@@ -34,6 +34,10 @@ class User < ApplicationRecord
     end
   end
 
+  def to_s
+    nom.presence || email
+  end
+
   def self.authentication_keys
     {statut: true, nom: false, region_id: false}
   end
