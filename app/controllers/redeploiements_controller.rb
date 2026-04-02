@@ -3,30 +3,17 @@ class RedeploiementsController < ApplicationController
 
   def index
     @annee_a_afficher = (2023..Date.today.year).include?(params[:annee].to_i) ? params[:annee].to_i : @annee
-    date_debut = Date.new(@annee_a_afficher, 1, 1)
-    date_fin = Date.new(@annee_a_afficher, 12, 31)
-    # Déterminer les regions_id selon le statut de l'utilisateur
-    @regions_id = current_user.statut == 'CBR' || current_user.statut == 'prefet' ? current_user.region_id : Region.all.pluck(:id).uniq
-    # Récupérer les objectifs pour l'année et les régions
-    @objectifs = Objectif.where(date: date_debut..date_fin, region_id: @regions_id)
-    # Récupérer les redéploiements associés à l'année et aux régions
-    @redeploiements_all = Redeploiement.where(created_at: date_debut..date_fin, region_id: @regions_id).includes(:mouvements, :region).order(created_at: :desc)
-    # Paginer les redéploiements
+    set_objectifs(@annee_a_afficher)
+    set_redeploiements(@annee_a_afficher)
     @pagy, @redeploiements = pagy(@redeploiements_all)
-    # Récupérer les IDs des redéploiements déjà chargés
-    redeploiements_ids = @redeploiements_all.pluck(:id)
-    # Récupérer les mouvements liés aux redéploiements
-    @mouvements = Mouvement.where(redeploiement_id: redeploiements_ids)
-    # Calcul des totaux
-    @credits_gestion = @mouvements.sum(:credits_gestion).to_i
-    @cout_etp = @mouvements.sum(:cout_etp).to_i
-    @etp_cible = @objectifs.sum(:etp_cible)
-    @etp_supp = @mouvements.suppressions.sum(:quotite)
+    # Récupérer les mouvements liés à tous les redéploiements
+    @mouvements = Mouvement.where(redeploiement_id: @redeploiements_all.select(:id))
+    compute_totaux(@mouvements, @objectifs)
     respond_to do |format|
       format.html
       format.xlsx {
         # Définir le nom du fichier XLSX
-        filename = "historique_repere3_#{@annee}.xlsx"
+        filename = "historique_repere3_#{@annee_a_afficher}.xlsx"
 
         # Générer le fichier XLSX et l'envoyer avec le nom personnalisé
         render xlsx: 'index', filename: filename
@@ -35,8 +22,7 @@ class RedeploiementsController < ApplicationController
   end
 
   def destroy
-    Redeploiement.where(id: params[:id]).destroy_all
-    # Mouvement.where(mouvement_lien: params[:id]).destroy_all
+    Redeploiement.find(params[:id]).destroy
     respond_to do |format|
       format.turbo_stream { redirect_to redeploiements_path, notice: 'Redéploiement supprimé' }
     end

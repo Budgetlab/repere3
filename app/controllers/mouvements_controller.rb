@@ -5,18 +5,10 @@ class MouvementsController < ApplicationController
 
   def index
     @annee_a_afficher = (2023..Date.today.year).include?(params[:annee].to_i) ? params[:annee].to_i : @annee
-    date_debut = Date.new(@annee_a_afficher, 1, 1)
-    date_fin = Date.new(@annee_a_afficher, 12, 31)
-    @ministere = Ministere.where(nom: current_user.nom).first if current_user.statut == 'ministere'
-    @programmes_id = @ministere ? Programme.where(ministere_id: @ministere.id).pluck(:id) : Programme.all.pluck(:id).uniq
-    @objectifs = Objectif.where(date: date_debut..date_fin, programme_id: @programmes_id)
-    @mouvements_all = Mouvement.includes(:service, :programme).where(programme_id: @programmes_id, created_at: date_debut..date_fin).order(created_at: :desc)
+    set_objectifs(@annee_a_afficher)
+    set_mouvements(@annee_a_afficher)
     @pagy, @mouvements = pagy(@mouvements_all)
-    # Calcul des totaux
-    @credits_gestion = @mouvements.sum(:credits_gestion).to_i
-    @cout_etp = @mouvements.sum(:cout_etp).to_i
-    @etp_cible = @objectifs.sum(:etp_cible)
-    @etp_supp = @mouvements.suppressions.sum(:quotite)
+    compute_totaux(@mouvements_all, @objectifs)
     respond_to do |format|
       format.html
       format.xlsx

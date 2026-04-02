@@ -1,11 +1,21 @@
 
-    wb = xlsx_package.workbook
-	wb.add_worksheet(name: "Buttons") do |sheet|
-	  sheet.add_row %W{ Région Date Quotité Grade Type Service\ concerné Programme Date\ effective ETPT Mouvements\ en\ gestion\ (LFR) Mouvements\ en\ base\ (PLF\ N+1) N°ref\ redéploiement}
+wb = xlsx_package.workbook
+header_style = wb.styles.add_style(font_name: 'Calibri', b: true)
+body_style   = wb.styles.add_style(font_name: 'Calibri')
+date_style   = wb.styles.add_style(font_name: 'Calibri', format_code: 'dd/mm/yyyy')
 
-      @mouvements_all.each do |mouvement|
-        sheet.add_row [mouvement.region.nom, mouvement.date, mouvement.quotite, mouvement.grade, mouvement.type_mouvement, mouvement.service.nom, mouvement.programme.numero, mouvement.date_effet, mouvement.etpt, mouvement.credits_gestion, mouvement.cout_etp, mouvement.mouvement_lien]
-           
-      end
+wb.add_worksheet(name: "Mouvements") do |sheet|
+  headers = %W{ Région Date Quotité Grade Type Service\ concerné Programme Date\ effective ETPT Mouvements\ en\ gestion\ (LFR) Mouvements\ en\ base\ (PLF\ N+1) N°ref\ redéploiement }
+  sheet.add_row headers, style: header_style
 
-	end
+  @mouvements_all.each do |mouvement|
+    sheet.add_row [mouvement.region.nom, mouvement.date, mouvement.quotite, mouvement.grade, mouvement.type_mouvement, mouvement.service.nom, mouvement.programme.numero, mouvement.date_effet, mouvement.etpt, mouvement.credits_gestion, mouvement.cout_etp, mouvement.mouvement_lien],
+                  style: [body_style, date_style, body_style, body_style, body_style, body_style, body_style, date_style, body_style, body_style, body_style, body_style]
+  end
+
+  column_widths = Array.new(headers.count, 15)
+  sheet.column_widths *column_widths
+
+  last_col = Axlsx::col_ref(headers.size - 3)
+  sheet.auto_filter = "A1:#{last_col}1"
+end

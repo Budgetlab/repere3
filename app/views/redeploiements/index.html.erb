@@ -51,7 +51,7 @@
   </div>
   <div class="fr-grid-row fr-grid-row--gutters fr-mb-4w">
     <div class="fr-col-12 fr-col-lg-12">
-      <h2 class="fr-my-2w">Historique des redéploiements (<%= @redeploiements_all&.count %>) et mouvements (<%= @mouvements&.count %>)</h2>
+      <h2 class="fr-my-2w">Historique des redéploiements (<%= @redeploiements_all&.count %>)</h2>
       <div class="fr-download">
         <p>
           <%= link_to redeploiements_path(annee: @annee_a_afficher, format: :xlsx), class: "fr-download__link" do %> Télécharger l'historique des
