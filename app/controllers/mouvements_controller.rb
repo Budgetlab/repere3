@@ -4,7 +4,7 @@ class MouvementsController < ApplicationController
   protect_from_forgery with: :null_session
 
   def index
-    @annee_a_afficher = [2023, 2024, 2025].include?(params[:annee].to_i) ? params[:annee].to_i : @annee
+    @annee_a_afficher = (2023..Date.today.year).include?(params[:annee].to_i) ? params[:annee].to_i : @annee
     date_debut = Date.new(@annee_a_afficher, 1, 1)
     date_fin = Date.new(@annee_a_afficher, 12, 31)
     @ministere = Ministere.where(nom: current_user.nom).first if current_user.statut == 'ministere'
@@ -148,18 +148,4 @@ params[:grade7],params[:grade8],params[:grade9],params[:grade10]]
   end
 
   def update; end
-
-  def ajout_mouvements; end
-
-  def import
-    Mouvement.import(params[:file])
-    respond_to do |format|
-      format.turbo_stream { redirect_to root_path}
-    end
-  end
-
-  private
-  def redirect_unless_cbr
-    redirect_to root_path unless current_user.statut == 'CBR'
-  end
 end

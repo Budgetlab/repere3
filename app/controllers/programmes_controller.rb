@@ -8,7 +8,7 @@ class ProgrammesController < ApplicationController
 
   # Page pour ajouter les programmes et effectuer export excel de synthese des programmes
   def index
-    @annee_a_afficher = [2023, 2024, 2025].include?(params[:annee].to_i) ? params[:annee].to_i : @annee
+    @annee_a_afficher = (2023..Date.today.year).include?(params[:annee].to_i) ? params[:annee].to_i : @annee
     @date_debut = Date.new(@annee_a_afficher, 1, 1)
     @date_fin = Date.new(@annee_a_afficher, 12, 31)
     @programmes = Programme.all.order(numero: :asc)

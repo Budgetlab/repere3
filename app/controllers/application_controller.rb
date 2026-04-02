@@ -37,14 +37,15 @@ class ApplicationController < ActionController::Base
 
     private
   def require_admin
-    unless current_user.statut == 'admin'
-      redirect_to root_path
-    end
+    redirect_to root_path unless current_user.statut == 'admin'
+  end
+
+  def redirect_unless_cbr
+    redirect_to root_path unless current_user.statut == 'CBR'
   end
 
   # fonction pour déclarer les variables globales dans l'application
   def set_global_variable
     @annee = Date.today.year
   end
-
 end

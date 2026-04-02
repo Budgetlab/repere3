@@ -21,8 +21,6 @@ Rails.application.routes.draw do
     post 'import_objectifs' => "objectifs#import"
     resources :mouvements, only: [:create, :update]
     resources :redeploiements
-    get 'ajout-mouvements' => "mouvements#ajout_mouvements"
-    post 'import_mouvements' => "mouvements#import"
     get 'historique' => "mouvements#index"
     get 'nouveau-redeploiement' => "mouvements#new"
     post 'get_couts' => "mouvements#get_couts"
