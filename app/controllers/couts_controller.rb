@@ -11,7 +11,7 @@ class CoutsController < ApplicationController
   def import
     Cout.import(params[:file])
     respond_to do |format|
-      format.turbo_stream { redirect_to root_path }
+      format.turbo_stream { redirect_to couts_path }
     end
   end
 

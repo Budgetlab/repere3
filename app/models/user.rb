@@ -5,32 +5,26 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   def self.import(file)
-    User.destroy_all 
-    Region.destroy_all
     data = Roo::Spreadsheet.open(file.path)
-    headers = data.row(1) # get header row
+    headers = data.row(1)
 
     data.each_with_index do |row, idx|
-      next if idx == 0 # skip header
+      next if idx == 0
       row_data = Hash[[headers, row].transpose]
-      if !row_data['region'].nil? && row_data['region'].length > 0 #region existe
-        Region.where('nom = ?',row_data['region']).first_or_create do |region|
-          region.nom = row_data['region']
-        end
+
+      if row_data['region'].present?
+        Region.where(nom: row_data['region']).first_or_create
       end
 
-      if row_data['email'] != "" 
-        User.where('email = ?',row_data['email']).first_or_create do |user|         
-          user.email = row_data['email']
-          user.statut = row_data['statut']
-          if Region.where('nom = ?',row_data['region']).count > 0
-            user.region_id = Region.where('nom = ?',row_data['region']).first.id
-          end
-          user.nom = row_data['nom']
-          user.password = row_data['Mot de passe']
-        end
-      end
+      next unless row_data['email'].present?
 
+      user = User.find_or_initialize_by(email: row_data['email'])
+      user.statut = row_data['statut']
+      user.nom = row_data['nom']
+      user.password = row_data['Mot de passe'] if row_data['Mot de passe'].present?
+      region = Region.find_by(nom: row_data['region'])
+      user.region_id = region.id if region
+      user.save
     end
   end
 

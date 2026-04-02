@@ -15,8 +15,33 @@
         <% end %>
     	</div>
 
-    	<div class="fr-my-4w"><%= Programme.all.count%> programmes</div>
-    	<div class="fr-my-4w"><%= Ministere.all.count%> ministere</div>
+      <div class="fr-table fr-mt-4w" id="table-programmes-component">
+        <div class="fr-table__wrapper">
+          <div class="fr-table__container">
+            <div class="fr-table__content">
+              <table id="table-programmes">
+                <caption><%= @programmes.count %> programmes / <%= Ministere.count %> ministères</caption>
+                <thead>
+                  <tr>
+                    <th>Numéro</th>
+                    <th>Nom du programme</th>
+                    <th>Ministère</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @programmes.each_with_index do |programme, index| %>
+                    <tr id="table-programmes-row-key-<%= index + 1 %>" data-row-key="<%= index + 1 %>">
+                      <td><%= programme.numero %></td>
+                      <td><%= programme.nom %></td>
+                      <td><%= programme.ministere&.nom %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
 		</div>
 	</div>
 </main>

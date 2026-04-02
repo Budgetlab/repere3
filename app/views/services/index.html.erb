@@ -14,7 +14,31 @@
         <div class="fr-my-4w"><%= submit_tag "Transmettre", class:"fr-btn" %></div>
         <% end %>
     	</div>
-    	<div class="fr-my-4w"><%= Service.all.count%> services</div>
+      <div class="fr-table fr-mt-4w" id="table-services-component">
+        <div class="fr-table__wrapper">
+          <div class="fr-table__container">
+            <div class="fr-table__content">
+              <table id="table-services">
+                <caption><%= @services.count %> services</caption>
+                <thead>
+                  <tr>
+                    <th>Nom du service</th>
+                    <th>Programme</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @services.each_with_index do |service, index| %>
+                    <tr id="table-services-row-key-<%= index + 1 %>" data-row-key="<%= index + 1 %>">
+                      <td class="fr-cell--multiline"><%= service.nom %></td>
+                      <td><%= service.programme&.numero %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
 		</div>
 	</div>
 </main>

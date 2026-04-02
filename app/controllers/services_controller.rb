@@ -7,7 +7,9 @@ class ServicesController < ApplicationController
   before_action :require_admin, except: [:select_services]
 
   # Page pour ajouter les services
-  def index; end
+  def index
+    @services = Service.includes(:programme).joins(:programme).order('programmes.numero asc')
+  end
 
   def import
     Service.import(params[:file])

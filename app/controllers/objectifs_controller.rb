@@ -7,7 +7,9 @@ class ObjectifsController < ApplicationController
   before_action :require_admin
 
   # Page pour importer les objectifs
-  def index; end
+  def index
+    @objectifs_par_annee = Objectif.group("DATE_PART('year', date)").count.transform_keys(&:to_i).sort.to_h
+  end
 
   def import
     Objectif.import(params[:file])

@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     post 'import_users' => "users#import"
     get 'regions' => "regions#index"
     get 'programmes' => "programmes#index"
+    get 'synthese-programmes' => "programmes#synthese", as: :synthese_programmes
     post 'import_programmes' => "programmes#import"
     get 'services' => "services#index"
     post 'import_services' => "services#import"

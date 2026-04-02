@@ -14,7 +14,32 @@
         <div class="fr-my-4w"><%= submit_tag "Transmettre", class:"fr-btn" %></div>
         <% end %>
     	</div>
-    	<div class="fr-my-4w"><%= Objectif.all.count%> objectifs</div>
+
+      <div class="fr-table fr-mt-4w" id="table-objectifs-component">
+        <div class="fr-table__wrapper">
+          <div class="fr-table__container">
+            <div class="fr-table__content">
+              <table id="table-objectifs">
+                <caption>Objectifs par année</caption>
+                <thead>
+                  <tr>
+                    <th>Année</th>
+                    <th>Nombre d'objectifs</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @objectifs_par_annee.each_with_index do |(annee, nombre), index| %>
+                    <tr id="table-objectifs-row-key-<%= index + 1 %>" data-row-key="<%= index + 1 %>">
+                      <td><%= annee %></td>
+                      <td><%= nombre %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
 		</div>
 	</div>
 </main>

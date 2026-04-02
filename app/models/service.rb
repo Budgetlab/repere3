@@ -9,27 +9,18 @@ class Service < ApplicationRecord
   require 'axlsx'
 
   def self.import(file)
-
     data = Roo::Spreadsheet.open(file.path)
     headers = data.row(1) # get header row
-    # @services_nom = data.column(1)
-    #Service.all.each do |service| #on regarde si le service est dans le fichier
-    #  unless @services_nom.include?(service.nom)
-    #    Mouvement.where(service_id: service.id).destroy_all
-    #    service.destroy
-    #  end
-    #end
     data.each_with_index do |row, idx|
       next if idx == 0 # skip header
       row_data = Hash[[headers, row].transpose]
-      if Programme.where(numero: row_data['Numero'].to_i).count > 0
-        if Service.where(nom: row_data['Nom'].to_s, programme_id: Programme.where(numero: row_data['Numero'].to_i).first.id).count.zero?
-          @service = Service.new 
-          @service.nom = row_data['Nom']
-          @service.programme_id = Programme.where(numero: row_data['Numero'].to_i).first.id
-          @service.save
-        end
-      end
+      next unless row_data['Nom'].present? && row_data['Numero'].present?
+
+      programme = Programme.find_by(numero: row_data['Numero'].to_i)
+      next unless programme
+
+      service = Service.find_or_initialize_by(nom: row_data['Nom'], programme_id: programme.id)
+      service.save
     end
   end
 
