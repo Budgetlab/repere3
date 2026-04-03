@@ -4,6 +4,16 @@ class Redeploiement < ApplicationRecord
   def to_s
     "#{region&.nom} — ajout: #{ajout}, suppression: #{suppression}"
   end
+
+  def recalculer_totaux
+    mvts = mouvements.reload
+    update!(
+      suppression: mvts.count { |m| m.type_mouvement == 'suppression' },
+      ajout: mvts.count { |m| m.type_mouvement == 'ajout' },
+      cout_etp: mvts.sum { |m| m.cout_etp.to_i },
+      credits_gestion: mvts.sum { |m| m.credits_gestion.to_i }
+    )
+  end
   has_many :mouvements, dependent: :destroy
 
   def self.ransackable_associations(auth_object = nil)

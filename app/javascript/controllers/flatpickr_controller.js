@@ -6,20 +6,20 @@ export default class extends Controller {
   static targets = []
 
   connect() {
-    const modal = document.getElementById('picker-container')
+    const modal   = document.getElementById('picker-container')
+    const minDate = this.element.dataset.flatpickrMinDate || null
+    const maxDate = this.element.dataset.flatpickrMaxDate || null
 
-    if (modal != null){
-      flatpickr(this.element, {
-        locale: 'fr',
-        dateFormat: "d/m/Y",
-        appendTo: document.getElementById('picker-container')
-      })
-    }else {
-      flatpickr(this.element, {
-        locale: 'fr',
-        dateFormat: "d/m/Y",
-      })
+    const options = {
+      locale: 'fr',
+      dateFormat: "d/m/Y",
+      minDate: minDate,
+      maxDate: maxDate,
     }
+
+    if (modal != null) options.appendTo = modal
+
+    flatpickr(this.element, options)
   }
 
 }

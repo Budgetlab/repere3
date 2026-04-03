@@ -101,7 +101,7 @@
                         <div class="fr-col-12 fr-col-lg-4">
                           <div class="fr-select-group">
                             <label for="date1" class="fr-label">Date effective*</label>
-                            <%= f.text_field :date1, { data: { 'form-target': 'date1', controller: "flatpickr", flatpickr_date_format: "d-m-Y", flatpickr_min_date: Date.new(Date.today.year, 1, 1), flatpickr_max_date: Date.new(Date.today.year, 12, 31) }, id: "date1", class: "fr-select", placeholder: "- sélectionner -" } %>
+                            <%= f.text_field :date1, { data: { 'form-target': 'date1', controller: "flatpickr", flatpickr_date_format: "d/m/Y", flatpickr_min_date: "01/01/#{Date.today.year}", flatpickr_max_date: "31/12/#{Date.today.year}" }, id: "date1", class: "fr-select", placeholder: "- sélectionner -" } %>
                           </div>
                         </div>
                       </div>
@@ -142,7 +142,7 @@
                           <div class="fr-col-12 fr-col-lg-4">
                             <div class="fr-select-group">
                               <label for="date<%= i %>" class="fr-label">Date effective*</label>
-                              <%= f.text_field "date#{i}", { data: { 'form-target': 'date' + i.to_s, controller: "flatpickr", flatpickr_date_format: "d-m-Y", flatpickr_min_date: Date.new(Date.today.year, 1, 1), flatpickr_max_date: Date.new(Date.today.year, 12, 31) }, id: "date" + i.to_s, class: "fr-select", placeholder: "- sélectionner -" } %>
+                              <%= f.text_field "date#{i}", { data: { 'form-target': 'date' + i.to_s, controller: "flatpickr", flatpickr_date_format: "d/m/Y", flatpickr_min_date: "01/01/#{Date.today.year}", flatpickr_max_date: "31/12/#{Date.today.year}" }, id: "date" + i.to_s, class: "fr-select", placeholder: "- sélectionner -" } %>
                             </div>
                           </div>
                         </div>
@@ -221,7 +221,7 @@
                         <div class="fr-col-12 fr-col-lg-4">
                           <div class="fr-select-group">
                             <label for="adddate1" class="fr-label">Date effective</label>
-                            <%= f.text_field :adddate1, { data: { 'form-target': 'adddate1', controller: "flatpickr", flatpickr_date_format: "d-m-Y", flatpickr_min_date: Date.new(Date.today.year, 1, 1), flatpickr_max_date: Date.new(Date.today.year, 12, 31) }, id: "adddate1", class: "fr-select", placeholder: "- sélectionner -" } %>
+                            <%= f.text_field :adddate1, { data: { 'form-target': 'adddate1', controller: "flatpickr", flatpickr_date_format: "d/m/Y", flatpickr_min_date: "01/01/#{Date.today.year}", flatpickr_max_date: "31/12/#{Date.today.year}" }, id: "adddate1", class: "fr-select", placeholder: "- sélectionner -" } %>
                           </div>
                         </div>
                       </div>
@@ -263,7 +263,7 @@
                           <div class="fr-col-12 fr-col-lg-4">
                             <div class="fr-select-group">
                               <label for="adddate<%= i %>" class="fr-label">Date effective*</label>
-                              <%= f.text_field "adddate#{i}", { data: { 'form-target': 'adddate' + i.to_s, controller: "flatpickr", flatpickr_date_format: "d-m-Y", flatpickr_min_date: Date.new(Date.today.year, 1, 1), flatpickr_max_date: Date.new(Date.today.year, 12, 31) }, id: "adddate" + i.to_s, class: "fr-select", placeholder: "- sélectionner -" } %>
+                              <%= f.text_field "adddate#{i}", { data: { 'form-target': 'adddate' + i.to_s, controller: "flatpickr", flatpickr_date_format: "d/m/Y", flatpickr_min_date: "01/01/#{Date.today.year}", flatpickr_max_date: "31/12/#{Date.today.year}" }, id: "adddate" + i.to_s, class: "fr-select", placeholder: "- sélectionner -" } %>
                             </div>
                           </div>
                         </div>
