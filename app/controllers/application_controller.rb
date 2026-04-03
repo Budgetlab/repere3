@@ -90,11 +90,34 @@ class ApplicationController < ActionController::Base
                       end.includes(:service, :programme).order(created_at: :desc)
   end
 
+  def set_regions
+    @regions = if ['CBR', 'prefet'].include?(current_user.statut)
+                 Region.where(id: current_user.region_id)
+               else
+                 Region.all.order(nom: :asc)
+               end
+  end
+
+  def set_programmes
+    @programmes = if current_user.statut == 'ministere'
+                    ministere = Ministere.find_by(nom: current_user.nom)
+                    Programme.where(ministere_id: ministere&.id).order(numero: :asc)
+                  else
+                    Programme.all.order(numero: :asc)
+                  end
+  end
+
   def compute_totaux(mouvements, objectifs)
     @credits_gestion = mouvements.sum(:credits_gestion).to_i
     @cout_etp        = mouvements.sum(:cout_etp).to_i
     @etp_cible       = objectifs.sum(:etp_cible)
     @etp_supp        = mouvements.suppressions.sum(:quotite)
+  end
+
+  def compute_totaux_accueil(mouvements, objectifs)
+    @etp_cible = objectifs.sum(:etp_cible)
+    @etp_redeployables = (0.03 * @etp_cible).round(1)
+    @etp_supp = mouvements.suppressions.sum(:quotite)
   end
 
   # fonction pour déclarer les variables globales dans l'application

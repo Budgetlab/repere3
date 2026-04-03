@@ -3,70 +3,106 @@ class PagesController < ApplicationController
 
   def accueil
     @annee_a_afficher = (2023..Date.today.year).include?(params[:annee].to_i) ? params[:annee].to_i : @annee
-    date_debut = Date.new(@annee_a_afficher, 1, 1)
-    date_fin = Date.new(@annee_a_afficher, 12, 31)
-    @regions = set_regions
-    @ministere = Ministere.where(nom: current_user.nom).first if current_user.statut == 'ministere'
-    @programmes = set_programmes
+    set_objectifs(@annee_a_afficher)
+    set_mouvements(@annee_a_afficher)
+    set_regions
+    set_programmes
+    compute_totaux_accueil(@mouvements_all, @objectifs)
 
-    @array_programme_mvt = @programmes.includes(:mouvements).where(mouvements: { region_id: @regions.pluck(:id), date: date_debut..date_fin }).pluck(:programme_id, :type_mouvement, :quotite, :etpt, :cout_etp, :credits_gestion, :grade)
-    @array_programme_obj = @programmes.includes(:objectifs).where(objectifs: { region_id: @regions.pluck(:id), date: date_debut..date_fin }).pluck(:programme_id, :etp_cible, :etpt_plafond)
+    objectifs_arr  = @objectifs.to_a
+    mouvements_arr = @mouvements_all.to_a
 
-    @array_region_mvt = @regions.includes(:mouvements).where(mouvements: { programme_id: @programmes.pluck(:id), date: date_debut..date_fin }).pluck(:region_id, :type_mouvement, :quotite, :etpt, :cout_etp, :credits_gestion, :grade)
-    @array_region_obj = @regions.includes(:objectifs).where(objectifs: { programme_id: @programmes.pluck(:id), date: date_debut..date_fin }).pluck(:region_id, :etp_cible, :etpt_plafond)
-
-    @etp_cible = @array_programme_obj.sum{ |s| s[1] }.round(1)
-    @etpt_plafond = @array_programme_obj.sum{ |s| s[2] }.round(1)
-    @etp_3 = (0.03 * @etp_cible).round(1)
-    @credits = @array_programme_mvt.sum{ |s| s[5] }.to_i
-    @couts_etp = @array_programme_mvt.sum{ |s| s[4] }.to_i
-
-    @etp_supp = []
-    @etp_add = []
-    @etpt_supp = []
-    @etpt_add = []
-    ['A', 'B', 'C'].each do |letter|
-      @etp_supp << @array_programme_mvt.select { |a| a[1] == 'suppression' && a[6] == letter }.sum { |s| s[2] }.round(1)
-      @etp_add << @array_programme_mvt.select { |a| a[1] == 'ajout' && a[6] == letter }.sum { |s| s[2] }.round(1)
-      @etpt_supp << @array_programme_mvt.select { |a| a[1] == 'suppression' && a[6] == letter }.sum { |s| s[3] }.round(1)
-      @etpt_add << @array_programme_mvt.select { |a| a[1] == 'ajout' && a[6] == letter }.sum { |s| s[3] }.round(1)
+    @data_par_programme = @programmes.map do |prog|
+      obj   = objectifs_arr.select { |o| o.programme_id == prog.id }
+      mvts  = mouvements_arr.select { |m| m.programme_id == prog.id }
+      supp  = mvts.select { |m| m.type_mouvement == 'suppression' }
+      ajout = mvts.select { |m| m.type_mouvement == 'ajout' }
+      etp_c     = obj.sum { |o| o.etp_cible.to_f }
+      plafond_3 = (0.03 * etp_c).round(1)
+      etp_supp  = supp.sum { |m| m.quotite.to_f }
+      {
+        programme:    prog,
+        etp_cible:    etp_c.round(1),
+        etpt_plafond: obj.sum { |o| o.etpt_plafond.to_f }.round(1),
+        plafond_3:    plafond_3,
+        etp_supp:     etp_supp.round(2),
+        pct_etp_supp: etp_c > 0 ? (etp_supp / etp_c * 100).round(2) : 0,
+        etp_add:      ajout.sum { |m| m.quotite.to_f }.round(2),
+        etpt_supp:    supp.sum { |m| m.etpt.to_f }.round(2),
+        etpt_add:     ajout.sum { |m| m.etpt.to_f }.round(2),
+        credits:      mvts.sum { |m| m.credits_gestion.to_f }.to_i,
+        couts:        mvts.sum { |m| m.cout_etp.to_f }.to_i
+      }
     end
-    @etp_supp_region = []
-    @etp_plafond = []
-    @etp_region = []
-    @regions.each do |region|
-      ['ajout', 'suppression'].each do |action|
-        ['A', 'B', 'C'].each do |category|
-          @etp_region << @array_region_mvt.select { |a| a[0] == region.id && a[1] == action && a[6] == category }.sum { |s| s[2] }.round(1)
+
+    @mvt_programme_etp = @programmes.flat_map do |prog|
+      mvts = mouvements_arr.select { |m| m.programme_id == prog.id }
+      ['ajout', 'suppression'].flat_map do |type|
+        ['A', 'B', 'C'].map do |grade|
+          mvts.select { |m| m.type_mouvement == type && m.grade == grade }.sum { |m| m.quotite.to_f }.round(1)
         end
       end
-      @etp_supp_region << @array_region_mvt.select { |a| a[0] == region.id && a[1] == 'suppression' }.sum { |s| s[2] }.round(1)
-      @etp_plafond << @array_region_obj.select { |a| a[0] == region.id }.sum { |s| 0.03*s[1] }.round(1)
     end
 
-    @ept_prog = []
-    @etp_supp_prog = []
-    @programmes.each do |programme|
-      ['ajout', 'suppression'].each do |action|
-        ['A', 'B', 'C'].each do |category|
-          @ept_prog << @array_programme_mvt.select { |a| a[0] == programme.id && a[1] == action && a[6] == category }.sum { |s| s[2] }.round(1)
+    if ['admin', 'ministere'].include?(current_user.statut)
+      @mvt_region_etp = @regions.flat_map do |region|
+        mvts = mouvements_arr.select { |m| m.region_id == region.id }
+        ['ajout', 'suppression'].flat_map do |type|
+          ['A', 'B', 'C'].map do |grade|
+            mvts.select { |m| m.type_mouvement == type && m.grade == grade }.sum { |m| m.quotite.to_f }.round(1)
+          end
         end
       end
-      @etp_supp_prog << @array_programme_mvt.select { |a| a[0] == programme.id && a[1] == 'suppression' }.sum { |s| s[2] }.round(1)
+
+      @data_par_region = @regions.map do |region|
+        obj   = objectifs_arr.select { |o| o.region_id == region.id }
+        mvts  = mouvements_arr.select { |m| m.region_id == region.id }
+        supp  = mvts.select { |m| m.type_mouvement == 'suppression' }
+        ajout = mvts.select { |m| m.type_mouvement == 'ajout' }
+        etp_c     = obj.sum { |o| o.etp_cible.to_f }
+        plafond_3 = (0.03 * etp_c).round(1)
+        etp_supp  = supp.sum { |m| m.quotite.to_f }
+        {
+          nom:          region.nom,
+          etp_cible:    etp_c.round(1),
+          etpt_plafond: obj.sum { |o| o.etpt_plafond.to_f }.round(1),
+          plafond_3:    plafond_3,
+          etp_supp:     etp_supp.round(2),
+          pct_etp_supp: etp_c > 0 ? (etp_supp / etp_c * 100).round(2) : 0,
+          etp_add:      ajout.sum { |m| m.quotite.to_f }.round(2),
+          etpt_supp:    supp.sum { |m| m.etpt.to_f }.round(2),
+          etpt_add:     ajout.sum { |m| m.etpt.to_f }.round(2),
+          credits:      mvts.sum { |m| m.credits_gestion.to_f }.to_i,
+          couts:        mvts.sum { |m| m.cout_etp.to_f }.to_i
+        }
+      end
     end
 
-    @mouvements_ajout = []
-    @etp_time_ajout = []
-    @mouvements_supp = []
-    @etp_time_supp = []
-    @hash_date = Mouvement.group("DATE_TRUNC('month', date)").group(:type_mouvement).sum(:quotite)
-    @hash_date_effet = Mouvement.group("DATE_TRUNC('month', date_effet)").group(:type_mouvement).sum(:quotite)
-    (0..11).to_a.each do |i|
-      @mouvements_ajout << @hash_date.select { |key, value| key == [Date.new(Date.today.year, i+1, 1), 'ajout'] }.values.sum.round(1)
-      @mouvements_supp <<  @hash_date.select { |key, value| key == [Date.new(Date.today.year, i+1, 1), 'suppression'] }.values.sum.round(1)
-      @etp_time_ajout << @hash_date_effet.select { |key, value| key == [Date.new(Date.today.year, i+1, 1), 'ajout'] }.values.sum.round(1)
-      @etp_time_supp << @hash_date_effet.select { |key, value| key == [Date.new(Date.today.year, i+1, 1), 'suppression'] }.values.sum.round(1)
+    @date_effet_ajout = (1..12).map do |m|
+      mouvements_arr.select { |mv| mv.type_mouvement == 'ajout' && mv.date_effet&.year == @annee_a_afficher && mv.date_effet.month == m }.sum { |mv| mv.quotite.to_f }.round(1)
     end
+    @date_effet_supp = (1..12).map do |m|
+      mouvements_arr.select { |mv| mv.type_mouvement == 'suppression' && mv.date_effet&.year == @annee_a_afficher && mv.date_effet.month == m }.sum { |mv| mv.quotite.to_f }.round(1)
+    end
+
+    @creation_ajout = (1..12).map do |m|
+      mouvements_arr.select { |mv| mv.type_mouvement == 'ajout' && mv.created_at.month == m }.sum { |mv| mv.quotite.to_f }.round(1)
+    end
+    @creation_supp = (1..12).map do |m|
+      mouvements_arr.select { |mv| mv.type_mouvement == 'suppression' && mv.created_at.month == m }.sum { |mv| mv.quotite.to_f }.round(1)
+    end
+
+    @data_par_macrograde = mouvements_arr.group_by(&:grade).map do |grade, mvts|
+      supp  = mvts.select { |m| m.type_mouvement == 'suppression' }
+      ajout = mvts.select { |m| m.type_mouvement == 'ajout' }
+      {
+        macrograde: grade,
+        etp_supp:   supp.sum { |m| m.quotite.to_f }.round(2),
+        etp_add:    ajout.sum { |m| m.quotite.to_f }.round(2),
+        etpt_supp:  supp.sum { |m| m.etpt.to_f }.round(2),
+        etpt_add:   ajout.sum { |m| m.etpt.to_f }.round(2)
+      }
+    end.sort_by { |d| d[:macrograde].to_s }
   end
 
   def error_404
@@ -91,12 +127,4 @@ class PagesController < ApplicationController
 
   def faq; end
 
-  private
-  def set_regions
-    ['CBR', 'prefet'].include?(current_user.statut) ? Region.where(id: current_user.region_id) : Region.all.order(nom: :asc)
-  end
-
-  def set_programmes
-    current_user.statut == 'ministere' ? Programme.where(ministere_id: @ministere.id).order(numero: :asc) : Programme.all.order(numero: :asc)
-  end
 end
