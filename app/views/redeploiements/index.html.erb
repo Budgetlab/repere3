@@ -135,40 +135,17 @@
                 </div>
               </div>
               <% if current_user.statut == "CBR" %>
+                <% past = (redeploiement.mouvements.minimum(:date_effet) || Date.today) < Date.today %>
                 <div>
-                  <button class="fr-btn fr-btn--secondary" title="Supprimer" data-fr-opened="false" aria-controls="fr-modal-<%= redeploiement.id %>">Supprimer
-                    le redéploiement
+                  <button class="fr-btn fr-btn--secondary"
+                          data-controller="delete-modal"
+                          data-action="click->delete-modal#open"
+                          data-delete-modal-id-value="<%= redeploiement.id %>"
+                          data-delete-modal-past-value="<%= past %>"
+                          data-delete-path="<%= redeploiement_path(redeploiement) %>">
+                    Supprimer le redéploiement
                   </button>
                 </div>
-                <dialog aria-labelledby="fr-modal-title-modal-<%= redeploiement.id %>" role="dialog" id="fr-modal-<%= redeploiement.id %>" class="fr-modal">
-                  <div class="fr-container fr-container--fluid fr-container-md">
-                    <div class="fr-grid-row fr-grid-row--center">
-                      <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
-                        <div class="fr-modal__body">
-                          <div class="fr-modal__header">
-                            <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="fr-modal-<%= redeploiement.id %>">Fermer</button>
-                          </div>
-                          <div class="fr-modal__content">
-                            <h1 id="fr-modal-title-modal-<%= redeploiement.id %>" class="fr-modal__title">
-                              <span class="fr-fi-arrow-right-line fr-fi--lg"></span>Supprimer ce redéploiement ?</h1>
-                            <% if Date.today > redeploiement.mouvements.pluck(:date_effet).min %>
-                              <div class="fr-alert fr-alert--warning fr-mb-3w">
-                                <h3 class="fr-alert__title">Attention</h3>
-                                <p>Vous êtes sur le point de supprimer un redéploiement qui a déjà eu lieu. Êtes-vous
-                                  sûr·e de vouloir supprimer ce redéploiement ?</p>
-                              </div>
-                            <% else %>
-                              <p>Êtes-vous sûr·e de vouloir supprimer ce redéploiement ?</p>
-                            <% end %>
-                            <%= link_to redeploiement_path(id: redeploiement.id), data: { "turbo-method": :delete }, class: "fr-btn fr-btn--secondary" do %>
-                              Supprimer le redéploiement
-                            <% end %>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </dialog>
               <% end %>
             </div>
 
@@ -179,3 +156,34 @@
     </div>
   </div>
 </div>
+
+<% if current_user.statut == "CBR" %>
+  <button id="fr-modal-delete-trigger" data-fr-opened="false" aria-controls="fr-modal-delete" class="fr-hidden"></button>
+
+  <dialog aria-labelledby="fr-modal-delete-title" role="dialog" id="fr-modal-delete" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+      <div class="fr-grid-row fr-grid-row--center">
+        <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+          <div class="fr-modal__body">
+            <div class="fr-modal__header">
+              <button class="fr-link--close fr-link" title="Fermer la fenêtre modale" aria-controls="fr-modal-delete">Fermer</button>
+            </div>
+            <div class="fr-modal__content">
+              <h1 id="fr-modal-delete-title" class="fr-modal__title">
+                <span class="fr-fi-arrow-right-line fr-fi--lg"></span>Supprimer ce redéploiement ?
+              </h1>
+              <div id="modal-delete-warning" class="fr-alert fr-alert--warning fr-mb-3w fr-hidden">
+                <h3 class="fr-alert__title">Attention</h3>
+                <p>Vous êtes sur le point de supprimer un redéploiement qui a déjà eu lieu. Êtes-vous sûr·e de vouloir le supprimer ?</p>
+              </div>
+              <p id="modal-delete-confirm">Êtes-vous sûr·e de vouloir supprimer ce redéploiement ?</p>
+              <%= link_to "#", data: { "turbo-method": :delete }, id: "modal-delete-link", class: "fr-btn fr-btn--secondary" do %>
+                Supprimer le redéploiement
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+<% end %>
